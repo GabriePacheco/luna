@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+	<meta charset="UTF-8">
+	<title>Lunytha - Asistente de tareas </title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+	<link href="https://fonts.googleapis.com/css?family=Pacifico" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+	<link rel="stylesheet" type="text/css" href="materialize/css/materialize.css">
+	<link rel="stylesheet" type="text/css" href="materialize/css/recortador.css">
+	
+	<script type="text/javascript" src="materialize/js/materialize.js"></script>
+	<style type="text/css">
+		h1,h2,h6{
+			font-family: 'Pacifico', cursive;
+
+			
+		}
+	.navFix{
+		position: fixed;
+		top:0;
+		left: 0;
+	}
+	.pageApp{
+		padding-top: 8vh !important;
+	}
+	.postTextArea{
+		border: none;
+		box-shadow: none;
+		overflow: hidden;
+	}
+	.postTextArea:focus{
+		 border-bottom:  none;
+     	box-shadow: inherit;
+     	 outline: none
+	}
+	.pieFix{
+		position: fixed;
+		bottom: 0;
+
+	}
+	.bt {
+		font-size: 1.8em !important;
+	}
+	.azul{
+		text-align: center;
+		background: #1e88e5 ;
+		color: white;
+	}
+	.naranja{
+		text-align: center;
+		background: #ffd180 ;
+		
+	}
+	.verde{
+		text-align: center;
+		background: #558b2f ;
+		color: white;
+	}
+	.color{
+		height: 10em;
+		padding-top: 2em; 
+	}
+
+	</style>
+
+	
+</head>
+<body>
+	<div class="row">
+		<div class="col s12 col m6 offset-m3" >
+			<div id = "app" class="row">
+				<!--- Login -->
+				<div class="col s12 center-align pageApp" id="login">
+					<h2 class="" >Lunytha</h2>
+					<div class="row">
+						<form id ="loginForm" class="container">
+							<div class="row">
+						        <div class="input-field col s12">
+						          <input  id="emailLogin" type="email" class="validate" required="required">
+						          <label for ="emailLogin">Email</label>
+						        </div>							
+							</div>
+							<div class="row">
+						        <div class="input-field col s12">
+						        	
+						          <input  id="passwordLogin" type="password" class="validate" required="required">
+				          		 <label for ="passwordLogin">Contraseña</label>
+						        </div>							
+						        <p class="right-align"><a href="#recuperar">¿olvidaste tu contraseña? </a></p>
+							</div>
+							<div class="row">
+						        <div class="input-field col s12">
+						        	<button id ="botonLogin"  class="btn col s12 disabled">Iniciar sesión
+						        		 <i id = "botonLoginI" class="material-icons right" >power_settings_new</i>
+						        	</button>
+			          			
+						        </div>							
+						        
+							</div>
+							<div class="row">
+								<div class ="col s5 "><hr> </div>
+								<div class ="col s2 "> ó </div>
+								<div class ="col s5 "><hr> </div>
+							</div>
+							<div class="row">
+						        <div class="input-field col s12">
+						        	<a class="btn col s12 blue darken-3 loginFacebook">Iniciar sesión con facebook</a>			
+						        </div>							
+						        
+							</div>
+							<div class="row">
+						        <div class="input-field col s12">
+						        	<p>¿No tienes cuenta? <a href="#registro">Regístrate</a>  </p>		
+						        </div>							
+						        
+							</div>			
+						</form>		
+
+					</div>
+
+				</div> <!-- Fin Login -->
+
+				<!--- Registro -->
+				<div class="col s12 center-align pageApp" id="registro">
+					<h2 class="" >Lunytha</h2>
+					<div class="row">
+						<form class="container" id ="registroForm">
+							<div class="row">
+						        <div class="input-field col s12">
+						        	<a  class="btn col s12 blue darken-3  loginFacebook">Iniciar sesión con facebook</a>			
+						        </div>							
+						        
+							</div>
+							<div class="row">
+								<div class ="col s5 "><hr> </div>
+								<div class ="col s2 "> ó </div>
+								<div class ="col s5 "><hr> </div>
+							</div>
+
+
+							<div class="row">
+						        <div class="input-field col s12">
+						          <input  id="emailRegistro" type="email" class="validate" required="required">
+						          <label for ="emailRegistro">Email</label>
+						        </div>
+					
+							
+						        <div class="input-field col s12">
+						          <input  id="passwordRegistro" type="password" class="validate" required="required">
+				          			<label for ="passwordRegistro">Contraseña</label>
+						        </div>
+								<div class="input-field col s12">
+						          <input  id="rpasswordRegistro" type="password" class="validate" required="required">
+						          <label for ="rpasswordRegistro">Confirmar Contraseña</label>
+						        </div>									
+						       
+							</div>
+							<div class="row">
+						        <div class="input-field col s12">
+						        	<button id ="botonRegistro"  class="btn col s12 disabled">Siguiente<i id="botonRegistroI" class="material-icons right">skip_next</i></button>
+			          			
+						        </div>							
+						        
+							</div>
+
+							<div class="row">
+						        <div class="input-field col s12">
+						        	<p>¿Tienes una cuanta? <a href ="#login"> Inicia sesión</a>  </p>		
+						        </div>							
+						        
+							</div>			
+						</form>		
+
+					</div>
+
+				</div><!-- Fin registro	-->
+				<!--- Recuperar Contraeña -->
+				<div class="col s12 center-align pageApp" id="recuperar">
+					<h2 class="" >Lunytha</h2>
+					<div class="row">
+						<form class="container" id ="recuperarForm">
+							<p><b>Recuperar cuenta.</b></p>
+							<div class="row">
+						        <div class="input-field col s12">					        	
+						          <input  id="emailRecuperar" type="email" class="validate" required="required">
+						          <label for ="emailRecuperar">Email</label>
+						        </div>
+					       
+							</div>
+							<div class="row">
+								<p>Ingresa el correo electrónico asociado a tu cuenta.</p>
+						        <div class="input-field col s12">
+						        	<button id ="botonRecuperar"  class="btn col s12 disabled">Siguiente
+						        		<i id="botonRecuperarI" class="material-icons right">skip_next</i>
+						        	</button>
+			          			
+						        </div>							
+						        	
+							</div>
+
+							<div class="row">
+						        <div class="input-field col s12">
+						        	<p>¿Si tienes tus credenciales? <a href = "#login"> Inicia sesión</a>  </p>		
+						        </div>							
+						        
+							</div>			
+						</form>		
+
+					</div>
+
+				</div><!-- Fin registro	-->
+				<!--- Recuperar Contraeña Mensaje -->
+				<div class="col s12 center-align pageApp" id="recuperarMensaje">
+					<h2 class="" >Lunytha</h2>
+					<div class="row">
+						<form class="container" id ="recuperarMensajeForm">
+							<p><b>Enviamos  un email a tu dirección de correro para verificar tu cuenta. Has click en el enlace para recuperar tu contraseña </b></p>
+
+							<div class="row">
+						        <div class="input-field col s12">
+						        	<p>¿No reciviste el correo electrónico? <a id ="reenvio" href = ""> Reenviar </a>  </p>		
+						        </div>							
+						        
+							</div>
+
+							<div class="row">
+						        <div class="input-field col s12">
+						        	<p>¿Si tienes tus credenciales? <a href = "#login"> Inicia sesión</a>  </p>		
+						        </div>							
+						        
+							</div>			
+						</form>		
+
+					</div>
+
+				</div><!-- Fin registro	-->	
+				<!--- Recuperar Contraeña Mensaje -->
+				<div class="col s12 center-align pageApp" id="registroMensaje">
+					<h2 class="" >Lunytha</h2>
+					<div class="row">
+						<form class="container" id ="registroMensajeRegistro">
+							<p><b>Enviamos  un E mail a tu dirección de correro para verificar tu cuenta. Has click en el enlace para activar tu contraseña </b></p>
+
+							<div class="row">
+						        <div class="input-field col s12">
+						        	<p>¿Si tienes tus credenciales? <a href = "#login"> Inicia sesión</a>  </p>		
+						        </div>							
+						        
+							</div>			
+						</form>		
+
+					</div>
+
+				</div><!--  Contraeña Mensaje	-->				
+
+				<!--- Registrar foto -->
+				<div class="col s12 center-align pageApp" id="registroFoto">
+					
+					<div class="row">
+						<form class="container" id ="registroFotoForm">
+							<h2 class="" >Lunytha</h2>
+								<div class="col s12">
+									<div id = "recortador"></div>
+									<div id = "botoneraRecortador"></div>
+								</div>
+
+							<p><b>Agrega una foto de perfil </b></p>
+							<p>Agrea una foto de perfil para que podamos reconocerte.</p>
+					
+						
+						</form>		
+
+					</div>
+
+				</div><!-- Fin registro	-->		
+
+
+			<!--- Registro Nombre -->
+				<div class="col s12 center-align pageApp" id="registroNombre">
+					<h2 class="" >Lunytha</h2>
+					<div class="row">
+						<form id ="registroNombreForm" class="container">
+							<div class="row">
+						        <div class="input-field col s12">
+						          <input  id="nombreRegistroNombre" type="text" class="validate" required="required">
+						          <label for ="nombreRegistroNombre">Nombre Completo</label>
+						        </div>							
+							</div>
+							<div class="row">
+								  <div class="input-field col s12">
+								    <select id ="rolUsuarioRegistro">
+								      <option value="" disabled selected>Escoje una opción</option>
+								      <option value="1">Soy Alumno  </option>
+								      <option value="2">Soy Representante </option>
+								      <option value="3">Soy Profesor</option>
+								    </select>
+								    <label>Rol del usuario </label>
+								  </div>					
+						        
+							</div>
+							<div class="row">
+						        <div class="input-field col s12">
+						          <input  id="tokenRegistroNombre" type="text" class="validate hide" required="required" placeholder="El token provisto por el desarrollador o administrador de la app">
+						          <label for ="tokenRegistroNombre">Token de la app</label>
+						        </div>							
+							</div>
+
+							<div class="row">
+						        <div class="input-field col s12">
+						          <input  id="estudiantesRegistroNombre" type="text" class="validate hide" required="required" placeholder="ej: Juan Piguave, Benito Camelas">
+						          <label for ="estudiantesRegistroNombre">Nombre(s) representado(s)</label>
+						        </div>							
+							</div>
+
+
+							<div class="row">
+						        <div class="input-field col s12">
+						        	<button id ="botonRegistroNombre" class="btn col s12 disabled">
+						        		Siguiente
+						        		<i id="botonRegistroNombreI" class="material-icons right">skip_next</i>
+						        	</button>
+			          			
+						        </div>							
+						        
+							</div>
+		
+						</form>		
+
+					</div>
+
+				</div> <!-- fin Registro Nombre -->
+			<!--Home -->
+			<div class="col s12 pageApp" id = "home"> 
+				<div class="row">
+				
+					<nav class="pink lighten-1 z-depth-1 valign-wrapper navFix ">
+						<span class="col s1"><a href="#addPhoto"><i class="material-icons" >camera_alt</i></a></span>
+						<span class="col s9"><a href="#home"><b>Lunytha</b></a></span>
+						<span class="col s1 right-align"><a href="#chat"><i class="material-icons">mode_comment</i></a></span>
+						<span class="col s1 right-align"><a href="#perfil"><i class="material-icons">person</i></a></span>
+
+					</nav>
+				
+				</div>
+				<div class="row">
+					<div class="col s12 hide-on-med-and-up historias">Historias</div> 
+					<div class="col m9 s12" id = "post">
+							Post 						
+					</div>
+					<div class="col m3 hide-on-small-only historias">Historias</div> 
+				</div>
+				<div id= "botonPost" class="fixed-action-btn hide">
+				  <a href="#addPost" class="btn-floating btn-large pink lighten-1 ">
+				    <i  class="large material-icons">mode_edit</i>
+				  </a>
+
+				</div>
+  
+			</div>	
+			<!--Fin home -->
+			<!-- Perfil -->
+			<div class="col s12 pageApp" id = "perfil">
+				<div class="row">
+					<nav class=" pink lighten-1 z-depth-1 valign-wrapper navFix">
+						<span class="col s1"><a href="#home"><i class="material-icons" >arrow_back</i></a></span>
+						<span class="col s10">Mi perfil</span>
+						<span class="col s1">
+							<a id = "cerrar" href="#cerrarSesion" alt="Cerrar sesión" ><i class="material-icons right" >settings_power</i></a>
+						</span>
+					</nav>
+					
+				</div>
+				<div class="row">	
+					<div class="col s12 ">
+						<div class="row">
+							<div class="col s4">
+								<img id = "imagenPerfil" src="" class = "responsive-img circle hoverable">
+							</div>
+							<div class="col s8">
+								<div class="row">
+									<div class="col m12 hide-on-small-only ">&nbsp; </div>
+									
+									<div class="col s12 m10 offset-m1 hide-on-small-only">&nbsp;</div>
+								
+									<div class="col s12 m10 offset-m1 flow-text" id ="nombrePerfil"></div>
+									
+									<div class="col s12 m10 offset-m1 flow-text" id ="rolPerfil"></div>
+									
+									<div class="col s12 m10 offset-m1 flow-text" id ="emailPerfil" ></div>
+									<div class="col s12 m10 offset-m1 center-align"><a class="waves-effect waves-light btn-small pink lighten-1 z-depth-1" href="#editarPerfil">Editar Perfil</a></div>
+									
+								</div>
+							</div>
+							<div class="col s12 ">
+								<div><b>Biografía</b></div>
+								<div id ="biografiaPerfil" ></div>
+							</div> 
+							<div class="col s12 center-align">
+								<div><b>Album</b></div>
+								<div id ="Album" class="center-align"></div>
+							</div> 
+						</div>
+					</div>
+				</div>
+
+			</div>
+			<!--Fin perfil -->	
+
+			<!-- Editar perfil -->
+			<div class="col s12 pageApp" id = "editarPerfil">
+				<div class="row">
+					<nav class="pink lighten-1 z-depth-1 valign-wrapper navFix">
+						<span class="col s1"><a href="#perfil"><i class="material-icons" >arrow_back</i></a></span>
+						<span class="col s10">Editar Perfil</span>
+						<span class="col s1"><i class="material-icons right" id = "savePerfil">done</i></span>
+					</nav>
+					
+				</div>
+				<div class="row">
+					<form class="col s12" id ="formEPerfil">
+							<div class="col s6 offset-s3 center-align">
+								<img id = "imagenEPerfil" src="" class = "responsive-img circle">
+								<a id ="linkEditarFoto" href="#editarFotoPerfil">Cambiar foto</a>
+							</div>
+					
+						<div class="input-field col s12">
+				          <input  id="nombreEPerfil" type="text" class="validate active" required="required">
+				          <label for ="nombreEPerfil">Nombre</label>
+				        </div>	
+				        <div class="input-field col s12">
+				          <textarea id="biografiaEPerfil" class="materialize-textarea validate" required="required" placeholder="Biografía"></textarea>  
+				          <label for ="biografiaEPerfil">Biografía</label>
+				        </div>
+		        		<div class="input-field col s12">
+						    <select id ="rolEPerfil">			      
+						      <option value="1">Soy Alumno  </option>
+						      <option value="2">Soy Representante </option>
+						      <option value="3" >Soy Profesor</option>
+						    </select>
+						    <label>Rol del usuario </label>
+						 </div>
+						 <div class="input-field col s12 hide" id ="portaEstudiantes">
+							  <div class="chips">
+							    <input id= "estudiantesEPerfil" class="custom-class">
+							  </div>
+							  <label for="estudiantesEPerfil">Represento a: </label>
+						 </div>				
+						
+					</form>
+
+				</div>
+				
+			</div>
+			<!-- Editar perfil -->
+
+			<!-- Editar Foro de perfil -->
+			<div class="col s12 pageApp" id = "editarFotoPerfil">
+				<div class="row">
+					<nav class="pink lighten-1 z-depth-1 valign-wrapper navFix">
+						<span class="col s1"><a href="#perfil"><i class="material-icons" >arrow_back</i></a></span>
+						<span class="col s11">Editar foto de perfil</span>
+						
+					</nav>
+					
+				</div>
+				<div class="row">
+					<div id = "editarFPerfil" ></div>
+					<div id = "editarFPerfilBotonera" ></div>
+				</div>
+				
+			</div>
+			<!-- fin Editar foto  perfil -->
+			<!-- Nuevo post -->
+			<div class="col s12 pageApp" id = "addPost">
+				<div class="row">
+					<nav class="pink lighten-1 z-depth-1 valign-wrapper navFix">
+						<span class="col s1"><a href="#home"><i class="material-icons" >arrow_back</i></a></span>
+						<span class="col s9">Nueva publicación</span>
+						<span class="col s2"><i class="material-icons right" id = "saveNPost">done</i></span>
+					</nav>
+				</div>	
+				<div class="row">
+					<div class="col s12">
+						<div class="row valign-wrapper">
+							<div class="col s2">
+								<img id="imagenUserPost" src="" class="responsive-img circle" alt="">
+							</div>
+							<div class="col s10">
+								<b id="nombreUserPost"></b><br>
+								<span>Publico</span>
+							</div>
+						</div>
+						<textarea class="flow-text postTextArea valign-wrapper" id ="postTextArea" placeholder="¿Qué quieres informar?"></textarea>
+						<input type="file" id="NewFile" class="hide">
+
+
+					</div>
+					<div id="imagenesPost" ></div>
+					<div id="adjuntosPost"></div>
+				</div>
+				<div class="pieFix col s11 m6"> 
+			       <ul class="tabs">
+				        <li class="tab col s2"><a id ="addFilePost"><i class="material-icons bt">attach_file</i></a></li>
+				        <li class="tab col s2"><a id ="addFotoPost"><i class="material-icons bt">add_a_photo</i></a></li>
+				        <li class="tab col s2"><a class="color"  data-color="none"><i  class="material-icons  bt">crop_din</i></a></li>
+				        <li class="tab col s2"><a class="color"  data-color="azul" ><i class="material-icons blue-text bt">broken_image</i></a></li>
+				         <li class="tab col s2"><a class="color"  data-color="naranja" ><i class="material-icons  orange-text bt">
+				         broken_image</i></a></li>
+				          
+				            <li class="tab col s2"><a class="color"  data-color="verde"><i class="material-icons  green-text bt">broken_image</i></a></li>
+				       
+				    </ul>
+		    	</div>
+			</div><!--FIN  Nuevo post -->
+			
+
+			</div>
+		
+		</div>
+	</div>
+	
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+	<script src="https://www.gstatic.com/firebasejs/5.9.1/firebase.js"></script>
+	<script src="recortador.js"></script>
+	<script src="funcionesInternas.js"></script>
+	<script src="firebase.js"></script>
+</body>
+</html>
