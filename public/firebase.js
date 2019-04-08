@@ -287,8 +287,6 @@ var editarUsuario = function (callback) {
 		})
 	}
 
-
-
 }
 var testPermisos = function (callback){
 	console.log("comprobando permisos ")
@@ -300,4 +298,67 @@ var testPermisos = function (callback){
 	})
 }
 
+var subirPost = async function (callbaks){
+	let myPost = {}
 
+	myPost.id = await base.ref().child("posts").push().key
+	myPost.authorId = userInline.uid
+	myPost.autorName =userInline.nombre;
+	myPost.autorName =userInline.foto;
+	myPost.fecha = firebase.database.ServerValue.TIMESTAMP;
+	if (nPost.texto){
+		myPost.texto = nPost.texto;
+	}
+	if (nPost.color){
+		myPost.color = nPost.color;
+	}
+	if (nPost.imagenes){
+		for (let ci =0; ci < nPost.imagenes.length; ci++){
+			if (!myPost.imagenes){
+				 myPost.imagenes =[]
+			}
+			var urlnImagen = await suirAdjuntos("imagenes/posts"+ myPost.id, nPost.imagenes[ci], mt()+".png" )
+			myPost.imagenes.push(urlnImagen);
+		}
+
+	}
+	if (nPost.files){
+		for (let ca =0; ca < nPost.files.length; ca++){
+			if (!myPost.files){
+				 myPost.files =[]
+				 myPost.filesName =[]
+			}
+			var urlnFiles = await suirAdjuntos("archivos/posts"+ myPost.id, nPost.files[ca], mt() )
+			myPost.files.push(urlnFiles);
+			myPost.filesName.push(nPost.files[ca].name);
+		}
+
+	}
+	
+	var updates = {}
+	updates["/posts/" + myPost.id]= myPost;
+	return base.ref().update(updates)
+	.then(function (){
+		callbaks();
+	})
+
+	
+		
+
+}
+
+
+var suirAdjuntos = async function (ruta, archivo, referencia ){
+	let  up = storage.ref().child(ruta + "/"+ referencia);
+	return up.put(archivo)
+	.then( function (){
+		return up.getDownloadURL()
+		.then(function (url){
+			return url
+		})
+	})
+
+
+	
+
+}

@@ -12,6 +12,12 @@
 
 
   });
+var progres={};
+progres.valor =0
+progres.head= '<div id ="pogres" class="progress">'
+progres.body1= '<div class="determinate" style="width: '
+progres.body2='%"></div>'
+progres.pie= '</div>';
 
 
 var preloader =  '<div class="preloader-wrapper small active">'+
@@ -366,8 +372,21 @@ $(".color").click(function (){
 });
 
 $("#saveNPost").click(function (){
-	if (nPost.texto || nPost.Imagenes || nPost.color || nPost.archivos){
-		console.log("vamos a subirlo...")
+	if (nPost.texto || nPost.imagenes || nPost.color || nPost.files){
+		$("#posts").prepend("<div class='posteando'>Posteando... "+progresBar(10)+"</div")
+		location.hash="#home";
+		subirPost(function (captura, e){
+			if (e){
+				mensajeria(e)
+
+			}
+			delete nPost.texto,nPost.imagenes,nPost.color,nPost.files ;
+			delete nPost.imagenes;
+			delete nPost.dataImg;
+			delete nPost.dataURLimg;
+			$(".posteando").remove()
+			vistaPost();
+		})
 	}
 
 });
@@ -434,9 +453,7 @@ $("#NewFile").change(function (e){
 				}
 			}
 		
-
-			/*nPost.imagenes.push(e.target.files[0])
-			vistaPost()*/
+			
 		}
 	}
 });
@@ -445,7 +462,13 @@ var mt = function (){
 	let fecha =  Date.now()
 	return  Math.floor(fecha / 100)
 }
-
+var progresBar = function(avance){
+	progres.valor = avance ;
+	let por = progres.head + progres.body1+progres.valor+ progres.body2 + progres.pie
+	console.log(por);
+	return por;
+	
+}
 
 var vistaPost = function (callback){
 
@@ -456,6 +479,7 @@ var vistaPost = function (callback){
 	$("#postTextArea").removeClass("verde")
 	$("#postTextArea").removeClass("naranja")
 	$("#postTextArea").removeClass("azul")
+	delete nPost.color;
 
 
 	if (nPost.filesName){
@@ -486,6 +510,8 @@ var vistaPost = function (callback){
 					img.style.backgroundImage="url('"+nPost.dataURLimg[im]+"')";
 					img.innerHTML="<a onclick='removeImagenes("+im+")'><i class='material-icons right'>delete_forever</i></a>";
 					$("#imagenesPost").append(img)
+					img = ""; 
+					delete img;
 					
 				}	
 		}
@@ -494,28 +520,46 @@ var vistaPost = function (callback){
 			if (alto > 180){
 				alto=180
 			}
-				$("#imagenesPost").append("<div class='col s12' style='height:"+alto+"px !important; background-image: url("+nPost.dataURLimg[0]+"); background-repeat: no-repeat; background-position: center;'><a onclick='removeImagenes("+0+")' ><i class='right'>X</i></a>"
-				+"</div>");	
-				$("#imagenesPost").append("<div class='col s6' style='height:"+alto+"px !important; background-image: url("+nPost.dataURLimg[1]+"); background-repeat: no-repeat;  background-position: center;'><a onclick='removeImagenes("+1+")' ><i class='right'>X</i></a>"
-				+"</div>");
-				$("#imagenesPost").append("<div class='col s6' style='height:"+alto+"px !important; background-image: url("+nPost.dataURLimg[2]+"); background-repeat: no-repeat; background-position: center;'><a onclick='removeImagenes("+0+")' ><i class='right'>X</i></a>"
-				+"</div>");
+			for (let im = 0; im < 3; im ++){
+				
+					let img = document.createElement("div")
+					if (im == 0){
+						img.setAttribute("class", "col s12" );
+					}else{
+						img.setAttribute("class", "col s6" );
+					}
+					
+					img.setAttribute("style", "height:" + alto +"px; background-repeat:no-repeat;" );					
+					img.style.backgroundPosition = "center";
+					img.style.backgroundImage="url('"+nPost.dataURLimg[im]+"')";
+					img.innerHTML="<a onclick='removeImagenes("+im+")'><i class='material-icons right'>delete_forever</i></a>";
+					$("#imagenesPost").append(img)
+					img = ""; 
+					delete img;
+					
+			}
+							
 		}		
 		if(nPost.imagenes.length > 3){
 			let alto = (nPost.dataImg[0] +  nPost.dataImg[1] +   nPost.dataImg[2]+ nPost.dataImg[3])/4 ;
 			if (alto > 180){
 				alto=180
 			}
-			console.log(alto)
-			
-				$("#imagenesPost").append("<div class='col s6' style='height:"+alto+"px !important; background-image: url("+nPost.dataURLimg[0]+"); background-repeat: no-repeat; background-position: center;'><a onclick='removeImagenes("+0+")' ><i class='right'>X</i></a>"
-				+"</div>");	
-				$("#imagenesPost").append("<div class='col s6' style='height:"+alto+"px !important; background-image: url("+nPost.dataURLimg[1]+"); background-repeat: no-repeat;  background-position: center;'><a onclick='removeImagenes("+1+")' ><i class='right'>X</i></a>"
-				+"</div>");
-				$("#imagenesPost").append("<div class='col s6' style='height:"+alto+"px !important; background-image: url("+nPost.dataURLimg[2]+"); background-repeat: no-repeat; background-position: center;'><a onclick='removeImagenes("+0+")' ><i class='right'>X</i></a>"
-				+"</div>");
-				$("#imagenesPost").append("<div class='col s6' style='height:"+alto+"px !important; background-image: url("+nPost.dataURLimg[3]+"); background-repeat: no-repeat; background-position: center;'><a onclick='removeImagenes("+0+")' ><i class='right'>X</i></a>"
-				+"</div>");	
+			for (let im = 0; im < 4 ; im ++){				
+					let img = document.createElement("div")			
+					img.setAttribute("class", "col s6" );			
+					img.setAttribute("style", "height:" + alto +"px; background-repeat:no-repeat;" );					
+					img.style.backgroundPosition = "center";
+					img.style.backgroundImage="url('"+nPost.dataURLimg[im]+"')";
+					img.innerHTML="<a onclick='removeImagenes("+im+")'><i class='material-icons right'>delete_forever</i></a>";
+					if (nPost.imagenes.length > 4  &&  im == 3){
+						img.setAttribute("class", "col s6 valign-wrapper center-align white-text" );
+						img.innerHTML+= "<h3class='center-align'>"+ (nPost.imagenes.length-4) +"</h3>";
+					}
+					$("#imagenesPost").append(img)
+					img = ""; 
+					delete img;					
+			}
 		}			
 
 
