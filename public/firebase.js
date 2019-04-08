@@ -300,7 +300,14 @@ var testPermisos = function (callback){
 
 var subirPost = async function (callbaks){
 	let myPost = {}
-
+	let peso = 0
+	for (let ci =0; ci < nPost.imagenes.length; ci++){
+		peso += nPost.imagenes[ci].size
+	}
+	for (let ci =0; ci < nPost.files.length; ci++){
+		peso += nPost.files[ci].size
+	}
+	
 	myPost.id = await base.ref().child("posts").push().key
 	myPost.authorId = userInline.uid
 	myPost.autorName =userInline.nombre;
@@ -357,8 +364,5 @@ var suirAdjuntos = async function (ruta, archivo, referencia ){
 			return url
 		})
 	})
-
-
-	
 
 }
