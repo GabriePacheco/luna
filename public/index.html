@@ -58,8 +58,14 @@
 		color: white;
 	}
 	.color{
-		height: 10em;
-		padding-top: 2em; 
+		height: 15em;
+		
+		text-align: center !important;
+		vertical-align: middle;
+		font-size: 1.5em;
+	}
+	.textoP{
+		font-size: 1.2em;
 	}
 
 	</style>
@@ -345,9 +351,7 @@
 				</div>
 				<div class="row">
 					<div class="col s12 hide-on-med-and-up historias">Historias</div> 
-					<div class="col m9 s12" id = "posts">
-							Post 						
-					</div>
+					<div class="col m9 s12" id ="posts"></div>
 					<div class="col m3 hide-on-small-only historias">Historias</div> 
 				</div>
 				<div id= "botonPost" class="fixed-action-btn hide">
@@ -419,10 +423,10 @@
 				</div>
 				<div class="row">
 					<form class="col s12" id ="formEPerfil">
-							<div class="col s6 offset-s3 center-align">
-								<img id = "imagenEPerfil" src="" class = "responsive-img circle">
-								<a id ="linkEditarFoto" href="#editarFotoPerfil">Cambiar foto</a>
-							</div>
+						<div class="col s6 m4 offset-s3 offset-m4  center-align">
+							<img id = "imagenEPerfil" src="" class = "responsive-img circle">
+							<a id ="linkEditarFoto" href="#editarFotoPerfil">Cambiar foto</a>
+						</div>
 					
 						<div class="input-field col s12">
 				          <input  id="nombreEPerfil" type="text" class="validate active" required="required">
@@ -441,11 +445,14 @@
 						    <label>Rol del usuario </label>
 						 </div>
 						 <div class="input-field col s12 hide" id ="portaEstudiantes">
-							  <div class="chips">
-							    <input id= "estudiantesEPerfil" class="custom-class">
-							  </div>
-							  <label for="estudiantesEPerfil">Represento a: </label>
+							  <input id= "estudiantesEPerfil" class="validate" type = "text">
+							   <label for="estudiantesEPerfil">Represento a: </label>
+						 </div>	
+						 <div class="input-field col s12 hide" id ="portaTokens">
+							  <input id= "tokenEPerfil" class="validate" type = "text">
+							   <label for="tokenEPerfil">Token de acceso: </label>
 						 </div>				
+
 						
 					</form>
 

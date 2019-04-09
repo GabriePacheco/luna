@@ -9,6 +9,8 @@
 
       var elems = document.querySelectorAll('.chips');
     var instances = M.Chips.init(elems)
+        var elems = document.querySelectorAll('.dropdown-trigger');
+    	var instances = M.Dropdown.init(elems);
 
 
   });
@@ -110,9 +112,6 @@ $( window ).on( 'hashchange', function( e ) {
 
 $(document).ready(function (){
 	$(".pageApp").addClass("hide");
-
-
-
 });
 
 var navegar = function (url, callback){
@@ -136,7 +135,6 @@ $("#loginForm").submit(function (e){
 	})
 	.catch(function (error){
 		mensajeria(error, "error");
-		console.log(error)
 		$("#botonLoginI").html("power_settings_new");
 	});
 
@@ -218,44 +216,51 @@ $("#registroNombreForm").submit( function (e){
 var mensajeria = function (mensaje){
 	let  alerta= {}
 
-
-	if (mensaje.code == "auth/invalid-email"){
-		alerta.icono = "<i class='material-icons'>error</i>"
+	switch(mensaje.code){
+		case "auth/invalid-email":
+		alerta.icono = "<i class='material-icons red-text'>error</i>"
 		alerta.texto = "Email no valido"
-	}
-	if (mensaje.code == "auth/email-already-in-use"){
-		alerta.icono = "<i class='material-icons'>error</i>"
-		alerta.texto = "La direccion de correo ingresada ya está siendo utilizada en otra cuenta"
-	}
-	if (mensaje.code == "auth/wrong-password"){
-		alerta.icono = "<i class='material-icons'>error</i>"
-		alerta.texto = "La contraseña ingresada no es valida";
-	}
-
-	if (mensaje.code == "auth/cargando"){
-		alerta.icono = "<i class='material-icons'>cached</i>"
-		alerta.texto = mensaje.message;
-	}
-	if (mensaje.code == "auth/token-invalido"){
-		alerta.icono = "<i class='material-icons'>error</i>"
-		alerta.texto = "El token ingresado no es válido o ya caducó";
-	}
-	if (mensaje.code == "auth/user-not-found"){
+		break;
+		case "auth/email-already-in-us":
+				alerta.icono = "<i class='material-icons'>error</i>"
+				alerta.texto = "La direccion de correo ingresada ya está siendo utilizada en otra cuenta"
+		break;
+		case "auth/wrong-password":
+			alerta.icono = "<i class='material-icons'>error</i>"
+			alerta.texto = "La contraseña ingresada no es valida";
+		break;
+		case "auth/cargando":
+			alerta.icono = "<i class='material-icons'>cached</i>"
+			alerta.texto = mensaje.message;
+		break;	
+		case "auth/token-invalido":
+			alerta.icono = "<i class='material-icons'>error</i>"
+			alerta.texto = "El token ingresado no es válido o ya caducó";
+		break
+		case "auth/token-invalido":
+			alerta.icono = "<i class='material-icons'>error</i>"
+			alerta.texto = "El token ingresado no es válido o ya caducó";
+		break;
+		case  "auth/user-not-found":
 		alerta.icono = "<i class='material-icons'>error</i>"
 		alerta.texto = "El usuario no está registrado";
-	}
-	if (mensaje.code="auth/reenviado"){
-		alerta.icono = "<i class='material-icons text-green'>send</i>"
-		alerta.texto = "Correo electronico reemviado";		
+		break;
+		case "auth/reenviado":
+			alerta.icono = "<i class='material-icons text-green'>send</i>"
+			alerta.texto = "Correo electronico reemviado";		
 
-	}
-		if (mensaje.code="base/saveOK"){
-		alerta.icono = "<i class='material-icons green-text'>save</i>"
-		alerta.texto = "Tus datos se an actualizado";		
+		break;
+		case "base/saveOK":
+			alerta.icono = "<i class='material-icons green-text'>save</i>"
+			alerta.texto = "Tus datos se an actualizado";		
+		break;
+		default: 
+			alerta.icono = "<i class='material-icons red-text'>error</i>"
+			alerta.texto = mensaje.message;
+		break
 
+	
 	}
-	
-	
 	  M.toast({html: alerta.texto  + alerta.icono});
 
 }
@@ -303,6 +308,14 @@ $("#rolEPerfil").change(function (e){
 	}else{
 		$("#portaEstudiantes").addClass("hide")
 	}
+	if ($("#rolEPerfil").val() == "3"){
+		$("#portaTokens").removeClass("hide")
+		$("#tokenEPerfil").attr("required", true )
+	}else{
+		$("#portaTokens").addClass("hide")
+		$("#tokenEPerfil").attr("required",false)
+		
+	}
 
 });
 
@@ -311,7 +324,9 @@ $("#formEPerfil").submit(function (e){
 	$("#savePerfil").html(preloader)
 	editarUsuario(function (cap){
 		$("#savePerfil").html("done");
-		mensajeria({code: "base/saveOK"})
+		mensajeria(cap)
+		$("#portaTokens").addClass("hide")
+		$("#tokenEPerfil").val("")
 
 	});
 })
@@ -373,7 +388,7 @@ $(".color").click(function (){
 
 $("#saveNPost").click(function (){
 	if (nPost.texto || nPost.imagenes || nPost.color || nPost.files){
-		$("#posts").prepend("<div class='posteando'>Posteando... "+progresBar(10)+"</div")
+		$("#posts").prepend("<div class='posteando col s12 '>Posteando... <i class='right'>"+preloader+"</i></div")
 		location.hash="#home";
 		subirPost(function (captura, e){
 			if (e){
@@ -384,7 +399,8 @@ $("#saveNPost").click(function (){
 			delete nPost.imagenes;
 			delete nPost.dataImg;
 			delete nPost.dataURLimg;
-			$(".posteando").remove()
+			$(".posteando").remove();
+			$("#postTextArea").val("")
 			vistaPost();
 		})
 	}
@@ -401,7 +417,9 @@ $("#addFotoPost").click(function(){
 
 });
 $("#NewFile").change(function (e){
+
 	if ($("#NewFile").attr("accept") == ""){
+			$("#adjuntosPost").append(preloader);
 		if (e.target.files[0].name){
 			if (!nPost.files){
 				nPost.files=[];
@@ -412,13 +430,13 @@ $("#NewFile").change(function (e){
 			vistaPost()
 		}
 	}else{
+		$("#imagenesPost").append(preloader);
 		if (e.target.files[0].name){
 			if (!nPost.imagenes){
 				nPost.imagenes=[];
 				nPost.dataImg=[];	
 				nPost.dataURLimg=[];	
 			}
-			console.log(e.target.files[0].size);
 			let canvasPost = document.createElement("canvas")
 			let contextP = canvasPost.getContext("2d");
 			let reader = new FileReader();
@@ -465,9 +483,7 @@ var mt = function (){
 var progresBar = function(avance){
 	progres.valor = avance ;
 	let por = progres.head + progres.body1+progres.valor+ progres.body2 + progres.pie
-	console.log(por);
 	return por;
-	
 }
 
 var vistaPost = function (callback){
@@ -479,6 +495,7 @@ var vistaPost = function (callback){
 	$("#postTextArea").removeClass("verde")
 	$("#postTextArea").removeClass("naranja")
 	$("#postTextArea").removeClass("azul")
+
 	delete nPost.color;
 
 
@@ -617,7 +634,53 @@ var removeImagenes = function (indez){
 	}
 
 
+var dibujarPublicacion = function (publicacion){
+	let formato = document.createElement("div")
+	formato.id ="P"+publicacion.id
+	formato.setAttribute("class", "publicacion row")
+	$("#posts").append(formato);
+	let autorPublicacion = document.createElement("div");
+	autorPublicacion.setAttribute("class", "col s8 ");
+	autorPublicacion.innerHTML = '<div class="col s3"><img src="'+publicacion.autorFoto+'" class="responsive-img circle"></div>'
+	autorPublicacion.innerHTML += '<div class="col s9">'+publicacion.autorName+'<br><small>'+tiempo(publicacion.fecha)+'</small> </div> ';
+	formato.appendChild(autorPublicacion)
+	let menuPublicacion = document.createElement("div");
+	menuPublicacion.setAttribute("class", "col s4 right-align")
+	menuPublicacion.innerHTML = " <a href='' class='dropdown-trigger' data-target='dropdown1'>Drop Me!</a>"
+	menuPublicacion.innerHTML +=`<ul id='dropdown1' class='dropdown-content'>
+								    <li><a onclick='borrar({publicacion.id})' >borrar</a></li>
+								    <li><a href="#!">two</a></li>
+								    <li class="divider" tabindex="-1"></li>
+								    <li><a href="#!">three</a></li>
+								    <li><a href="#!"><i class="material-icons">view_module</i>four</a></li>
+								    <li><a href="#!"><i class="material-icons">cloud</i>five</a></li>
+								  </ul>`;
+
+	formato.appendChild(menuPublicacion)
+	if (publicacion.texto){
+		let texto = document.createElement("div");
+		texto.innerHTML="<div class='textoP'>" + publicacion.texto +"</div>";
+		texto.setAttribute("class", "col s12")
+		formato.appendChild(texto)	
+		if (publicacion.color){
+			texto.setAttribute("class", "col s12 "+ publicacion.color )
+			texto.innerHTML="<div class='color valign-wrapper  '><div class=' col s12 center-align'>" +publicacion.texto+"</div></div>";
+
+		}
+	}
+	
+    let elems = document.querySelectorAll('.dropdown-trigger');
+	let instances = M.Dropdown.init(elems);
+}
 
 
+var tiempo = function (ts){
+		
+		let date = new Date(ts);
+		var options = {
+		         day: 'numeric',month: 'long', year: 'numeric', hour: 'numeric', minute: 'numeric'
+		    };
 
+		return  date.toLocaleDateString('es', options); // 10/29/2013
 
+}

@@ -30,8 +30,9 @@
 				    		if (!userInline.nombre){
 				    			location.hash ="#registroNombre"	
 				    		}else{
-				    			location.hash= "#home"
 				    			cargarPerfil();
+				    			location.hash= "#home"
+				    			
 
 				    		}
 				    	}
@@ -55,8 +56,9 @@
 									$("#nombreRegistroNombre").val(userInline.nombre);
 									location.hash= "#registroNombre"
 								}else{
-									location.hash= "#home"
 									cargarPerfil();
+									location.hash= "#home"
+									
 								}
 							}
 
@@ -170,7 +172,7 @@ var loginCon = function(prov, callback){
 		
 		firebase.auth().signInWithRedirect(provider)
 		.then((result)=>{	
-
+			cargarPerfil();
 			location.hash= "#home"
 			callback(result);
 		})
@@ -255,38 +257,85 @@ var cargarPerfil = function (){
 }
 
 var editarUsuario = function (callback) {
-	if ($("#rolEPerfil").val() != "2"){
-		base.ref("users/" + userInline.uid)
-		.update({
-			nombre: $("#nombreEPerfil").val(),
-			biografia: $("#biografiaEPerfil").val(),
-			rol: $("#rolEPerfil").val(),
-			estudiantes: false
-		})
-		.then(function (e){
-			callback()
-			auth.currentUser.updateProfile({
-				name: $("#nombreEPerfil").val(),
+	switch ($("#rolEPerfil").val()){
+		case "1"://Es estudiante 
+			base.ref("users/" + userInline.uid)
+			.update({
+				nombre: $("#nombreEPerfil").val(),
+				biografia: $("#biografiaEPerfil").val(),
+				rol: $("#rolEPerfil").val(),
+				estudiantes: false
 			})
-		})
-
-	}else{
-		base.ref("users/" + userInline.uid)
-		.update({
-			nombre: $("#nombreEPerfil").val(),
-			biografia: $("#biografiaEPerfil").val(),
-			rol: $("#rolEPerfil").val(),
-			estudiantes: $("#estudiantesEPerfil").val()
-		})
-		.then(function (e){
-			auth.currentUser.updateProfile({
-			name: $("#nombreEPerfil").val(),
+			.then(function (e){
+				auth.currentUser.updateProfile({
+					displayName: $("#nombreEPerfil").val(),
+				})
+				callback({code: "base/saveOK"})
 			})
 
-			callback()
-		})
+		break;
+		case "2":// Es padre de familia 
+			base.ref("users/" + userInline.uid)
+			.update({
+				nombre: $("#nombreEPerfil").val(),
+				biografia: $("#biografiaEPerfil").val(),
+				rol: $("#rolEPerfil").val(),
+				estudiantes: $("#estudiantesEPerfil").val()
+			})
+			.then(function (e){
+				auth.currentUser.updateProfile({
+				displayName: $("#nombreEPerfil").val(),
+				})
+				callback({code: "base/saveOK"});
+			})
+		break;
+		case "3": // Es profesor 
+
+			if ($("#tokenEPerfil").attr("required") == "required"){
+				base.ref().child("tokens" + $("tokensEPerfil").val() ).once("value", function(token){
+					let tok = (token.val() && token.val().estado) || false;
+					if (tok){
+						base.ref("users/" + userInline.uid)
+						.update({
+							nombre: $("#nombreEPerfil").val(),
+							biografia: $("#biografiaEPerfil").val(),
+							rol: $("#rolEPerfil").val(),
+							estudiantes: false
+						})
+						.then(function (e){
+							callback({code: "base/saveOK"})
+							auth.currentUser.updateProfile({
+								displayName: $("#nombreEPerfil").val(),
+							})
+						})
+						base.ref().child("tokens/" + $("#tokenEPerfil").val())
+						.update({
+							estado: false,
+							usuario: userInline.uid
+						})
+					}else{
+						mensajeria({code: "auth/token-invalido"})
+						callback({code: "auth/token-invalido"})
+					}
+
+				})
+			}else{
+			base.ref("users/" + userInline.uid)
+				.update({
+					nombre: $("#nombreEPerfil").val(),
+					biografia: $("#biografiaEPerfil").val(),
+					rol: $("#rolEPerfil").val(),
+					estudiantes: false
+				})
+				.then(function (e){
+					auth.currentUser.updateProfile({
+						displayName: $("#nombreEPerfil").val(),
+					})
+					callback({code: "base/saveOK"})
+				})
+			}
+		break;
 	}
-
 }
 var testPermisos = function (callback){
 	console.log("comprobando permisos ")
@@ -301,17 +350,21 @@ var testPermisos = function (callback){
 var subirPost = async function (callbaks){
 	let myPost = {}
 	let peso = 0
-	for (let ci =0; ci < nPost.imagenes.length; ci++){
-		peso += nPost.imagenes[ci].size
+	if (nPost.imagenes){
+		for (let ci =0; ci < nPost.imagenes.length; ci++){
+			peso += nPost.imagenes[ci].size
+		}
 	}
-	for (let ci =0; ci < nPost.files.length; ci++){
-		peso += nPost.files[ci].size
+	if (nPost.files){
+		for (let ci =0; ci < nPost.files.length; ci++){
+			peso += nPost.files[ci].size
+		}
 	}
 	
 	myPost.id = await base.ref().child("posts").push().key
 	myPost.authorId = userInline.uid
 	myPost.autorName =userInline.nombre;
-	myPost.autorName =userInline.foto;
+	myPost.autorFoto =userInline.foto;
 	myPost.fecha = firebase.database.ServerValue.TIMESTAMP;
 	if (nPost.texto){
 		myPost.texto = nPost.texto;
@@ -366,3 +419,10 @@ var suirAdjuntos = async function (ruta, archivo, referencia ){
 	})
 
 }
+
+///Escuchar cambios en los post 
+base.ref().child("posts/").on("child_added", function (pub){
+	if (pub.val()){
+		dibujarPublicacion(pub.val());
+	}
+})
