@@ -522,7 +522,7 @@ var vistaPost = function (callback){
 					let img = document.createElement("div")
 					img.setAttribute("class", "col s6" );
 					img.setAttribute("style", "height:" + alto +"px; background-repeat:no-repeat;" );
-					
+					img.style.backgroundSize = "cover";
 					img.style.backgroundPosition = "center";
 					img.style.backgroundImage="url('"+nPost.dataURLimg[im]+"')";
 					img.innerHTML="<a onclick='removeImagenes("+im+")'><i class='material-icons right'>delete_forever</i></a>";
@@ -549,6 +549,7 @@ var vistaPost = function (callback){
 					img.setAttribute("style", "height:" + alto +"px; background-repeat:no-repeat;" );					
 					img.style.backgroundPosition = "center";
 					img.style.backgroundImage="url('"+nPost.dataURLimg[im]+"')";
+					img.style.backgroundSize = "cover";
 					img.innerHTML="<a onclick='removeImagenes("+im+")'><i class='material-icons right'>delete_forever</i></a>";
 					$("#imagenesPost").append(img)
 					img = ""; 
@@ -567,11 +568,12 @@ var vistaPost = function (callback){
 					img.setAttribute("class", "col s6" );			
 					img.setAttribute("style", "height:" + alto +"px; background-repeat:no-repeat;" );					
 					img.style.backgroundPosition = "center";
+					img.style.backgroundSize = "cover";
 					img.style.backgroundImage="url('"+nPost.dataURLimg[im]+"')";
 					img.innerHTML="<a onclick='removeImagenes("+im+")'><i class='material-icons right'>delete_forever</i></a>";
 					if (nPost.imagenes.length > 4  &&  im == 3){
 						img.setAttribute("class", "col s6 valign-wrapper center-align white-text" );
-						img.innerHTML+= "<h3class='center-align'>"+ (nPost.imagenes.length-4) +"</h3>";
+						img.innerHTML+= "<div class='col s12'><h3 class='center-align'>"+ (nPost.imagenes.length-4) +"</h3></div>";
 					}
 					$("#imagenesPost").append(img)
 					img = ""; 
@@ -638,17 +640,19 @@ var dibujarPublicacion = function (publicacion){
 	let formato = document.createElement("div")
 	formato.id ="P"+publicacion.id
 	formato.setAttribute("class", "publicacion row")
-	$("#posts").append(formato);
+	
+
 	let autorPublicacion = document.createElement("div");
 	autorPublicacion.setAttribute("class", "col s8 ");
 	autorPublicacion.innerHTML = '<div class="col s3"><img src="'+publicacion.autorFoto+'" class="responsive-img circle"></div>'
 	autorPublicacion.innerHTML += '<div class="col s9">'+publicacion.autorName+'<br><small>'+tiempo(publicacion.fecha)+'</small> </div> ';
 	formato.appendChild(autorPublicacion)
+
 	let menuPublicacion = document.createElement("div");
 	menuPublicacion.setAttribute("class", "col s4 right-align")
-	menuPublicacion.innerHTML = " <a href='' class='dropdown-trigger' data-target='dropdown1'>Drop Me!</a>"
+	menuPublicacion.innerHTML = " <a href='' class='dropdown-trigger ' data-target='dropdown1'><i class='material-icons'>more_horiz</i></a>"
 	menuPublicacion.innerHTML +=`<ul id='dropdown1' class='dropdown-content'>
-								    <li><a onclick='borrar({publicacion.id})' >borrar</a></li>
+								    <li><a onclick='borrar({publicacion.id})' ></i></a></li>
 								    <li><a href="#!">two</a></li>
 								    <li class="divider" tabindex="-1"></li>
 								    <li><a href="#!">three</a></li>
@@ -657,6 +661,7 @@ var dibujarPublicacion = function (publicacion){
 								  </ul>`;
 
 	formato.appendChild(menuPublicacion)
+
 	if (publicacion.texto){
 		let texto = document.createElement("div");
 		texto.innerHTML="<div class='textoP'>" + publicacion.texto +"</div>";
@@ -668,6 +673,98 @@ var dibujarPublicacion = function (publicacion){
 
 		}
 	}
+
+	if (publicacion.imagenes){
+		let vistaImagenes = document.createElement("div");
+		
+		if (publicacion.imagenes.length >= 4){
+			for (let a1 = 0; a1 < 4 ; a1++){
+				let imP = document.createElement("div");
+				if ((publicacion.imagenes.length - 4 ) > 0  && a1 == 3){
+					imP . setAttribute("class", "col s6 valign-wrapper");
+					imP.innerHTML= "<div class='center-align white-text col s12'><h3> + " +  (publicacion.imagenes.length - 4)  + "</h3></div>";
+
+				}else{
+					imP . setAttribute("class", "col s6  ");	
+
+				}
+				
+
+				imP.style.height = "180px";
+				imP.style.backgroundImage= "url('"+publicacion.imagenes[a1]+"')";
+				imP.style.backgroundPosition = "center";
+				imP.style.backgroundSize = "cover";
+				vistaImagenes.appendChild(imP);
+				imP = "";
+				delete imP;
+			}
+		}
+		if (publicacion.imagenes.length == 3){
+			for (let a1 = 0; a1 < publicacion.imagenes.length; a1++){
+				let imP = document.createElement("div");
+				if (a1 == 0){
+					imP . setAttribute("class", "col s12");
+				}else{
+					imP . setAttribute("class", "col s6");
+				}				
+				imP.style.height = "180px";		
+				imP.style.backgroundImage= "url('"+publicacion.imagenes[a1]+"')";
+				imP.style.backgroundPosition = "center";
+				imP.style.backgroundSize = "cover";
+				vistaImagenes.appendChild(imP);
+				imP = "";
+				delete imP;
+			}
+		}
+		if (publicacion.imagenes.length ==2){
+			for (let a1 = 0; a1 < publicacion.imagenes.length; a1++){
+				let imP = document.createElement("div");				
+				imP.setAttribute("class", "col s6");			
+				imP.style.height = "360px";		
+				imP.style.backgroundImage= "url('"+publicacion.imagenes[a1]+"')";
+				imP.style.backgroundPosition = "center";
+				imP.style.backgroundSize = "cover";
+				vistaImagenes.appendChild(imP);
+
+			}
+		}
+		if (publicacion.imagenes.length == 1){
+
+				let imP = document.createElement("img");			
+				imP.setAttribute("class", "responsive-img");								
+				imP.setAttribute("src", publicacion.imagenes[0])		
+				vistaImagenes.appendChild( imP );
+				imP = "";
+				delete imP;
+				
+		}	
+		formato.appendChild(vistaImagenes);
+
+	}
+	if (publicacion.files){
+		for (let f1 = 0 ; f1 < publicacion.files.length;  f1++){
+			var  fileP = document.createElement("div");
+			fileP.setAttribute( "class", "col s10  grey lighten-2 offset-s1");
+			fileP.style= "padding: 1em;"
+			fileP.innerHTML = "<i class='material-icons'>attach_file</i>" +publicacion.filesName[f1];
+			fileP.innerHTML +='<a href="'+publicacion.files[f1]+'" download> <i class="material-icons right grey-text">cloud_download</i></a>'
+			
+		}
+		formato.appendChild(fileP);
+		fileP = "";
+		delete fileP;
+
+	}
+	let pieP = document.createElement("div")
+	let corazonP = document.createElement("div");
+	corazonP.id = "likes" + publicacion.id;
+	corazonP.setAttribute("class", "col s6 left-align")
+	corazonP.innerHTML = "<i class='material-icons'>thumb_up</i>"
+	corazonP.innerHTML+= "<span class='contador'></spna>";
+	pieP.appendChild(corazonP)
+	formato.appendChild(pieP)
+
+	$("#posts").prepend(formato);
 	
     let elems = document.querySelectorAll('.dropdown-trigger');
 	let instances = M.Dropdown.init(elems);

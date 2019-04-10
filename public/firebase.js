@@ -377,7 +377,7 @@ var subirPost = async function (callbaks){
 			if (!myPost.imagenes){
 				 myPost.imagenes =[]
 			}
-			var urlnImagen = await suirAdjuntos("imagenes/posts"+ myPost.id, nPost.imagenes[ci], mt()+".png" )
+			var urlnImagen = await suirAdjuntos("imagenes/posts/"+ myPost.id, nPost.imagenes[ci], mt()+".png" )
 			myPost.imagenes.push(urlnImagen);
 		}
 
@@ -388,7 +388,7 @@ var subirPost = async function (callbaks){
 				 myPost.files =[]
 				 myPost.filesName =[]
 			}
-			var urlnFiles = await suirAdjuntos("archivos/posts"+ myPost.id, nPost.files[ca], mt() )
+			var urlnFiles = await suirAdjuntos("archivos/posts/"+ myPost.id, nPost.files[ca], nPost.files[ca].name)
 			myPost.files.push(urlnFiles);
 			myPost.filesName.push(nPost.files[ca].name);
 		}
