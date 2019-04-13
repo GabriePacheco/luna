@@ -67,17 +67,17 @@
 	.textoP{
 		font-size: 1.2em;
 	}
-
+	
 	</style>
 
 	
 </head>
-<body>
+<body  >
 	<div class="row">
 		<div class="col s12 col m6 offset-m3" >
 			<div id = "app" class="row">
 				<!--- Login -->
-				<div class="col s12 center-align pageApp" id="login">
+				<div class="col s12 center-align pageApp  " id="login">
 					<h2 class="" >Lunytha</h2>
 					<div class="row">
 						<form id ="loginForm" class="container">
@@ -482,14 +482,14 @@
 			<div class="col s12 pageApp" id = "addPost">
 				<div class="row">
 					<nav class="pink lighten-1 z-depth-1 valign-wrapper navFix">
-						<span class="col s1"><a href="#home"><i class="material-icons" >arrow_back</i></a></span>
+						<span class="col s1"><a class="back" href="#home"><i class="material-icons" >arrow_back</i></a></span>
 						<span class="col s9">Nueva publicación</span>
 						<span class="col s2"><a id = "saveNPost"><i class="material-icons right" >done</i></a></span>
 					</nav>
 				</div>	
-				<div class="row">
-					<div class="col s12">
-						<div class="row valign-wrapper">
+				<div class="row ">
+					<div class="col s12 contenido">
+						<!--<div class="row valign-wrapper">
 							<div class="col s2">
 								<img id="imagenUserPost" src="" class="responsive-img circle" alt="">
 							</div>
@@ -497,7 +497,7 @@
 								<b id="nombreUserPost"></b><br>
 								<span>Publico</span>
 							</div>
-						</div>
+						</div>-->
 						<textarea class="flow-text postTextArea valign-wrapper" id ="postTextArea" placeholder="¿Qué quieres informar?"></textarea>
 						<input type="file" id="NewFile" class="hide">
 
@@ -520,7 +520,50 @@
 				    </ul>
 		    	</div>
 			</div><!--FIN  Nuevo post -->
-			
+
+
+		<!-- Edit  post -->
+			<div class="col s12 pageApp" id = "editPost">
+				<div class="row">
+					<nav class="pink lighten-1 z-depth-1 valign-wrapper navFix">
+						<span class="col s1"><a class= "back" href="#home"><i class="material-icons" >arrow_back</i></a></span>
+						<span class="col s9">Editar publicación</span>
+						<span class="col s2"><a id = "saveEPost"><i class="material-icons right" >done</i></a></span>
+					</nav>
+				</div>	
+				<div class="row ">
+					<div class="col s12 contenido">
+						<!--<div class="row valign-wrapper">
+							<div class="col s2">
+								<img id="imagenUserPost" src="" class="responsive-img circle" alt="">
+							</div>
+							<div class="col s10">
+								<b id="nombreUserPost"></b><br>
+								<span>Publico</span>
+							</div>
+						</div>-->
+						<textarea class="flow-text postTextArea valign-wrapper" id ="postETextArea" placeholder="¿Qué quieres informar?"></textarea>
+						<input type="file" id="NewEFile" class="hide">
+
+
+					</div>
+					<div id="imagenesEPost" ></div>
+					<div id="adjuntosEPost"></div>
+				</div>
+				<div class="pieFix col s11 m6"> 
+			       <ul class="tabs">
+				        <li class="tab col s2"><a id ="editFilePost"><i class="material-icons bt">attach_file</i></a></li>
+				        <li class="tab col s2"><a id ="editFotoPost"><i class="material-icons bt">add_a_photo</i></a></li>
+				        <li class="tab col s2"><a class="colorE"  data-color="none"><i  class="material-icons  bt">crop_din</i></a></li>
+				        <li class="tab col s2"><a class="colorE"  data-color="azul" ><i class="material-icons blue-text bt">broken_image</i></a></li>
+				         <li class="tab col s2"><a class="colorE"  data-color="naranja" ><i class="material-icons  orange-text bt">
+				         broken_image</i></a></li>
+				          
+				            <li class="tab col s2"><a class="colorE"  data-color="verde"><i class="material-icons  green-text bt">broken_image</i></a></li>
+				       
+				    </ul>
+		    	</div>
+			</div><!--FIN  Nuevo post -->		
 
 			</div>
 		

@@ -35,6 +35,8 @@ var preloader =  '<div class="preloader-wrapper small active">'+
   '</div>';
   var next = '<i class="material-icons">skip_next</i>'
   var nPost = {}
+  var edPost={}
+  var edPostRespaldo={}
 
 $("#emailLogin").keyup(()=>{
 	loginFrom()
@@ -96,7 +98,15 @@ $("#emailRecuperar").keyup(()=>{
 $( window ).on( 'hashchange', function( e ) {
 	let url=  location.hash.split("?")[0]
 	if (url != "#addPost"){
-	  navegar(url)
+		if (url != "#registro" && url != "#recuperar" && url != "#login" && url != "mensajeRecuperar"){
+			if (userInline.uid){
+		  		navegar(url)
+			}else{
+				navegar("#login")
+			}
+		}else{
+			navegar(url)
+		}
 
 	}else{
 		testPermisos(function (estado){
@@ -104,7 +114,11 @@ $( window ).on( 'hashchange', function( e ) {
 			if (estado){
 				navegar(url)
 			}else{
+				if (userInline.uid){
 				  navegar("#home")
+				}else{
+				  navegar("#login")
+				}
 			}
 		})
 	}
@@ -130,7 +144,7 @@ $("#loginForm").submit(function (e){
 	auth.signInWithEmailAndPassword($("#emailLogin").val(), $("#passwordLogin").val())
 	.then(function (){
 		$("#botonLoginI").html("lock_open");
-		cargarPerfil();
+	
 		location.hash="#login";
 	})
 	.catch(function (error){
@@ -274,8 +288,11 @@ gpRecortador({recortador: "recortador", redondo: true},
 })
 
 $("#cerrar").click((e)=>{
-	console.log("cerrando secion..")
-	auth.signOut();
+	auth.signOut()
+	.then(function (){
+		delete userInline.id, userInline.nombre, userInline.foto;
+	})
+
 });
 
 
@@ -638,10 +655,11 @@ var removeImagenes = function (indez){
 
 var dibujarPublicacion = function (publicacion){
 	let formato = document.createElement("div")
+
 	formato.id ="P"+publicacion.id
 	formato.setAttribute("class", "publicacion row")
+	formato.style = "padding-top: 0.7em; margin-bottom: 0.5em";
 	
-
 	let autorPublicacion = document.createElement("div");
 	autorPublicacion.setAttribute("class", "col s8 ");
 	autorPublicacion.innerHTML = '<div class="col s3"><img src="'+publicacion.autorFoto+'" class="responsive-img circle"></div>'
@@ -650,14 +668,10 @@ var dibujarPublicacion = function (publicacion){
 
 	let menuPublicacion = document.createElement("div");
 	menuPublicacion.setAttribute("class", "col s4 right-align")
-	menuPublicacion.innerHTML = " <a href='' class='dropdown-trigger ' data-target='dropdown1'><i class='material-icons'>more_horiz</i></a>"
-	menuPublicacion.innerHTML +=`<ul id='dropdown1' class='dropdown-content'>
-								    <li><a onclick='borrar({publicacion.id})' ></i></a></li>
-								    <li><a href="#!">two</a></li>
-								    <li class="divider" tabindex="-1"></li>
-								    <li><a href="#!">three</a></li>
-								    <li><a href="#!"><i class="material-icons">view_module</i>four</a></li>
-								    <li><a href="#!"><i class="material-icons">cloud</i>five</a></li>
+	menuPublicacion.innerHTML = `<a href='#' class='dropdown-trigger ' data-target='menu${publicacion.id}'><i class='material-icons'>more_horiz</i></a>`
+	menuPublicacion.innerHTML +=`<ul id='menu${publicacion.id}' class='dropdown-content'>
+								    <li><a  onclick='borrar("${publicacion.id}")' >Borrar</i></a></li>
+								    <li><a onclick='editar("${publicacion.id}")' >Editar</i></a></li>								    
 								  </ul>`;
 
 	formato.appendChild(menuPublicacion)
@@ -759,9 +773,18 @@ var dibujarPublicacion = function (publicacion){
 	let corazonP = document.createElement("div");
 	corazonP.id = "likes" + publicacion.id;
 	corazonP.setAttribute("class", "col s6 left-align")
-	corazonP.innerHTML = "<i class='material-icons'>thumb_up</i>"
+	corazonP.innerHTML = "<i class='material-icons'> favorite_border </i>"
 	corazonP.innerHTML+= "<span class='contador'></spna>";
+	corazonP.style = "padding-top: 0.7em"
+	let comentP = document.createElement("div");
+
+	comentP.setAttribute("class", "col s6 right-align")
+	comentP.innerHTML = "<span class='contador'></span>";
+	comentP.innerHTML += "<i class='material-icons'>comment</i>";
+	comentP.style = "padding-top: 0.7em"
 	pieP.appendChild(corazonP)
+	pieP.appendChild(comentP)
+
 	formato.appendChild(pieP)
 
 	$("#posts").prepend(formato);
@@ -771,6 +794,44 @@ var dibujarPublicacion = function (publicacion){
 }
 
 
+$("#addPost .back").click(function (e){
+	e.preventDefault();
+	if (!$.isEmptyObject(nPost)){
+		
+		let descart = confirm("¿Deseas descartar la publicación? " );
+		if (descart){
+			nPost ={}
+			vistaPost();
+			$("#postTextArea").val("");
+			location.hash= "#home";
+		}
+	}else{
+		$("#postTextArea").val("");
+		location.hash= "#home";
+	}
+
+})
+$("#editPost .back").click(function (e){
+	e.preventDefault();
+	if (edPost.color == edPostRespaldo.color, ){
+		let descart = confirm("¿Hay cambios en la publicacion deseas descartarlos? " );
+		if (descart){
+			limpiarEdit()	
+			location.hash= "#home";
+			edPost={}
+			edPostRespaldo={}
+		}
+		
+	}else{
+
+		limpiarEdit()
+		location.hash = "#home";
+		edPost={}
+		edPostRespaldo={}		
+
+	}
+
+})
 var tiempo = function (ts){
 		
 		let date = new Date(ts);
@@ -781,3 +842,169 @@ var tiempo = function (ts){
 		return  date.toLocaleDateString('es', options); // 10/29/2013
 
 }
+var editar = async function (postId){
+	location.hash = "#editPost"
+	await consultarPublicacion(postId, edPostDraw)
+
+}
+var edPostDraw =  function (ed){
+
+		edPost = ed;
+		edPostRespaldo = ed;
+	if (edPost.texto){
+		$("#postETextArea").val(edPost.texto)
+	}
+	if (edPost.color){
+		$("#postETextArea").addClass(edPost.color)
+		$("#postETextArea").addClass("color")
+	}
+	if (edPost.files){
+		for (let ef = 0; ef < edPost.files.length; ef++){
+			let edPostFile = document.createElement("div");
+			edPostFile.setAttribute("class", "col s10  grey lighten-2 offset-s1");
+		
+			edPostFile.style = " padding: 1em";
+			edPostFile.innerHTML = `<a  onclick="borrarEf('${ef}')"><i class="material-icons right">delete</i></a>`
+			edPostFile.innerHTML += `<i class="material-icons">attach_file </i>`;
+			edPostFile.innerHTML += edPost.filesName[ef];
+			$("#adjuntosEPost").append(edPostFile)
+			edPostFile ="";
+			delete edPostFile
+
+		}	
+	}
+	if (edPost.imagenes){
+		if (edPost.imagenes.length >= 4 ){
+			for (let ei = 0; ei < 4; ei++ ){
+				let edImagen = document.createElement("div");
+				edImagen.setAttribute("class", "col s6")
+				edImagen.style= "height: 180px";
+				edImagen.style.backgroundImage= `url('${edPost.imagenes[ei]}')`;
+				edImagen.style.backgroundSize = "cover";
+				edImagen.style.backgroundPosition = "center";
+				edImagen.style.backgroundRepeat = "no-repeat";
+				edImagen.innerHTML= `<a onclick='borrarEi("${ei}")'><i class="material-icons right">delete</i></a>`
+				if (edPost.imagenes.length > 4 && ei == 3){
+					edImagen.setAttribute("class", "col s6 valign-wrapper white-text");
+					edImagen.innerHTML+= `<h3> + ${ edPost.imagenes.length - 4 }</h3>`
+				}
+				$("#adjuntosEPost").append(edImagen);
+				edImagen = "";
+				delete edImagen;
+			}
+		}
+		if (edPost.imagenes.length == 3 ){
+			for (let ei = 0; ei < 3; ei++ ){
+				let edImagen = document.createElement("div");
+				edImagen.setAttribute("class", "col s6")
+				edImagen.style= "height: 180px";
+				edImagen.style.backgroundImage= `url('${edPost.imagenes[ei]}')`;
+				edImagen.style.backgroundSize = "cover";
+				edImagen.style.backgroundPosition = "center";
+				edImagen.style.backgroundRepeat = "no-repeat";
+				edImagen.innerHTML= `<a onclick='borrarEi("${ei}")'><i class="material-icons right">delete</i></a>`
+				if (ei == 0 ){
+					edImagen.setAttribute("class", "col s12");
+					
+				}
+				$("#adjuntosEPost").append(edImagen);
+				edImagen = "";
+				delete edImagen;
+			}
+		}
+		if (edPost.imagenes.length == 2 ){
+			for (let ei = 0; ei < 2; ei++ ){
+				let edImagen = document.createElement("div");
+				edImagen.setAttribute("class", "col s6");
+				edImagen.style= "height: 360px";
+				edImagen.style.backgroundImage= `url('${edPost.imagenes[ei]}')`;
+				edImagen.style.backgroundSize = "cover";
+				edImagen.style.backgroundPosition = "center";
+				edImagen.style.backgroundRepeat = "no-repeat";
+				edImagen.innerHTML= `<a onclick='borrarEi("${ei}")'><i class="material-icons right">delete</i></a>`
+				$("#adjuntosEPost").append(edImagen);
+				edImagen = "";
+				delete edImagen;
+			}
+		}
+		if (edPost.imagenes.length == 1 ){
+				let edImagen = document.createElement("div");
+				edImagen.setAttribute("class", "col s12")
+				edImagen.innerHTML= `<a onclick='borrarEi(${0})'><i class="material-icons right">delete</i></a>`
+				edImagen.innerHTML+= `<img class='responsive-img' src='${edPost.imagenes[0]}' width ='100%'>`
+				$("#adjuntosEPost").append(edImagen);
+				edImagen = "";
+				delete edImagen;	
+		}
+	}
+
+}
+
+var limpiarEdit = function (callback){
+	$("#postETextArea").val("");
+	$("#imagenesEPost").html("");
+	$("#adjuntosEPost").html("");
+	$("#postETextArea").removeClass("color");
+	$("#postETextArea").removeClass("verde")
+	$("#postETextArea").removeClass("naranja")
+	$("#postETextArea").removeClass("azul")
+	if (callback){
+		callback();
+	}
+
+}
+
+var borrarEi = function (ind){
+	edPost.imagenes.splice(ind,1)
+	if (edPost.imagenes.length == 0 ){
+		delete edPost.imagenes;
+	}
+	limpiarEdit(function (){
+		edPostDraw(edPost)
+	});
+}
+var borrarEf = function (ind){
+	edPost.files.splice(ind,1)
+	edPost.filesName.splice(ind,1)
+	if (edPost.files.length){
+		delete edPost.imagenes;
+	
+	} 
+	limpiarEdit(function (){
+		edPostDraw(edPost)
+	});
+}
+
+$("#postETextArea").keyup(function (){
+	var el = this;
+	  if (!$(this).hasClass("color")){
+	  	setTimeout(function(){
+	    el.style.cssText = 'height:auto; padding:0';
+	    el.style.cssText = 'height:' + el.scrollHeight + 'px';
+	  	},0);
+
+	  }
+	  edPost.texto = el.value;
+	  if ( el.value == ""){
+	  	delete edPost.texto;
+	  }
+});
+$(".colorE").click(function (){
+	if (!nPost.files && ! nPost.imagenes ){
+	$("#postETextArea").removeClass("color")
+	$("#postETextArea").attr("style", "")
+	$("#postETextArea").removeClass("verde")
+	$("#postETextArea").removeClass("naranja")
+	$("#postETextArea").removeClass("azul")
+	$("#postETextArea").addClass($(this).attr("data-color"))
+	$("#postETextArea").addClass("color")
+	edPost.color= $(this).attr("data-color");
+
+	if ($(this).attr("data-color") == "none"){
+		$("#postETextArea").removeClass("color");
+		$("#postETextArea").removeClass("none");
+		delete edPost.color
+	}
+ }	
+
+});

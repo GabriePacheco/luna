@@ -12,7 +12,7 @@
   var auth = firebase.auth();
   var storage = firebase.storage();
   var userInline ={}
-	firebase.auth().onAuthStateChanged(function(user) {
+	firebase.auth().onAuthStateChanged(function(user){
 		if (user) {
 		
 		  	userInline.uid= user.uid;
@@ -199,6 +199,21 @@ var cargarPerfil = function (){
 	$("#imagenUserPost").attr("src",userInline.foto)
 	$("#nombreUserPost").html(userInline.nombre)
 
+	var userPresensia = document.createElement("div");
+	userPresensia.setAttribute("class", "row valign-wrapper")
+	let  presensiaFoto = document.createElement("div")
+	presensiaFoto.setAttribute("class", "col s2");
+	presensiaFoto.innerHTML= `<img class="responsive-img circle" src="${userInline.foto}">` ;
+	userPresensia.appendChild(presensiaFoto);
+	let presensiaNombre = document.createElement("div")
+	presensiaNombre.setAttribute("class", "col s10");
+	presensiaNombre.innerHTML= userInline.nombre + `<br><span class="optional"></span>`;
+	userPresensia.appendChild(presensiaNombre);
+	userPresensia.id ="UserInlinePresensiaPostNuevo" ;
+	$("#addPost .contenido").prepend(userPresensia);
+	$("#addPost .optional").html("Publico");
+	
+
 	 base.ref("users/" + userInline.uid ).on("value", function (datos){
 	 	userInline.rol= datos.val().rol
 		$("#rolEPerfil").val(datos.val().rol);
@@ -338,7 +353,6 @@ var editarUsuario = function (callback) {
 	}
 }
 var testPermisos = function (callback){
-	console.log("comprobando permisos ")
 	base.ref("config/")
 	.once("value", function (estatus){
 		var permisos = (userInline.rol >= estatus.val().perfil )
@@ -426,3 +440,30 @@ base.ref().child("posts/").on("child_added", function (pub){
 		dibujarPublicacion(pub.val());
 	}
 })
+
+
+var  borrar = function (publicacionId){
+
+	testPermisos(function (permiso){
+		if (permiso){
+			base.ref().child("posts/" + publicacionId).remove()
+			.then(function (m){
+				$("#P" + publicacionId).remove()
+			});
+
+		}
+
+	});
+}
+
+var consultarPublicacion = function (id, callback){
+	 base.ref().child("posts/" + id ).once("value", function (pub){
+		if (pub.val()){
+			let pp = {}
+				 pp = pub.val();
+				 callback(pp)
+			
+		}
+	})
+
+}
