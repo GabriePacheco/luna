@@ -813,7 +813,7 @@ $("#addPost .back").click(function (e){
 })
 $("#editPost .back").click(function (e){
 	e.preventDefault();
-	if (edPost.color == edPostRespaldo.color, ){
+	if (edPost.color == edPostRespaldo.color && edPost.imagenes == edPostRespaldo.imagenes &&  edPost.files == edPostRespaldo.files ){
 		let descart = confirm("¿Hay cambios en la publicacion deseas descartarlos? " );
 		if (descart){
 			limpiarEdit()	
