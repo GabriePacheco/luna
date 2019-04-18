@@ -435,62 +435,65 @@ $("#addFotoPost").click(function(){
 });
 $("#NewFile").change(function (e){
 
-	if ($("#NewFile").attr("accept") == ""){
-			$("#adjuntosPost").append(preloader);
-		if (e.target.files[0].name){
-			if (!nPost.files){
-				nPost.files=[];
-				nPost.filesName=[];
-			}
-			nPost.files.push(e.target.files[0])
-			nPost.filesName.push(e.target.files[0].name);
-			vistaPost()
-		}
-	}else{
-		$("#imagenesPost").append(preloader);
-		if (e.target.files[0].name){
-			if (!nPost.imagenes){
-				nPost.imagenes=[];
-				nPost.dataImg=[];	
-				nPost.dataURLimg=[];	
-			}
-			let canvasPost = document.createElement("canvas")
-			let contextP = canvasPost.getContext("2d");
-			let reader = new FileReader();
-			reader.readAsDataURL(e.target.files[0]);
-			reader.onload = function (){
-				let nImagen = new Image();
-				nImagen.src = reader.result;
-				nImagen.onload = function (){
-					if (e.target.files[0].size >= 307200 ){
-						canvasPost.width = nImagen.width/3.6
-						canvasPost.height = nImagen.height /3.6
-						contextP.drawImage(nImagen, 0,0, canvasPost.width, canvasPost.height) 
-						nPost.imagenes.push(URLtoBlob(canvasPost.toDataURL())) 
-						nPost.dataURLimg.push(canvasPost.toDataURL())
-						nPost.dataImg.push(canvasPost.height )
-						vistaPost(()=>{
-							delete canvasPost;
-							delete reader;
-							delete nImagen;
-						})
-					}else{
-						nPost.imagenes.push(e.target.files[0])
-						nPost.dataURLimg.push(nImagen.src)
-						nPost.dataImg.push(nImagen.height)
-						vistaPost(()=>{
-							delete canvasPost;
-							delete reader;
-							delete nImagen;
-						})
-					}
-
+	if (e.target.files.length > 0){
+			if ($("#NewFile").attr("accept") == ""){
+				$("#adjuntosPost").append(preloader);
+			if (e.target.files[0].name){
+				if (!nPost.files){
+					nPost.files=[];
+					nPost.filesName=[];
 				}
+				nPost.files.push(e.target.files[0])
+				nPost.filesName.push(e.target.files[0].name);
+				vistaPost()
 			}
-		
+		}else{
+			$("#imagenesPost").append(preloader);
+			if (e.target.files[0].name){
+				if (!nPost.imagenes){
+					nPost.imagenes=[];
+					nPost.dataImg=[];	
+					nPost.dataURLimg=[];	
+				}
+				let canvasPost = document.createElement("canvas")
+				let contextP = canvasPost.getContext("2d");
+				let reader = new FileReader();
+				reader.readAsDataURL(e.target.files[0]);
+				reader.onload = function (){
+					let nImagen = new Image();
+					nImagen.src = reader.result;
+					nImagen.onload = function (){
+						if (e.target.files[0].size >= 307200 ){
+							canvasPost.width = nImagen.width/3.6
+							canvasPost.height = nImagen.height /3.6
+							contextP.drawImage(nImagen, 0,0, canvasPost.width, canvasPost.height) 
+							nPost.imagenes.push(URLtoBlob(canvasPost.toDataURL())) 
+							nPost.dataURLimg.push(canvasPost.toDataURL())
+							nPost.dataImg.push(canvasPost.height )
+							vistaPost(()=>{
+								delete canvasPost;
+								delete reader;
+								delete nImagen;
+							})
+						}else{
+							nPost.imagenes.push(e.target.files[0])
+							nPost.dataURLimg.push(nImagen.src)
+							nPost.dataImg.push(nImagen.height)
+							vistaPost(()=>{
+								delete canvasPost;
+								delete reader;
+								delete nImagen;
+							})
+						}
+	
+					}
+				}
 			
+				
+			}
 		}
 	}
+
 });
 
 var mt = function (){
@@ -626,10 +629,7 @@ var removeImagenes = function (indez){
 				delete nPost.imagenes;
 				delete nPost.dataImg;
 				delete nPost.dataURLimg;
-
-
 			}
-			console.log(nPost)
 		})
 
 }
@@ -657,13 +657,13 @@ var dibujarPublicacion = function (publicacion){
 	let formato = document.createElement("div")
 
 	formato.id ="P"+publicacion.id
-	formato.setAttribute("class", "publicacion row")
+	formato.setAttribute("class", "publicacion row white")
 	formato.style = "padding-top: 0.7em; margin-bottom: 0.5em";
 	
 	let autorPublicacion = document.createElement("div");
 	autorPublicacion.setAttribute("class", "col s8 ");
 	autorPublicacion.innerHTML = '<div class="col s3"><img src="'+publicacion.autorFoto+'" class="responsive-img circle"></div>'
-	autorPublicacion.innerHTML += '<div class="col s9">'+publicacion.autorName+'<br><small>'+tiempo(publicacion.fecha)+'</small> </div> ';
+	autorPublicacion.innerHTML += '<div class="col s9">'+publicacion.autorName+'<br><span><small>'+tiempo(publicacion.fecha)+'</small><span> </div> ';
 	formato.appendChild(autorPublicacion)
 
 	let menuPublicacion = document.createElement("div");
@@ -746,7 +746,8 @@ var dibujarPublicacion = function (publicacion){
 
 				let imP = document.createElement("img");			
 				imP.setAttribute("class", "responsive-img");								
-				imP.setAttribute("src", publicacion.imagenes[0])		
+				imP.setAttribute("src", publicacion.imagenes[0])	
+				imP.setAttribute("width", "100%")	
 				vistaImagenes.appendChild( imP );
 				imP = "";
 				delete imP;
@@ -760,34 +761,62 @@ var dibujarPublicacion = function (publicacion){
 			var  fileP = document.createElement("div");
 			fileP.setAttribute( "class", "col s10  grey lighten-2 offset-s1");
 			fileP.style= "padding: 1em;"
-			fileP.innerHTML = "<i class='material-icons'>attach_file</i>" +publicacion.filesName[f1];
+			fileP.innerHTML = "<i class='material-icons'>attach_file</i>" + publicacion.filesName[f1];
 			fileP.innerHTML +='<a href="'+publicacion.files[f1]+'" download> <i class="material-icons right grey-text">cloud_download</i></a>'
+			formato.appendChild(fileP);
+			fileP = "";
+			delete fileP;
 			
 		}
-		formato.appendChild(fileP);
-		fileP = "";
-		delete fileP;
+
+		
 
 	}
 	let pieP = document.createElement("div")
+
 	let corazonP = document.createElement("div");
 	corazonP.id = "likes" + publicacion.id;
-	corazonP.setAttribute("class", "col s6 left-align")
+	corazonP.setAttribute("class", "col s6 left-align valign-wrapper")
+	corazonP.setAttribute("data-id",publicacion.id)
+	corazonP.setAttribute("onclick","like('"+publicacion.id+"')")
 	corazonP.innerHTML = "<i class='material-icons'> favorite_border </i>"
 	corazonP.innerHTML+= "<span class='contador'></spna>";
 	corazonP.style = "padding-top: 0.7em"
 	let comentP = document.createElement("div");
 
 	comentP.setAttribute("class", "col s6 right-align")
+	comentP.id="coment" +publicacion.id;
 	comentP.innerHTML = "<span class='contador'></span>";
 	comentP.innerHTML += "<i class='material-icons'>comment</i>";
-	comentP.style = "padding-top: 0.7em"
+	comentP.style = "padding-top: 0.7em"; 
+
 	pieP.appendChild(corazonP)
 	pieP.appendChild(comentP)
-
 	formato.appendChild(pieP)
 
-	$("#posts").prepend(formato);
+
+
+	if (!$("#P" + publicacion.id).length > 0 ){
+		$("#posts").prepend(formato);
+
+	}else{
+		$("#P" + publicacion.id).replaceWith(formato)
+	}
+	toLisentLikes(publicacion.id, function (total,me){
+		if (total > 0){
+				$("#likes" + publicacion.id + " .contador").html("&nbsp;" + total + " me gusta")
+		}else{
+			$("#likes" + publicacion.id + " .contador").html('')
+		}
+		if (me){
+			$("#likes" + publicacion.id + " i").html("favorite")
+		}else{
+			$("#likes" + publicacion.id + " i").html("favorite_border")
+			
+		}
+	})
+
+	
 	
     let elems = document.querySelectorAll('.dropdown-trigger');
 	let instances = M.Dropdown.init(elems);
@@ -888,7 +917,7 @@ var edPostDraw =  function (ed){
 					edImagen.setAttribute("class", "col s6 valign-wrapper white-text");
 					edImagen.innerHTML+= `<h3> + ${ edPost.imagenes.length - 4 }</h3>`
 				}
-				$("#adjuntosEPost").append(edImagen);
+				$("#imagenesEPost").append(edImagen);
 				edImagen = "";
 				delete edImagen;
 			}
@@ -907,7 +936,7 @@ var edPostDraw =  function (ed){
 					edImagen.setAttribute("class", "col s12");
 					
 				}
-				$("#adjuntosEPost").append(edImagen);
+				$("#imagenesEPost").append(edImagen);
 				edImagen = "";
 				delete edImagen;
 			}
@@ -922,7 +951,7 @@ var edPostDraw =  function (ed){
 				edImagen.style.backgroundPosition = "center";
 				edImagen.style.backgroundRepeat = "no-repeat";
 				edImagen.innerHTML= `<a onclick='borrarEi("${ei}")'><i class="material-icons right">delete</i></a>`
-				$("#adjuntosEPost").append(edImagen);
+				$("#imagenesEPost").append(edImagen);
 				edImagen = "";
 				delete edImagen;
 			}
@@ -932,7 +961,7 @@ var edPostDraw =  function (ed){
 				edImagen.setAttribute("class", "col s12")
 				edImagen.innerHTML= `<a onclick='borrarEi(${0})'><i class="material-icons right">delete</i></a>`
 				edImagen.innerHTML+= `<img class='responsive-img' src='${edPost.imagenes[0]}' width ='100%'>`
-				$("#adjuntosEPost").append(edImagen);
+				$("#imagenesEPost").append(edImagen);
 				edImagen = "";
 				delete edImagen;	
 		}
@@ -966,8 +995,8 @@ var borrarEi = function (ind){
 var borrarEf = function (ind){
 	edPost.files.splice(ind,1)
 	edPost.filesName.splice(ind,1)
-	if (edPost.files.length){
-		delete edPost.imagenes;
+	if (edPost.files.length == 0){
+		delete edPost.files;
 	
 	} 
 	limpiarEdit(function (){
@@ -990,21 +1019,101 @@ $("#postETextArea").keyup(function (){
 	  }
 });
 $(".colorE").click(function (){
-	if (!nPost.files && ! nPost.imagenes ){
-	$("#postETextArea").removeClass("color")
-	$("#postETextArea").attr("style", "")
-	$("#postETextArea").removeClass("verde")
-	$("#postETextArea").removeClass("naranja")
-	$("#postETextArea").removeClass("azul")
-	$("#postETextArea").addClass($(this).attr("data-color"))
-	$("#postETextArea").addClass("color")
-	edPost.color= $(this).attr("data-color");
+	if (!edPost.files && ! edPost.imagenes ){
 
-	if ($(this).attr("data-color") == "none"){
-		$("#postETextArea").removeClass("color");
-		$("#postETextArea").removeClass("none");
-		delete edPost.color
-	}
+		$("#postETextArea").removeClass("color")
+		$("#postETextArea").attr("style", "")
+		$("#postETextArea").removeClass("verde")
+		$("#postETextArea").removeClass("naranja")
+		$("#postETextArea").removeClass("azul")
+		$("#postETextArea").addClass($(this).attr("data-color"))
+		$("#postETextArea").addClass("color")
+		edPost.color= $(this).attr("data-color");
+
+		if ($(this).attr("data-color") == "none"){
+			$("#postETextArea").removeClass("color");
+			$("#postETextArea").removeClass("none");
+			delete edPost.color
+		}
  }	
 
 });
+
+
+
+$("#editFilePost").click(function (e){
+	e.preventDefault();
+	$("#NewEFile").attr("accept", "")
+	$("#NewEFile").click()
+	
+})
+
+
+$("#editFotoPost").click(function (e){
+	e.preventDefault();
+	$("#NewEFile").attr("accept", "image/*")
+	$("#NewEFile").click()
+	
+})
+
+$("#NewEFile").change(function (e){
+
+	if (e.target.files.length > 0  ){
+		$("#postETextArea").removeClass("color")
+		$("#postETextArea").attr("style", "")
+		$("#postETextArea").removeClass("verde")
+		$("#postETextArea").removeClass("naranja")
+		$("#postETextArea").removeClass("azul")
+		
+	
+		if ($(this).attr("accept") == ""){
+			if (!edPost.files){
+				edPost.files=[]
+				edPost.filesName=[] 
+			}
+			edPost.files.push(e.target.files[0])
+			edPost.filesName.push(e.target.files[0].name);
+			limpiarEdit(function (){
+				edPostDraw(edPost)
+			});
+
+		}else{
+			if (!edPost.imagenes){
+				edPost.imagenes=[]
+			}
+			
+			let render = new FileReader();
+			render.onload = function (){
+				edPost.imagenes.push(render.result);	
+				limpiarEdit(function (){
+					edPostDraw(edPost)
+				});
+			}
+			render.readAsDataURL(e.target.files[0])				
+
+		}
+	}
+})
+$("#saveEPost").click(function (e){
+	e.preventDefault()
+	$("#saveEPost  i").html(preloader);
+	savePost(function (){
+		$("#saveEPost  i").html("done");
+			location.hash="#home";
+			limpiarEdit(function (ed){
+				edPost = {}
+				edPostRespaldo={}
+			})
+	})
+});
+
+var like = function (likeId){
+	toLike(likeId, function (estado){
+		if (estado){
+			$("#likes" + likeId +" i").html("favorite")
+		}else{
+			$("#likes" + likeId +" i").html("favorite_border")
+		}
+	})
+
+}

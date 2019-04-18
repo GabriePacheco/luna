@@ -12,6 +12,7 @@
   var auth = firebase.auth();
   var storage = firebase.storage();
   var userInline ={}
+  var userPresensia ;
 	firebase.auth().onAuthStateChanged(function(user){
 		if (user) {
 		
@@ -199,7 +200,7 @@ var cargarPerfil = function (){
 	$("#imagenUserPost").attr("src",userInline.foto)
 	$("#nombreUserPost").html(userInline.nombre)
 
-	var userPresensia = document.createElement("div");
+	/*var userPresensia = document.createElement("div");
 	userPresensia.setAttribute("class", "row valign-wrapper")
 	let  presensiaFoto = document.createElement("div")
 	presensiaFoto.setAttribute("class", "col s2");
@@ -211,8 +212,22 @@ var cargarPerfil = function (){
 	userPresensia.appendChild(presensiaNombre);
 	userPresensia.id ="UserInlinePresensiaPostNuevo" ;
 	$("#addPost .contenido").prepend(userPresensia);
+	$("#addPost .optional").html("Publico");*/
+
+	userPresensia = `<div class='row valign-wrapper'>`
+	userPresensia+= `<div class='col s2'>`
+	userPresensia+= `<img class="responsive-img circle" src="${userInline.foto}">`
+	userPresensia+= `</div>`
+	userPresensia+= `<div class='col s10'>`
+	userPresensia+= `${userInline.nombre}` 
+	userPresensia+= `<br><span class='optional'></span>` 
+	userPresensia+= `</div>`;
+	userPresensia+= `</div>`;
+	$("#addPost .contenido").prepend(userPresensia);
 	$("#addPost .optional").html("Publico");
-	
+	$("#editPost .contenido").prepend(userPresensia);
+	$("#editPost .optional").html("Publico");
+
 
 	 base.ref("users/" + userInline.uid ).on("value", function (datos){
 	 	userInline.rol= datos.val().rol
@@ -377,8 +392,6 @@ var subirPost = async function (callbaks){
 	
 	myPost.id = await base.ref().child("posts").push().key
 	myPost.authorId = userInline.uid
-	myPost.autorName =userInline.nombre;
-	myPost.autorFoto =userInline.foto;
 	myPost.fecha = firebase.database.ServerValue.TIMESTAMP;
 	if (nPost.texto){
 		myPost.texto = nPost.texto;
@@ -437,20 +450,36 @@ var suirAdjuntos = async function (ruta, archivo, referencia ){
 ///Escuchar cambios en los post 
 base.ref().child("posts/").on("child_added", function (pub){
 	if (pub.val()){
-		dibujarPublicacion(pub.val());
+		let pubs = pub.val();
+		base.ref().child("users/" + pub.val().authorId )
+		.once("value", function (usuario){
+			pubs.autorName = usuario.val().nombre
+			pubs.autorFoto = usuario.val().photoURL
+			dibujarPublicacion(pubs);
+		})
+		
 	}
 })
-
+base.ref().child("posts/").on("child_changed", function (pub){
+	if (pub.val()){
+		let pubs = pub.val();
+		base.ref().child("users/" + pub.val().authorId )
+		.once("value", function (usuario){
+			pubs.autorName = usuario.val().nombre
+			pubs.autorFoto = usuario.val().photoURL
+			dibujarPublicacion(pubs);
+		})
+	}
+})
+base.ref().child("posts/").on("child_removed", function (pub){
+	$("#P" + pub.val().id).remove() 
+})
 
 var  borrar = function (publicacionId){
 
 	testPermisos(function (permiso){
 		if (permiso){
 			base.ref().child("posts/" + publicacionId).remove()
-			.then(function (m){
-				$("#P" + publicacionId).remove()
-			});
-
 		}
 
 	});
@@ -464,6 +493,66 @@ var consultarPublicacion = function (id, callback){
 				 callback(pp)
 			
 		}
+	})
+
+}
+
+var savePost = async function (callback){
+	if (edPost.imagenes){
+		for (let spI = 0; spI < edPost.imagenes.length; spI++ )	{
+			if (edPost.imagenes[spI].split(":")[0] != "https"){
+				
+				console.log("cambiando imagen:  " + spI )
+				let archivo = await URLtoBlob(edPost.imagenes[spI]);
+				let nURLimagen = await suirAdjuntos("imagenes/posts/"+edPost.id, archivo, mt()+".png" )
+				edPost.imagenes[spI] = nURLimagen;
+			}
+		}
+	}
+	if (edPost.files){
+		for (let spf = 0; spf < edPost.files.length; spf++ )	{
+			if(edPost.files[spf].type){		
+				let nURLarchivo = await suirAdjuntos("archivos/posts/"+edPost.id, edPost.files[spf], edPost.files[spf].name)
+				edPost.files[spf]= nURLarchivo;
+			}
+		}
+	}
+	
+	let updates = {}
+	updates["/posts/" + edPost.id]= edPost;
+	return base.ref().update(updates)
+	.then(function (){
+		callback();
+	})
+}
+var toLike = function (id, callback){
+	let refLikes  = base.ref("likes/" + id );
+	refLikes.child(userInline.uid).once("value", function (snap){
+		let isLiked = (snap && snap.val()) || false;
+		if (!isLiked){
+			refLikes.child(userInline.uid).update({
+				fecha: mt()
+
+			})
+		}else{
+			refLikes.child(userInline.uid).remove()
+		}
+		callback(!isLiked)
+	})
+	
+}
+var toLisentLikes = function (pid, callback){
+	let likesCount = base.ref().child("likes/" + pid);
+	likesCount.on("value", function (snap){
+		let cont = 0;
+		let likeTome= false;
+			snap.forEach((item) => {
+				if (userInline.uid == item.key){
+				 likeTome= true;
+				}
+			cont++;
+			})
+		callback(cont, likeTome)	
 	})
 
 }
