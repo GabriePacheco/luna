@@ -473,7 +473,7 @@ var bajarPost = function (){
 				  	pubs.autorName = usuario.val().nombre
 					pubs.autorFoto = usuario.val().photoURL
 					
-					dibujarPublicacion(pubs, "carga");
+					dibujarPublicacion(pubs, "bajar");
 				  })
 			})	
 		}
@@ -626,9 +626,9 @@ var cargarComentarios =function (publicacionId, callback){
 var buscarPost = function(id, callback){
 	base.ref().child("posts/" + id).once("value", function (publicacion){
 		let publis= publicacion.val()
-		base.ref().child("users/" +publicacion.val().authorId ).once("value", function (uu){
+		base.ref().child("users/" + publicacion.val().authorId ).once("value", function (uu){
 			publis.userName = uu.val().nombre
-			publis.userFoto= uu.val().photoURL
+			publis.userFoto = uu.val().photoURL
 		})
 		if (callback){
 		 callback(publis)
@@ -645,7 +645,7 @@ var buscarUsuario = function (id, callback){
 		 	 if (!usC.album  ){
 		 	 	usC.album=[];
 		 	 }
-		 	console.log(item.val())
+		 	
 		 	 usC.album.push(item.val().archivo)
 		 	})
 		 		 callback(usC)

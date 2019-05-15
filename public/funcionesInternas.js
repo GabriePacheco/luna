@@ -820,13 +820,7 @@ var dibujarPublicacion = function (publicacion, actions){
 	comentarios.innerHTML= `<textarea id ="area${publicacion.id}"  class="postTextArea col s11" placeholder='Has un comentario!'></textarea>`
 	comentarios.innerHTML+=`<i class='material-icons col s1 ' onclick='sendComentario(this)' data-id="${publicacion.id}" >send</i>`
 	comentarios.innerHTML+=`<div id = "allComents${publicacion.id}"></div>`
-	cargarComentarios (publicacion.id, function (total){
-		if (total > 0){
-			$("#coment" + publicacion.id + " .contador").html(total)
-		}else{
-			$("#coment" + publicacion.id + " .contador").html()
-		}
-	})
+
 
 	pieP.appendChild(corazonP)
 	pieP.appendChild(comentP)
@@ -853,6 +847,12 @@ var dibujarPublicacion = function (publicacion, actions){
 			$("#posts").append(formato);		
 		}
 	}
+	if (actions == "bajar"){
+	
+		if ( !$("#P" + publicacion.id).length > 0 ){		
+			$("#posts").append(formato);
+		}
+	}
 	
 	if (actions == "change"){
 		$("#P" + publicacion.id).replaceWith(formato)
@@ -870,6 +870,15 @@ var dibujarPublicacion = function (publicacion, actions){
 			
 		}
 	})	
+
+	cargarComentarios (publicacion.id, function (total){
+		if (total > 0){
+			$("#coment" + publicacion.id + " .contador").html(total)
+		}else{
+			$("#coment" + publicacion.id + " .contador").html()
+		}
+	})
+
     let elems = document.querySelectorAll('.dropdown-trigger');
 	let instances = M.Dropdown.init(elems);
 }
@@ -1198,6 +1207,7 @@ var dibujarComentarios= function (ob, pid){
 	let com = document.createElement("div")
 	com.id = "C" + ob.id
 	com.setAttribute("class", "col s12 ")
+	com.setAttribute("onclick" , `verPerfil('${ob.userId}')`)
 	com.innerHTML = `<div  class="col s2">
 						<img src='${ob.autorFoto}' class='responsive-img circle'>
 					</div>
@@ -1291,7 +1301,7 @@ $(window).on("scroll", function() {
     var scrollPosition = $(window).height() + $(window).scrollTop();
     
      
-    if ((scrollHeight - scrollPosition) / scrollHeight > 0.1) {
+    if ((scrollHeight - scrollPosition) / scrollHeight > 0.09) {
        limite+= 5;
 	     if (location.hash){
 	     	bajarPost();	
@@ -1302,37 +1312,33 @@ $(window).on("scroll", function() {
 var verPerfil = function (userId){
 	
 	buscarUsuario(userId, function (vUsuario){
-		console.log(vUsuario)
-		$("#vimagenPerfil").attr("src",vUsuario.photoURL)
+		
+		$("#vimagenPerfil").attr("src", vUsuario.photoURL)
 		$("#vnombrePerfil").html(vUsuario.nombre)
 		$("#vemailPerfil").html(vUsuario.email)	
 		$("#vnombrePerfil").html(vUsuario.nombre)
 		$("#vbiografiaPerfil").html(vUsuario.biografia)
-
+		$("#vAlbum").html("");
 		if (vUsuario.album){
 			for (let i = 0; i < vUsuario.album.length; i++ ){
-				let foto = `<div class='col s4 '><img src='${vUsuario.album[i]}' class='responsive-img'></div>`
+				let foto = `<div class='col s4 '><img src='${vUsuario.album[i]}' class='responsive-img materialboxed'></div>`
 				$("#vAlbum").append(foto);
 			}
 		}
+    	var elems = document.querySelectorAll('.materialboxed');
+		var instances = M.Materialbox.init(elems);
 		location.hash= "verPerfil";
-	
-	
 	})
 
 }
 $("#nFoto").click(function (e){
-	e.preventDefault()
-	
+	e.preventDefault()	
 	let camara = document.createElement("input") 
 	camara.setAttribute("type", "file")
 	camara.setAttribute("accept", "image/*");
 	camara.addEventListener("change", tomarFoto)
-
 	camara.id = "Camara"
-	camara.click()
-
-
+	camara.click();
 })
 
 var tomarFoto= function (cam, i){
@@ -1344,27 +1350,16 @@ var tomarFoto= function (cam, i){
 
 		foto.src = lector.result;
 		foto.onload= function (e){
-			foto.setAttribute("class", "responsive-img")
-			
-	
+			foto.setAttribute("class", "responsive-img")	
 			foto.id = "photo";
-			let nWidth = 380
-			console.log("original : " + foto.width , foto.height)
+			let nWidth = 380			
 			if (foto.width > nWidth ){
 				let height = foto.height;
 				let porcentaje = Math.round((100 * nWidth) / foto.width)
-				console.log("porcentaje : " + porcentaje)
-
 				let nHeight= Math.round( (height * porcentaje)/100 )
-
 				foto.height=nHeight;
-				foto.width= nWidth;
-				console.log("final 1 "+ nWidth, nHeight)
-				console.log("final 2 "+ foto.height, foto.height)
-				
-			}
-			
-			
+				foto.width= nWidth;				
+			}		
 			
 			canvasPhoto.id= "micanvasPotho"
 			let contexPhoto = canvasPhoto.getContext("2d");
