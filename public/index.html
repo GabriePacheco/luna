@@ -66,18 +66,49 @@
 	}
 	.textoP{
 		font-size: 1.2em;
+		
 	}
 	
+	#seePost{
+		padding-top: 8vh !important;
+
+	}
+	#addPhoto{
+		background: #000000;
+		height: 100%;
+		max-height: 100% !important;;
+		overflow: hidden;
+		padding: 0 !important;
+
+	}
+	#addPhoto nav {
+		background: none !important;
+		color: #ffffff;
+
+	}
+	#addPhoto .contenido {
+		min-height: 100% !important: 
+		height: 100% !important;
+		overflow: hidden;
+
+	}
 	</style>
 
 	
 </head>
-<body>
+<body style="background: #f9f2f4;" >
 	<div class="row">
 		<div class="col s12 col m6 offset-m3" >
 			<div id = "app" class="row">
+				<!-- Start -->
+				<div id="start" class="col s12 center-align pageApp">
+					<div class="row">
+						cargando..
+					</div>
+				</div>
+				<!-- fin start -->
 				<!--- Login -->
-				<div class="col s12 center-align pageApp  " id="login">
+				<div class="col s12 center-align pageApp hide " id="login">
 					<h2 class="" >Lunytha</h2>
 					<div class="row">
 						<form id ="loginForm" class="container">
@@ -128,7 +159,7 @@
 				</div> <!-- Fin Login -->
 
 				<!--- Registro -->
-				<div class="col s12 center-align pageApp" id="registro">
+				<div class="col s12 center-align pageApp hide " id="registro">
 					<h2 class="" >Lunytha</h2>
 					<div class="row">
 						<form class="container" id ="registroForm">
@@ -182,7 +213,7 @@
 
 				</div><!-- Fin registro	-->
 				<!--- Recuperar Contraeña -->
-				<div class="col s12 center-align pageApp" id="recuperar">
+				<div class="col s12 center-align pageApp hide " id="recuperar">
 					<h2 class="" >Lunytha</h2>
 					<div class="row">
 						<form class="container" id ="recuperarForm">
@@ -217,7 +248,7 @@
 
 				</div><!-- Fin registro	-->
 				<!--- Recuperar Contraeña Mensaje -->
-				<div class="col s12 center-align pageApp" id="recuperarMensaje">
+				<div class="col s12 center-align pageApp hide " id="recuperarMensaje">
 					<h2 class="" >Lunytha</h2>
 					<div class="row">
 						<form class="container" id ="recuperarMensajeForm">
@@ -242,7 +273,7 @@
 
 				</div><!-- Fin registro	-->	
 				<!--- Recuperar Contraeña Mensaje -->
-				<div class="col s12 center-align pageApp" id="registroMensaje">
+				<div class="col s12 center-align pageApp hide " id="registroMensaje">
 					<h2 class="" >Lunytha</h2>
 					<div class="row">
 						<form class="container" id ="registroMensajeRegistro">
@@ -261,12 +292,12 @@
 				</div><!--  Contraeña Mensaje	-->				
 
 				<!--- Registrar foto -->
-				<div class="col s12 center-align pageApp" id="registroFoto">
+				<div class="col s12 center-align pageApp hide " id="registroFoto">
 					
 					<div class="row">
 						<form class="container" id ="registroFotoForm">
 							<h2 class="" >Lunytha</h2>
-								<div class="col s12">
+								<div class="col s12 m8">
 									<div id = "recortador"></div>
 									<div id = "botoneraRecortador"></div>
 								</div>
@@ -283,7 +314,7 @@
 
 
 			<!--- Registro Nombre -->
-				<div class="col s12 center-align pageApp" id="registroNombre">
+				<div class="col s12 center-align pageApp hide" id="registroNombre">
 					<h2 class="" >Lunytha</h2>
 					<div class="row">
 						<form id ="registroNombreForm" class="container">
@@ -337,13 +368,13 @@
 
 				</div> <!-- fin Registro Nombre -->
 			<!--Home -->
-			<div class="col s12 pageApp" id = "home"> 
+			<div class="col s12 pageApp hide " id = "home"> 
 				<div class="row">
 				
 					<nav class="pink lighten-1 z-depth-1 valign-wrapper navFix ">
-						<span class="col s1"><a href="#addPhoto"><i class="material-icons" >camera_alt</i></a></span>
-						<span class="col s9"><a href="#home"><b>Lunytha</b></a></span>
-						<span class="col s1 right-align"><a href="#chat"><i class="material-icons">mode_comment</i></a></span>
+						<span class="col s1"><a id ="nFoto" href="#addPhoto"><i class="material-icons" >camera_alt</i></a></span>
+						<span class="col s9"><a href="#home"><b>Lunytha</b></a> <span id= "da"></span></span>
+						<!-- <span class="col s1 right-align"><a href="#chat"><i class="material-icons">mode_comment</i></a></span> -->
 						<span class="col s1 right-align"><a href="#perfil"><i class="material-icons">person</i></a></span>
 
 					</nav>
@@ -364,7 +395,7 @@
 			</div>	
 			<!--Fin home -->
 			<!-- Perfil -->
-			<div class="col s12 pageApp" id = "perfil">
+			<div class="col s12 pageApp hide " id = "perfil">
 				<div class="row">
 					<nav class=" pink lighten-1 z-depth-1 valign-wrapper navFix">
 						<span class="col s1"><a href="#home"><i class="material-icons" >arrow_back</i></a></span>
@@ -412,7 +443,7 @@
 			<!--Fin perfil -->	
 
 			<!-- Editar perfil -->
-			<div class="col s12 pageApp" id = "editarPerfil">
+			<div class="col s12 pageApp hide " id = "editarPerfil">
 				<div class="row">
 					<nav class="pink lighten-1 z-depth-1 valign-wrapper navFix">
 						<span class="col s1"><a href="#perfil"><i class="material-icons" >arrow_back</i></a></span>
@@ -462,7 +493,7 @@
 			<!-- Editar perfil -->
 
 			<!-- Editar Foro de perfil -->
-			<div class="col s12 pageApp" id = "editarFotoPerfil">
+			<div class="col s12 pageApp  hide " id = "editarFotoPerfil">
 				<div class="row">
 					<nav class="pink lighten-1 z-depth-1 valign-wrapper navFix">
 						<span class="col s1"><a href="#perfil"><i class="material-icons" >arrow_back</i></a></span>
@@ -479,7 +510,7 @@
 			</div>
 			<!-- fin Editar foto  perfil -->
 			<!-- Nuevo post -->
-			<div class="col s12 pageApp" id = "addPost">
+			<div class="col s12 pageApp hide" id = "addPost">
 				<div class="row">
 					<nav class="pink lighten-1 z-depth-1 valign-wrapper navFix">
 						<span class="col s1"><a class="back" href="#home"><i class="material-icons" >arrow_back</i></a></span>
@@ -523,7 +554,7 @@
 
 
 		<!-- Edit  post -->
-			<div class="col s12 pageApp" id = "editPost">
+			<div class="col s12 pageApp hide" id = "editPost">
 				<div class="row">
 					<nav class="pink lighten-1 z-depth-1 valign-wrapper navFix">
 						<span class="col s1"><a class= "back" href="#home"><i class="material-icons" >arrow_back</i></a></span>
@@ -563,7 +594,82 @@
 				       
 				    </ul>
 		    	</div>
-			</div><!--FIN  Nuevo post -->		
+			</div><!--FIN  Nuevo post -->	
+
+			<!-- Ver Perfil -->
+
+			<div class="col s12 pageApp hide " id = "verPerfil">
+				<div class="row">
+					<nav class=" pink lighten-1 z-depth-1 valign-wrapper navFix">
+						<span class="col s1"><a href="#home"><i class="material-icons" >arrow_back</i></a></span>
+						<span class="col s11">Perfil</span>
+				
+					</nav>
+					
+				</div>
+				<div class="row">	
+					<div class="col s12 ">
+						<div class="row">
+							<div class="col s4">
+								<img id = "vimagenPerfil" src="" class = "responsive-img circle hoverable">
+							</div>
+							<div class="col s8">
+								<div class="row">
+									<div class="col m12 hide-on-small-only ">&nbsp; </div>
+									
+									<div class="col s12 m10 offset-m1 hide-on-small-only">&nbsp;</div>
+								
+									<div class="col s12 m10 offset-m1 flow-text" id ="vnombrePerfil"></div>
+									
+									<div class="col s12 m10 offset-m1 flow-text" id ="vrolPerfil"></div>
+									
+									<div class="col s12 m10 offset-m1 flow-text" id ="vemailPerfil" ></div>
+																		
+								</div>
+							</div>
+							<div class="col s12 ">
+								<div><b>Biografía</b></div>
+								<div id ="vbiografiaPerfil" ></div>
+							</div> 
+							<div class="col s12 center-align">
+								<div><b>Album</b></div>
+								<div id ="vAlbum" class="row center-align"></div>
+							</div> 
+						</div>
+					</div>
+				</div>
+
+			</div>
+			<!-- fin verperfil-->
+			<!-- Add photo-->
+			<div class="col s12 pageApp hide valign-wrapper" id ="addPhoto">
+				<div class="row">
+					<nav class="col s12 m6 z-depth-1 valign-wrapper navFix">
+						<span class="col s1"><a href="#home"><i class="material-icons" >arrow_back</i></a></span>
+						<span class="col s10"></span>
+						<span class="col s1"><a id="savePhoto" href="#home"><i class="material-icons" >save</i></a></span>
+					</nav>
+				
+					<div class="row contenido center-align">				
+					</div>
+				</div>
+			</div>							
+			<!-- fin add photo-->
+
+			<div class="col s12 pageApp hide" id = "seePost">
+				<div class="row">
+					<nav class="pink lighten-1 z-depth-1 valign-wrapper navFix">
+						<span class="col s1"><a class= "back" href="#home"><i class="material-icons" >arrow_back</i></a></span>
+						<span class="col s11">Ver publicación</span>	
+					</nav>
+					
+					<div class="row contenido white">
+						<p> Cargando... </p>
+					</div>
+					
+					
+				</div>
+			</div>	
 
 			</div>
 		

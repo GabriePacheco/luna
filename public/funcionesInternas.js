@@ -1,17 +1,21 @@
 
 //Controla a interactividad del boton login 
   document.addEventListener('DOMContentLoaded', function() {
-    var elems = document.querySelectorAll('select');
-    var instances = M.FormSelect.init(elems);
-      var elems = document.querySelectorAll('.sidenav');
-    var instances = M.Sidenav.init(elems);
-     var instance = M.Tabs.init(instances);
+    	var elems = document.querySelectorAll('select');
+    	var instances = M.FormSelect.init(elems);
+      	var elems = document.querySelectorAll('.sidenav');
+    	var instances = M.Sidenav.init(elems);
+     	var instance = M.Tabs.init(instances);
 
-      var elems = document.querySelectorAll('.chips');
-    var instances = M.Chips.init(elems)
+      	var elems = document.querySelectorAll('.chips');
+    	var instances = M.Chips.init(elems)
         var elems = document.querySelectorAll('.dropdown-trigger');
     	var instances = M.Dropdown.init(elems);
-
+    	
+    	if (location.hash){	
+    		location.hash = "start"
+    	}
+    	
 
   });
 var progres={};
@@ -20,7 +24,8 @@ progres.head= '<div id ="pogres" class="progress">'
 progres.body1= '<div class="determinate" style="width: '
 progres.body2='%"></div>'
 progres.pie= '</div>';
-
+var limite =10;
+var canvasPhoto = document.createElement("canvas");
 
 var preloader =  '<div class="preloader-wrapper small active">'+
     '<div class="spinner-layer spinner-blue-only">'+
@@ -97,10 +102,15 @@ $("#emailRecuperar").keyup(()=>{
 
 $( window ).on( 'hashchange', function( e ) {
 	let url=  location.hash.split("?")[0]
-	if (url != "#addPost"){
+	if (url != "#addPost" && url != "editPost"){
 		if (url != "#registro" && url != "#recuperar" && url != "#login" && url != "mensajeRecuperar"){
 			if (userInline.uid){
-		  		navegar(url)
+		  		
+		  		if (url == "seePost"){
+		  			toSee( location.hash.split("?")[1])
+		  		}else{
+		  			navegar(url);
+		  		}
 			}else{
 				navegar("#login")
 			}
@@ -124,9 +134,6 @@ $( window ).on( 'hashchange', function( e ) {
 	}
 });
 
-$(document).ready(function (){
-	$(".pageApp").addClass("hide");
-});
 
 var navegar = function (url, callback){
 	$(".pageApp").addClass("hide");
@@ -653,7 +660,7 @@ var removeImagenes = function (indez){
 	}
 
 
-var dibujarPublicacion = function (publicacion){
+var dibujarPublicacion = function (publicacion, actions){
 	let formato = document.createElement("div")
 
 	formato.id ="P"+publicacion.id
@@ -662,6 +669,7 @@ var dibujarPublicacion = function (publicacion){
 	
 	let autorPublicacion = document.createElement("div");
 	autorPublicacion.setAttribute("class", "col s8 ");
+	autorPublicacion.setAttribute("onclick", `verPerfil('${publicacion.authorId}')`);
 	autorPublicacion.innerHTML = '<div class="col s3"><img src="'+publicacion.autorFoto+'" class="responsive-img circle"></div>'
 	autorPublicacion.innerHTML += '<div class="col s9">'+publicacion.autorName+'<br><span><small>'+tiempo(publicacion.fecha)+'</small><span> </div> ';
 	formato.appendChild(autorPublicacion)
@@ -669,11 +677,26 @@ var dibujarPublicacion = function (publicacion){
 	let menuPublicacion = document.createElement("div");
 	menuPublicacion.setAttribute("class", "col s4 right-align")
 	menuPublicacion.innerHTML = `<a href='#' class='dropdown-trigger ' data-target='menu${publicacion.id}'><i class='material-icons'>more_horiz</i></a>`
-	menuPublicacion.innerHTML +=`<ul id='menu${publicacion.id}' class='dropdown-content'>
-								    <li><a  onclick='borrar("${publicacion.id}")' >Borrar</i></a></li>
-								    <li><a onclick='editar("${publicacion.id}")' >Editar</i></a></li>								    
-								  </ul>`;
+	let menus = `<ul id='menu${publicacion.id}' class='dropdown-content'>`;
 
+	menus += `<li><a  onclick='toSee("${publicacion.id}")' >Ver</i></a></li>`; 
+	testPermisos(function(y){
+		
+		if (y){
+			if (!$("#itemMenuBorrar"+publicacion.id).length > 0 ){
+					$("#menu"+publicacion.id).append(`<li id ='itemMenuBorrar${publicacion.id}'><a  onclick='borrar("${publicacion.id}")' >Borrar</i></a></li>`);
+
+			}
+			if (!$("#itemMenuEditar"+publicacion.id).length > 0){
+				$("#menu"+publicacion.id).append(`<li id ='itemMenuEditar${publicacion.id}'><a onclick='editar("${publicacion.id}")' >Editar</i></a></li>`)	
+			}
+
+			
+		}
+	})
+
+	menus+=`</ul>`;
+	menuPublicacion.innerHTML += menus;
 	formato.appendChild(menuPublicacion)
 
 	if (publicacion.texto){
@@ -696,7 +719,7 @@ var dibujarPublicacion = function (publicacion){
 				let imP = document.createElement("div");
 				if ((publicacion.imagenes.length - 4 ) > 0  && a1 == 3){
 					imP . setAttribute("class", "col s6 valign-wrapper");
-					imP.innerHTML= "<div class='center-align white-text col s12'><h3> + " +  (publicacion.imagenes.length - 4)  + "</h3></div>";
+					imP.innerHTML= "<div class='center-align white-text col s12' onclick=toSee('"+publicacion.id+"')><h3> + " +  (publicacion.imagenes.length - 4)  + "</h3></div>";
 
 				}else{
 					imP . setAttribute("class", "col s6  ");	
@@ -782,24 +805,56 @@ var dibujarPublicacion = function (publicacion){
 	corazonP.innerHTML = "<i class='material-icons'> favorite_border </i>"
 	corazonP.innerHTML+= "<span class='contador'></spna>";
 	corazonP.style = "padding-top: 0.7em"
+	
 	let comentP = document.createElement("div");
-
 	comentP.setAttribute("class", "col s6 right-align")
-	comentP.id="coment" +publicacion.id;
+	comentP.id="coment" + publicacion.id;
+	comentP.setAttribute(`onclick`, `toggleComent('${publicacion.id}')`)
 	comentP.innerHTML = "<span class='contador'></span>";
 	comentP.innerHTML += "<i class='material-icons'>comment</i>";
 	comentP.style = "padding-top: 0.7em"; 
 
+	let comentarios = document.createElement("div");
+	comentarios.setAttribute("class", "col s12 hide ");
+	comentarios.id = "comentariosDe" + publicacion.id;
+	comentarios.innerHTML= `<textarea id ="area${publicacion.id}"  class="postTextArea col s11" placeholder='Has un comentario!'></textarea>`
+	comentarios.innerHTML+=`<i class='material-icons col s1 ' onclick='sendComentario(this)' data-id="${publicacion.id}" >send</i>`
+	comentarios.innerHTML+=`<div id = "allComents${publicacion.id}"></div>`
+	cargarComentarios (publicacion.id, function (total){
+		if (total > 0){
+			$("#coment" + publicacion.id + " .contador").html(total)
+		}else{
+			$("#coment" + publicacion.id + " .contador").html()
+		}
+	})
+
 	pieP.appendChild(corazonP)
 	pieP.appendChild(comentP)
+	pieP.appendChild(comentarios)
 	formato.appendChild(pieP)
 
-
-
-	if (!$("#P" + publicacion.id).length > 0 ){
-		$("#posts").prepend(formato);
-
-	}else{
+	/*if (!$("#P" + publicacion.id).length > 0 ){		
+	
+		$("#posts").append(formato);		
+	}*/
+	if (actions == "add"){
+		if ($("#P" + publicacion.id).length > 0 ){		
+			!$("#P" + publicacion.id).replaceWith(formato);		
+		}else{
+			$("#posts").prepend(formato);		
+		}
+	}
+	
+	if (actions == "carga"){
+		
+		if ($("#P" + publicacion.id).length > 0 ){		
+			!$("#P" + publicacion.id).replaceWith(formato);		
+		}else{
+			$("#posts").append(formato);		
+		}
+	}
+	
+	if (actions == "change"){
 		$("#P" + publicacion.id).replaceWith(formato)
 	}
 	toLisentLikes(publicacion.id, function (total,me){
@@ -814,10 +869,7 @@ var dibujarPublicacion = function (publicacion){
 			$("#likes" + publicacion.id + " i").html("favorite_border")
 			
 		}
-	})
-
-	
-	
+	})	
     let elems = document.querySelectorAll('.dropdown-trigger');
 	let instances = M.Dropdown.init(elems);
 }
@@ -1117,3 +1169,221 @@ var like = function (likeId){
 	})
 
 }
+
+var toggleComent = function (ids){
+	if ($("#comentariosDe" + ids ).hasClass("hide")){
+		$("#comentariosDe" + ids ).removeClass("hide");	
+	}else{
+		$("#comentariosDe" + ids ).addClass("hide");	
+	}
+	
+
+}
+
+var sendComentario = function (el){
+	let id = el.getAttribute("data-id");
+	
+	if ($("#area" + id ).val() != '' ){
+		el.innerHTML= preloader;
+		subirComentario (id, $("#area" + id ).val(), function (e){
+			el.innerHTML= "send"
+			$("#area" + id ).val("");
+
+		});
+
+	}
+
+}
+var dibujarComentarios= function (ob, pid){
+	let com = document.createElement("div")
+	com.id = "C" + ob.id
+	com.setAttribute("class", "col s12 ")
+	com.innerHTML = `<div  class="col s2">
+						<img src='${ob.autorFoto}' class='responsive-img circle'>
+					</div>
+					<div class="col s9 style='max-width: 100%; overflow: hidden;' ">
+						<small>${ob.autorNombre}</small>				
+					    <br> <span >${ob.comentario} </span>    
+					</div>
+					<div class="col s1" >
+						
+					</div>
+					`
+
+	if ( $("#C" + ob.id ) .length == 0){		
+		$("#allComents"+ pid).append(com)					
+	}else{
+		$("#C" + ob.id ).replaceWith(com)
+	}
+
+}
+
+var toSee = function (id){
+	$("#seePost .contenido").html(`<p> ${preloader} cargando... </p>`)
+	buscarPost(id,  function (post){
+		let see = document.createElement("div")
+		see.id = "see"+ post.id
+		see.setAttribute("class", " col s12 white")
+		see.innerHTML= "<h6>&nbsp;</h6>"
+		let seeAutorPublicacion = document.createElement("div");
+		seeAutorPublicacion.setAttribute("class", "col s8 ");
+		seeAutorPublicacion.innerHTML = '<div class="col s3"><img src="'+post.userFoto+'" class="responsive-img circle"></div>'
+		seeAutorPublicacion.innerHTML += '<div class="col s9">'+post.userName+'<br><span><small>'+tiempo(post.fecha)+'</small><span> </div> ';
+		see.appendChild(seeAutorPublicacion)
+		
+		if (post.texto){
+			let seetexto = document.createElement("div");
+			seetexto.innerHTML="<div class='textoP'>" + post.texto +"</div>";
+			seetexto.setAttribute("class", "col s12")
+			see.appendChild(seetexto)	
+			if (post.color){
+				seetexto.setAttribute("class", "col s12 "+ post.color )
+				seetexto.innerHTML="<div class='color valign-wrapper  '><div class=' col s12 center-align'>" +post.texto+"</div></div>";
+
+			}
+		}
+		if (post.files){
+			for (let f1 = 0 ; f1 < post.files.length;  f1++){
+				var  fileP = document.createElement("div");
+				fileP.setAttribute( "class", "col s10  grey lighten-2 offset-s1");
+				fileP.style= "padding: 1em;"
+				fileP.innerHTML = "<i class='material-icons'>attach_file</i>" + post.filesName[f1];
+				fileP.innerHTML +='<a href="'+post.files[f1]+'" download> <i class="material-icons right grey-text">cloud_download</i></a>'
+				see.appendChild(fileP);
+				fileP = "";
+				delete fileP;
+				
+			}		
+		}
+		if (post.imagenes){
+			for (let img = 0; img < post.imagenes.length; img ++){
+				let imP = document.createElement("img");			
+				imP.setAttribute("class", "responsive-img");								
+				imP.setAttribute("src", post.imagenes[img])	
+				imP.setAttribute("width", "100%")	
+				see.appendChild( imP );
+				imP = "";
+				delete imP;
+
+			}
+		}
+		let seePie = document.createElement("div")
+		seePie.setAttribute("class", "col s12")
+		seePie.innerHTML= "&nbsp"
+		see.appendChild(seePie);
+
+
+
+
+		$("#seePost .contenido").html(see)
+		
+		location.hash= "#seePost?"+post.id;	
+	})
+
+	
+}
+
+
+$(window).on("scroll", function() {
+
+    var scrollHeight = $(document).height();
+
+    var scrollPosition = $(window).height() + $(window).scrollTop();
+    
+     
+    if ((scrollHeight - scrollPosition) / scrollHeight > 0.1) {
+       limite+= 5;
+	     if (location.hash){
+	     	bajarPost();	
+	     }  
+       
+    }
+});
+var verPerfil = function (userId){
+	
+	buscarUsuario(userId, function (vUsuario){
+		console.log(vUsuario)
+		$("#vimagenPerfil").attr("src",vUsuario.photoURL)
+		$("#vnombrePerfil").html(vUsuario.nombre)
+		$("#vemailPerfil").html(vUsuario.email)	
+		$("#vnombrePerfil").html(vUsuario.nombre)
+		$("#vbiografiaPerfil").html(vUsuario.biografia)
+
+		if (vUsuario.album){
+			for (let i = 0; i < vUsuario.album.length; i++ ){
+				let foto = `<div class='col s4 '><img src='${vUsuario.album[i]}' class='responsive-img'></div>`
+				$("#vAlbum").append(foto);
+			}
+		}
+		location.hash= "verPerfil";
+	
+	
+	})
+
+}
+$("#nFoto").click(function (e){
+	e.preventDefault()
+	
+	let camara = document.createElement("input") 
+	camara.setAttribute("type", "file")
+	camara.setAttribute("accept", "image/*");
+	camara.addEventListener("change", tomarFoto)
+
+	camara.id = "Camara"
+	camara.click()
+
+
+})
+
+var tomarFoto= function (cam, i){
+	let lector= new FileReader();
+	lector.readAsDataURL(cam.target.files[0])
+	lector.onload = function (){
+		let foto = new Image();
+		$("#addPhoto").height((screen.height * 98) / 100) 
+
+		foto.src = lector.result;
+		foto.onload= function (e){
+			foto.setAttribute("class", "responsive-img")
+			
+	
+			foto.id = "photo";
+			let nWidth = 380
+			console.log("original : " + foto.width , foto.height)
+			if (foto.width > nWidth ){
+				let height = foto.height;
+				let porcentaje = Math.round((100 * nWidth) / foto.width)
+				console.log("porcentaje : " + porcentaje)
+
+				let nHeight= Math.round( (height * porcentaje)/100 )
+
+				foto.height=nHeight;
+				foto.width= nWidth;
+				console.log("final 1 "+ nWidth, nHeight)
+				console.log("final 2 "+ foto.height, foto.height)
+				
+			}
+			
+			
+			
+			canvasPhoto.id= "micanvasPotho"
+			let contexPhoto = canvasPhoto.getContext("2d");
+			canvasPhoto.width= nWidth;
+			canvasPhoto.height= foto.height;	
+			contexPhoto.drawImage(foto , 0,0,canvasPhoto.width, canvasPhoto.height)
+			foto.setAttribute("width", "100%")
+			$("#addPhoto .contenido").html(foto)
+			location.hash= "addPhoto";
+			delete foto;
+			delete lector;
+
+		}  
+	}
+}
+
+$("#savePhoto").click(function (){
+	
+	let photoCanvas = URLtoBlob(canvasPhoto.toDataURL())
+	addHistoria(photoCanvas)
+	
+})

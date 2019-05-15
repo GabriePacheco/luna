@@ -447,19 +447,51 @@ var suirAdjuntos = async function (ruta, archivo, referencia ){
 
 }
 
-///Escuchar cambios en los post 
-base.ref().child("posts/").on("child_added", function (pub){
+
+base.ref().child("posts/").orderByKey().limitToLast(limite).once("value", function (publicaciones){
+	if (publicaciones.val()){
+		publicaciones.forEach((item) => {
+			  let pubs = item.val()		  
+			  base.ref().child("users/" + item.val().authorId )
+			  .once("value", function(usuario){
+			  	pubs.autorName = usuario.val().nombre
+				pubs.autorFoto = usuario.val().photoURL
+				
+				dibujarPublicacion(pubs, "carga");
+			  })
+		})	
+	}
+})
+
+var bajarPost = function (){
+	base.ref().child("posts/").orderByKey().limitToLast(limite).once("value", function (publicaciones){
+		if (publicaciones.val()){
+			publicaciones.forEach((item) => {
+				  let pubs = item.val()		  
+				  base.ref().child("users/" + item.val().authorId )
+				  .once("value", function(usuario){
+				  	pubs.autorName = usuario.val().nombre
+					pubs.autorFoto = usuario.val().photoURL
+					
+					dibujarPublicacion(pubs, "carga");
+				  })
+			})	
+		}
+	})
+}
+base.ref().child("posts/").limitToLast(1).on("child_added", function (pub){
 	if (pub.val()){
 		let pubs = pub.val();
 		base.ref().child("users/" + pub.val().authorId )
 		.once("value", function (usuario){
 			pubs.autorName = usuario.val().nombre
-			pubs.autorFoto = usuario.val().photoURL
-			dibujarPublicacion(pubs);
+			pubs.autorFoto = usuario.val().photoURL			
+			dibujarPublicacion(pubs, "add");
 		})
-		
 	}
 })
+
+///Escuchar cambios en los post 
 base.ref().child("posts/").on("child_changed", function (pub){
 	if (pub.val()){
 		let pubs = pub.val();
@@ -467,7 +499,8 @@ base.ref().child("posts/").on("child_changed", function (pub){
 		.once("value", function (usuario){
 			pubs.autorName = usuario.val().nombre
 			pubs.autorFoto = usuario.val().photoURL
-			dibujarPublicacion(pubs);
+			console.log("chan")
+			dibujarPublicacion(pubs, "change");
 		})
 	}
 })
@@ -555,4 +588,90 @@ var toLisentLikes = function (pid, callback){
 		callback(cont, likeTome)	
 	})
 
+}
+
+var subirComentario = function(publicacionId , comentario, callback){
+	let refComentarios = base.ref("comentarios/" + publicacionId);
+	let nuComentarioId = refComentarios.push().key;
+	refComentarios.child("/"+nuComentarioId).set({
+		userId: userInline.uid,
+		comentario: comentario, 
+		fecha: mt(), 
+		id: nuComentarioId
+	})	
+	.then(function (){
+		callback()
+	})
+
+}
+
+var cargarComentarios =function (publicacionId, callback){
+	let refComentarios = base.ref("comentarios/" + publicacionId);
+	refComentarios.on("value", function (comentarios){
+		let totalComentarios = 0
+		comentarios.forEach((com)=>{
+			totalComentarios++
+			let come = com.val()
+			
+			base.ref().child("users/" + com.val().userId ).once("value", function (autor){
+				come.autorNombre = autor.val().nombre
+				come.autorFoto =  autor.val().photoURL
+				dibujarComentarios(come, publicacionId)
+			})
+
+		})
+		callback(totalComentarios);
+	})
+}
+var buscarPost = function(id, callback){
+	base.ref().child("posts/" + id).once("value", function (publicacion){
+		let publis= publicacion.val()
+		base.ref().child("users/" +publicacion.val().authorId ).once("value", function (uu){
+			publis.userName = uu.val().nombre
+			publis.userFoto= uu.val().photoURL
+		})
+		if (callback){
+		 callback(publis)
+		}
+	})
+}
+
+var buscarUsuario = function (id, callback){
+	base.ref().child("users/" + id).once("value", function (us){
+		let usC=us.val()
+		 base.ref().child("/albumes/" + us.val().uid).once("value", function (archivos){
+
+		 	archivos.forEach((item) => {
+		 	 if (!usC.album  ){
+		 	 	usC.album=[];
+		 	 }
+		 	console.log(item.val())
+		 	 usC.album.push(item.val().archivo)
+		 	})
+		 		 callback(usC)
+		})
+	
+	})
+
+}
+var addHistoria =  async function (file){
+
+	let historia = base.ref("/historias/" + userInline.uid)
+	let nId = historia.push().key
+	let albumes =  base.ref().child("/albumes/" + userInline.uid+"/"+nId+"/")
+	
+	let url = await suirAdjuntos("imagenes/historias/" + userInline.uid+ "/"  , file, nId+".png" )
+	historia.child("/"+ nId).set({
+		id: nId,
+		userId: userInline.uid,
+		archivo: url,
+		fecha: mt()
+		
+	})
+	albumes.set({
+		id: nId,
+		userId: userInline.uid,
+		archivo: url,
+		fecha: mt()
+	})
 }
