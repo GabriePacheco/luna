@@ -656,12 +656,12 @@ var buscarUsuario = function (id, callback){
 }
 var addHistoria =  async function (file){
 
-	let historia = base.ref("/historias/" + userInline.uid)
+	let historia = base.ref("/historias/")
 	let nId = historia.push().key
 	let albumes =  base.ref().child("/albumes/" + userInline.uid+"/"+nId+"/")
 	
 	let url = await suirAdjuntos("imagenes/historias/" + userInline.uid+ "/"  , file, nId+".png" )
-	historia.child("/"+ nId).set({
+	historia.child(nId).set({
 		id: nId,
 		userId: userInline.uid,
 		archivo: url,
@@ -675,3 +675,29 @@ var addHistoria =  async function (file){
 		fecha: mt()
 	})
 }
+
+var historiasNuevas = function(){
+	let fecha = new Date() 
+
+	console.log(fecha)
+	let nows = Math.floor(fecha.setDate(fecha.getHours() ))
+	console.log(tiempo(nows))
+
+	let historias = base.ref("historias/").orderByChild("fecha").on("value", function (his){
+		his.forEach((laHistoria)=>{
+			let hisautor = laHistoria.val()
+			base.ref("users/"+ hisautor.userId).once("value", function (snapUser){
+				hisautor.imagen = snapUser.val().photoURL
+				hisautor.nombre = snapUser.val().nombre;
+				dibujarHistoriaNueva(hisautor);
+
+			})
+
+		})
+
+		
+	})
+	
+
+}
+historiasNuevas()

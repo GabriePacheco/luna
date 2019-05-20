@@ -505,7 +505,8 @@ $("#NewFile").change(function (e){
 
 var mt = function (){
 	let fecha =  Date.now()
-	return  Math.floor(fecha / 100)
+	return firebase.database.ServerValue.TIMESTAMP
+	//return  Math.floor(fecha / 100)
 }
 var progresBar = function(avance){
 	progres.valor = avance ;
@@ -1321,7 +1322,10 @@ var verPerfil = function (userId){
 		$("#vAlbum").html("");
 		if (vUsuario.album){
 			for (let i = 0; i < vUsuario.album.length; i++ ){
-				let foto = `<div class='col s4 '><img src='${vUsuario.album[i]}' class='responsive-img materialboxed'></div>`
+				let foto = `<div class='col s4 '>
+					<img src='${vUsuario.album[i]}' class='responsive-img materialboxed'>
+					<div></div>
+				</div>`
 				$("#vAlbum").append(foto);
 			}
 		}
@@ -1377,8 +1381,23 @@ var tomarFoto= function (cam, i){
 }
 
 $("#savePhoto").click(function (){
-	
+
 	let photoCanvas = URLtoBlob(canvasPhoto.toDataURL())
 	addHistoria(photoCanvas)
 	
 })
+
+var dibujarHistoriaNueva = function(his){
+
+	let nHistoria = document.createElement("div")
+	nHistoria.setAttribute("class", "col s3 col m12 center-align")
+	nHistoria.innerHTML= `
+							<div class='col s12 m6'>
+								<img src="${his.imagen}"  class= "responsive-img circle" widht="100%">
+							</div>
+							<div class='col s12 m6' >${his.nombre}</div>
+						`
+						
+	$(".historias").append(nHistoria )
+	delete nHistoria;
+}
