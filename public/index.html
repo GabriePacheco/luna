@@ -1,102 +1,17 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-	<meta charset="UTF-8">
+	<meta charset="UTF-8" >
 	<title>Lunytha - Asistente de tareas </title>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 	<link href="https://fonts.googleapis.com/css?family=Pacifico" rel="stylesheet">
 	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 	<link rel="stylesheet" type="text/css" href="materialize/css/materialize.css">
 	<link rel="stylesheet" type="text/css" href="materialize/css/recortador.css">
+	<link rel="stylesheet" type="text/css" href="materialize/css/index.css">
 	
 	<script type="text/javascript" src="materialize/js/materialize.js"></script>
-	<style type="text/css">
-		h1,h2,h6{
-			font-family: 'Pacifico', cursive;
 
-			
-		}
-	.navFix{
-		position: fixed;
-		top:0;
-		left: 0;
-	}
-	.pageApp{
-		padding-top: 8vh !important;
-	}
-	.postTextArea{
-		border: none;
-		box-shadow: none;
-		overflow: hidden;
-	}
-	.postTextArea:focus{
-		 border-bottom:  none;
-     	box-shadow: inherit;
-     	 outline: none
-	}
-	.pieFix{
-		position: fixed;
-		bottom: 0;
-
-	}
-	.bt {
-		font-size: 1.8em !important;
-	}
-	.azul{
-		text-align: center;
-		background: #1e88e5 ;
-		color: white;
-	}
-	.naranja{
-		text-align: center;
-		background: #ffd180 ;
-		
-	}
-	.verde{
-		text-align: center;
-		background: #558b2f ;
-		color: white;
-	}
-	.color{
-		height: 15em;
-		
-		text-align: center !important;
-		vertical-align: middle;
-		font-size: 1.5em;
-	}
-	.textoP{
-		font-size: 1.2em;
-		
-	}
-	
-	#seePost{
-		padding-top: 8vh !important;
-
-	}
-	#addPhoto{
-		background: #000000;
-		height: 100%;
-		max-height: 100% !important;;
-		overflow: hidden;
-		padding: 0 !important;
-
-	}
-	#addPhoto nav {
-		background: none !important;
-		color: #ffffff;
-
-	}
-	#addPhoto .contenido {
-		min-height: 100% !important: 
-		height: 100% !important;
-		overflow: hidden;
-
-	}
-	.historias{
-		background: #989898;
-		margin-bottom: 0 !important;
-	}
-	</style>
 
 	
 </head>
@@ -121,16 +36,14 @@
 						          <input  id="emailLogin" type="email" class="validate" required="required">
 						          <label for ="emailLogin">Email</label>
 						        </div>							
-							</div>
-							<div class="row">
+							
 						        <div class="input-field col s12">
 						        	
 						          <input  id="passwordLogin" type="password" class="validate" required="required">
 				          		 <label for ="passwordLogin">Contraseña</label>
 						        </div>							
 						        <p class="right-align"><a href="#recuperar">¿olvidaste tu contraseña? </a></p>
-							</div>
-							<div class="row">
+							
 						        <div class="input-field col s12">
 						        	<button id ="botonLogin"  class="btn col s12 disabled">Iniciar sesión
 						        		 <i id = "botonLoginI" class="material-icons right" >power_settings_new</i>
@@ -138,19 +51,16 @@
 			          			
 						        </div>							
 						        
-							</div>
-							<div class="row">
+						
 								<div class ="col s5 "><hr> </div>
 								<div class ="col s2 "> ó </div>
 								<div class ="col s5 "><hr> </div>
-							</div>
-							<div class="row">
+							
 						        <div class="input-field col s12">
 						        	<a class="btn col s12 blue darken-3 loginFacebook">Iniciar sesión con facebook</a>			
 						        </div>							
 						        
-							</div>
-							<div class="row">
+						
 						        <div class="input-field col s12">
 						        	<p>¿No tienes cuenta? <a href="#registro">Regístrate</a>  </p>		
 						        </div>							
@@ -162,6 +72,38 @@
 
 				</div> <!-- Fin Login -->
 
+					<!--Home -->
+				<div class="col s12 pageApp hide " id = "home"> 
+					<div class="row">
+					
+						<nav class="pink lighten-1 z-depth-1 valign-wrapper navFix ">
+							<span class="col s1"><a id ="nFoto" href="#addPhoto"><i class="material-icons" >camera_alt</i></a></span>
+							<span class="col s9"><a href="#home"><b>Lunytha</b></a> <span id= "da"></span></span>
+							<!-- <span class="col s1 right-align"><a href="#chat"><i class="material-icons">mode_comment</i></a></span> -->
+							<span class="col s1 right-align"><a href="#perfil"><i class="material-icons">person</i></a></span>
+
+						</nav>
+					
+					</div>
+					<div class="row">
+						<div class="col s12 hide-on-med-and-up">
+							<div class="row historias"></div>
+						</div> 
+						<div class="col m9 s12" id ="posts"></div>
+						<div class="col m3 hide-on-small-only">
+							<div class="row historias"></div>
+						</div> 
+					</div>
+					<div id= "botonPost" class="fixed-action-btn hide">
+					  <a href="#addPost" class="btn-floating btn-large pink lighten-1 ">
+					    <i  class="large material-icons">mode_edit</i>
+					  </a>
+
+					</div>
+	  
+				</div>	
+				<!--Fin home -->
+
 				<!--- Registro -->
 				<div class="col s12 center-align pageApp hide " id="registro">
 					<h2 class="" >Lunytha</h2>
@@ -172,15 +114,11 @@
 						        	<a  class="btn col s12 blue darken-3  loginFacebook">Iniciar sesión con facebook</a>			
 						        </div>							
 						        
-							</div>
-							<div class="row">
+
 								<div class ="col s5 "><hr> </div>
 								<div class ="col s2 "> ó </div>
 								<div class ="col s5 "><hr> </div>
-							</div>
 
-
-							<div class="row">
 						        <div class="input-field col s12">
 						          <input  id="emailRegistro" type="email" class="validate" required="required">
 						          <label for ="emailRegistro">Email</label>
@@ -196,16 +134,12 @@
 						          <label for ="rpasswordRegistro">Confirmar Contraseña</label>
 						        </div>									
 						       
-							</div>
-							<div class="row">
+
 						        <div class="input-field col s12">
 						        	<button id ="botonRegistro"  class="btn col s12 disabled">Siguiente<i id="botonRegistroI" class="material-icons right">skip_next</i></button>
 			          			
 						        </div>							
-						        
-							</div>
 
-							<div class="row">
 						        <div class="input-field col s12">
 						        	<p>¿Tienes una cuanta? <a href ="#login"> Inicia sesión</a>  </p>		
 						        </div>							
@@ -317,7 +251,7 @@
 				</div><!-- Fin registro	-->		
 
 
-			<!--- Registro Nombre -->
+				<!--- Registro Nombre -->
 				<div class="col s12 center-align pageApp hide" id="registroNombre">
 					<h2 class="" >Lunytha</h2>
 					<div class="row">
@@ -371,326 +305,281 @@
 					</div>
 
 				</div> <!-- fin Registro Nombre -->
-			<!--Home -->
-			<div class="col s12 pageApp hide " id = "home"> 
-				<div class="row">
-				
-					<nav class="pink lighten-1 z-depth-1 valign-wrapper navFix ">
-						<span class="col s1"><a id ="nFoto" href="#addPhoto"><i class="material-icons" >camera_alt</i></a></span>
-						<span class="col s9"><a href="#home"><b>Lunytha</b></a> <span id= "da"></span></span>
-						<!-- <span class="col s1 right-align"><a href="#chat"><i class="material-icons">mode_comment</i></a></span> -->
-						<span class="col s1 right-align"><a href="#perfil"><i class="material-icons">person</i></a></span>
 
-					</nav>
-				
-				</div>
-				<div class="row">
-					<div class="col s12 hide-on-med-and-up">
-						<div class="row historias"></div>
-					</div> 
-					<div class="col m9 s12" id ="posts"></div>
-					<div class="col m3 hide-on-small-only">
-						<div class="row historias"></div>
-					</div> 
-				</div>
-				<div id= "botonPost" class="fixed-action-btn hide">
-				  <a href="#addPost" class="btn-floating btn-large pink lighten-1 ">
-				    <i  class="large material-icons">mode_edit</i>
-				  </a>
-
-				</div>
-  
-			</div>	
-			<!--Fin home -->
-			<!-- Perfil -->
-			<div class="col s12 pageApp hide " id = "perfil">
-				<div class="row">
-					<nav class=" pink lighten-1 z-depth-1 valign-wrapper navFix">
-						<span class="col s1"><a href="#home"><i class="material-icons" >arrow_back</i></a></span>
-						<span class="col s10">Mi perfil</span>
-						<span class="col s1">
-							<a id = "cerrar" href="#cerrarSesion" alt="Cerrar sesión" ><i class="material-icons right" >settings_power</i></a>
-						</span>
-					</nav>
-					
-				</div>
-				<div class="row">	
-					<div class="col s12 ">
-						<div class="row">
-							<div class="col s4">
-								<img id = "imagenPerfil" src="" class = "responsive-img circle hoverable">
-							</div>
-							<div class="col s8">
-								<div class="row">
-									<div class="col m12 hide-on-small-only ">&nbsp; </div>
-									
-									<div class="col s12 m10 offset-m1 hide-on-small-only">&nbsp;</div>
-								
-									<div class="col s12 m10 offset-m1 flow-text" id ="nombrePerfil"></div>
-									
-									<div class="col s12 m10 offset-m1 flow-text" id ="rolPerfil"></div>
-									
-									<div class="col s12 m10 offset-m1 flow-text" id ="emailPerfil" ></div>
-									<div class="col s12 m10 offset-m1 center-align"><a class="waves-effect waves-light btn-small pink lighten-1 z-depth-1" href="#editarPerfil">Editar Perfil</a></div>
-									
-								</div>
-							</div>
-							<div class="col s12 ">
-								<div><b>Biografía</b></div>
-								<div id ="biografiaPerfil" ></div>
-							</div> 
-							<div class="col s12 center-align">
-								<div><b>Album</b></div>
-								<div id ="Album" class="center-align"></div>
-							</div> 
-						</div>
-					</div>
-				</div>
-
-			</div>
-			<!--Fin perfil -->	
-
-			<!-- Editar perfil -->
-			<div class="col s12 pageApp hide " id = "editarPerfil">
-				<div class="row">
-					<nav class="pink lighten-1 z-depth-1 valign-wrapper navFix">
-						<span class="col s1"><a href="#perfil"><i class="material-icons" >arrow_back</i></a></span>
-						<span class="col s10">Editar Perfil</span>
-						<span class="col s1"><i class="material-icons right" id = "savePerfil">done</i></span>
-					</nav>
-					
-				</div>
-				<div class="row">
-					<form class="col s12" id ="formEPerfil">
-						<div class="col s6 m4 offset-s3 offset-m4  center-align">
-							<img id = "imagenEPerfil" src="" class = "responsive-img circle">
-							<a id ="linkEditarFoto" href="#editarFotoPerfil">Cambiar foto</a>
-						</div>
-					
-						<div class="input-field col s12">
-				          <input  id="nombreEPerfil" type="text" class="validate active" required="required">
-				          <label for ="nombreEPerfil">Nombre</label>
-				        </div>	
-				        <div class="input-field col s12">
-				          <textarea id="biografiaEPerfil" class="materialize-textarea validate" required="required" placeholder="Biografía"></textarea>  
-				          <label for ="biografiaEPerfil">Biografía</label>
-				        </div>
-		        		<div class="input-field col s12">
-						    <select id ="rolEPerfil">			      
-						      <option value="1">Soy Alumno  </option>
-						      <option value="2">Soy Representante </option>
-						      <option value="3" >Soy Profesor</option>
-						    </select>
-						    <label>Rol del usuario </label>
-						 </div>
-						 <div class="input-field col s12 hide" id ="portaEstudiantes">
-							  <input id= "estudiantesEPerfil" class="validate" type = "text">
-							   <label for="estudiantesEPerfil">Represento a: </label>
-						 </div>	
-						 <div class="input-field col s12 hide" id ="portaTokens">
-							  <input id= "tokenEPerfil" class="validate" type = "text">
-							   <label for="tokenEPerfil">Token de acceso: </label>
-						 </div>				
-
+				<!-- Perfil -->
+				<div class="col s12 pageApp hide " id = "perfil">
+					<div class="row">
+						<nav class=" pink lighten-1 z-depth-1 valign-wrapper navFix">
+							<span class="col s1"><a href="#home"><i class="material-icons" >arrow_back</i></a></span>
+							<span class="col s10">Mi perfil</span>
+							<span class="col s1">
+								<a id = "cerrar" href="#cerrarSesion" alt="Cerrar sesión" ><i class="material-icons right" >settings_power</i></a>
+							</span>
+						</nav>
 						
-					</form>
-
-				</div>
-				
-			</div>
-			<!-- Editar perfil -->
-
-			<!-- Editar Foro de perfil -->
-			<div class="col s12 pageApp  hide " id = "editarFotoPerfil">
-				<div class="row">
-					<nav class="pink lighten-1 z-depth-1 valign-wrapper navFix">
-						<span class="col s1"><a href="#perfil"><i class="material-icons" >arrow_back</i></a></span>
-						<span class="col s11">Editar foto de perfil</span>
-						
-					</nav>
-					
-				</div>
-				<div class="row">
-					<div id = "editarFPerfil" ></div>
-					<div id = "editarFPerfilBotonera" ></div>
-				</div>
-				
-			</div>
-			<!-- fin Editar foto  perfil -->
-			<!-- Nuevo post -->
-			<div class="col s12 pageApp hide" id = "addPost">
-				<div class="row">
-					<nav class="pink lighten-1 z-depth-1 valign-wrapper navFix">
-						<span class="col s1"><a class="back" href="#home"><i class="material-icons" >arrow_back</i></a></span>
-						<span class="col s9">Nueva publicación</span>
-						<span class="col s2"><a id = "saveNPost"><i class="material-icons right" >done</i></a></span>
-					</nav>
-				</div>	
-				<div class="row ">
-					<div class="col s12 contenido">
-						<!--<div class="row valign-wrapper">
-							<div class="col s2">
-								<img id="imagenUserPost" src="" class="responsive-img circle" alt="">
-							</div>
-							<div class="col s10">
-								<b id="nombreUserPost"></b><br>
-								<span>Publico</span>
-							</div>
-						</div>-->
-						<textarea class="flow-text postTextArea valign-wrapper" id ="postTextArea" placeholder="¿Qué quieres informar?"></textarea>
-						<input type="file" id="NewFile" class="hide">
-
-
 					</div>
-					<div id="imagenesPost" ></div>
-					<div id="adjuntosPost"></div>
-				</div>
-				<div class="pieFix col s11 m6"> 
-			       <ul class="tabs">
-				        <li class="tab col s2"><a id ="addFilePost"><i class="material-icons bt">attach_file</i></a></li>
-				        <li class="tab col s2"><a id ="addFotoPost"><i class="material-icons bt">add_a_photo</i></a></li>
-				        <li class="tab col s2"><a class="color"  data-color="none"><i  class="material-icons  bt">crop_din</i></a></li>
-				        <li class="tab col s2"><a class="color"  data-color="azul" ><i class="material-icons blue-text bt">broken_image</i></a></li>
-				         <li class="tab col s2"><a class="color"  data-color="naranja" ><i class="material-icons  orange-text bt">
-				         broken_image</i></a></li>
-				          
-				            <li class="tab col s2"><a class="color"  data-color="verde"><i class="material-icons  green-text bt">broken_image</i></a></li>
-				       
-				    </ul>
-		    	</div>
-			</div><!--FIN  Nuevo post -->
-
-
-		<!-- Edit  post -->
-			<div class="col s12 pageApp hide" id = "editPost">
-				<div class="row">
-					<nav class="pink lighten-1 z-depth-1 valign-wrapper navFix">
-						<span class="col s1"><a class= "back" href="#home"><i class="material-icons" >arrow_back</i></a></span>
-						<span class="col s9">Editar publicación</span>
-						<span class="col s2"><a id = "saveEPost"><i class="material-icons right" >done</i></a></span>
-					</nav>
-				</div>	
-				<div class="row ">
-					<div class="col s12 contenido">
-						<!--<div class="row valign-wrapper">
-							<div class="col s2">
-								<img id="imagenUserPost" src="" class="responsive-img circle" alt="">
-							</div>
-							<div class="col s10">
-								<b id="nombreUserPost"></b><br>
-								<span>Publico</span>
-							</div>
-						</div>-->
-						<textarea class="flow-text postTextArea valign-wrapper" id ="postETextArea" placeholder="¿Qué quieres informar?"></textarea>
-						<input type="file" id="NewEFile" class="hide">
-
-
-					</div>
-					<div id="imagenesEPost" ></div>
-					<div id="adjuntosEPost"></div>
-				</div>
-				<div class="pieFix col s11 m6"> 
-			       <ul class="tabs">
-				        <li class="tab col s2"><a id ="editFilePost"><i class="material-icons bt">attach_file</i></a></li>
-				        <li class="tab col s2"><a id ="editFotoPost"><i class="material-icons bt">add_a_photo</i></a></li>
-				        <li class="tab col s2"><a class="colorE"  data-color="none"><i  class="material-icons  bt">crop_din</i></a></li>
-				        <li class="tab col s2"><a class="colorE"  data-color="azul" ><i class="material-icons blue-text bt">broken_image</i></a></li>
-				         <li class="tab col s2"><a class="colorE"  data-color="naranja" ><i class="material-icons  orange-text bt">
-				         broken_image</i></a></li>
-				          
-				            <li class="tab col s2"><a class="colorE"  data-color="verde"><i class="material-icons  green-text bt">broken_image</i></a></li>
-				       
-				    </ul>
-		    	</div>
-			</div><!--FIN  Nuevo post -->	
-
-			<!-- Ver Perfil -->
-
-			<div class="col s12 pageApp hide " id = "verPerfil">
-				<div class="row">
-					<nav class=" pink lighten-1 z-depth-1 valign-wrapper navFix">
-						<span class="col s1"><a href="#home"><i class="material-icons" >arrow_back</i></a></span>
-						<span class="col s11">Perfil</span>
-				
-					</nav>
-					
-				</div>
-				<div class="row">	
-					<div class="col s12 ">
-						<div class="row">
-							<div class="col s4">
-								<img id = "vimagenPerfil" src="" class = "responsive-img circle hoverable">
-							</div>
-							<div class="col s8">
-								<div class="row">
-									<div class="col m12 hide-on-small-only ">&nbsp; </div>
-									
-									<div class="col s12 m10 offset-m1 hide-on-small-only">&nbsp;</div>
-								
-									<div class="col s12 m10 offset-m1 flow-text" id ="vnombrePerfil"></div>
-									
-									<div class="col s12 m10 offset-m1 flow-text" id ="vrolPerfil"></div>
-									
-									<div class="col s12 m10 offset-m1 flow-text" id ="vemailPerfil" ></div>
-																		
+					<div class="row">	
+						<div class="col s12 ">
+							<div class="row">
+								<div class="col s4">
+									<img id = "imagenPerfil" src="" class = "responsive-img circle hoverable">
 								</div>
+								<div class="col s8">
+									<div class="row">
+										<div class="col m12 hide-on-small-only ">&nbsp; </div>
+										
+										<div class="col s12 m10 offset-m1 hide-on-small-only">&nbsp;</div>
+									
+										<div class="col s12 m10 offset-m1 flow-text" id ="nombrePerfil"></div>
+										
+										<div class="col s12 m10 offset-m1 flow-text" id ="rolPerfil"></div>
+										
+										<div class="col s12 m10 offset-m1 flow-text" id ="emailPerfil" ></div>
+										<div class="col s12 m10 offset-m1 center-align"><a class="waves-effect waves-light btn-small pink lighten-1 z-depth-1" href="#editarPerfil">Editar Perfil</a></div>
+										
+									</div>
+								</div>
+								<div class="col s12 ">
+									<div><b>Biografía</b></div>
+									<div id ="biografiaPerfil" ></div>
+								</div> 
+								<div class="col s12 center-align">
+									<div><b>Album</b></div>
+									<div id ="Album" class="center-align"></div>
+								</div> 
 							</div>
-							<div class="col s12 ">
-								<div><b>Biografía</b></div>
-								<div id ="vbiografiaPerfil" ></div>
-							</div> 
-							<div class="col s12 center-align">
-								<div><b>Album</b></div>
-								<div id ="vAlbum" class="row center-align"></div>
-							</div> 
 						</div>
 					</div>
-				</div>
 
-			</div>
-			<!-- fin verperfil-->
-			<!-- Add photo-->
-			<div class="col s12 pageApp hide valign-wrapper" id ="addPhoto">
-				<div class="row">
-					<nav class="col s12 m6 z-depth-1 valign-wrapper navFix">
-						<span class="col s1"><a href="#home"><i class="material-icons" >arrow_back</i></a></span>
-						<span class="col s10"></span>
-						<span class="col s1"><a id="savePhoto" href="#home"><i class="material-icons" >save</i></a></span>
-					</nav>
+				</div>
+				<!--Fin perfil -->	
+
+				<!-- Editar perfil -->
+				<div class="col s12 pageApp hide " id = "editarPerfil">
+					<div class="row">
+						<nav class="pink lighten-1 z-depth-1 valign-wrapper navFix">
+							<span class="col s1"><a href="#perfil"><i class="material-icons" >arrow_back</i></a></span>
+							<span class="col s10">Editar Perfil</span>
+							<span class="col s1"><i class="material-icons right" id = "savePerfil">done</i></span>
+						</nav>
+						
+					</div>
+					<div class="row">
+						<form class="col s12" id ="formEPerfil">
+							<div class="col s6 m4 offset-s3 offset-m4  center-align">
+								<img id = "imagenEPerfil" src="" class = "responsive-img circle">
+								<a id ="linkEditarFoto" href="#editarFotoPerfil">Cambiar foto</a>
+							</div>
+						
+							<div class="input-field col s12">
+					          <input  id="nombreEPerfil" type="text" class="validate active" required="required">
+					          <label for ="nombreEPerfil">Nombre</label>
+					        </div>	
+					        <div class="input-field col s12">
+					          <textarea id="biografiaEPerfil" class="materialize-textarea validate" required="required" placeholder="Biografía"></textarea>  
+					          <label for ="biografiaEPerfil">Biografía</label>
+					        </div>
+			        		<div class="input-field col s12">
+							    <select id ="rolEPerfil">			      
+							      <option value="1">Soy Alumno  </option>
+							      <option value="2">Soy Representante </option>
+							      <option value="3" >Soy Profesor</option>
+							    </select>
+							    <label>Rol del usuario </label>
+							 </div>
+							 <div class="input-field col s12 hide" id ="portaEstudiantes">
+								  <input id= "estudiantesEPerfil" class="validate" type = "text">
+								   <label for="estudiantesEPerfil">Represento a: </label>
+							 </div>	
+							 <div class="input-field col s12 hide" id ="portaTokens">
+								  <input id= "tokenEPerfil" class="validate" type = "text">
+								   <label for="tokenEPerfil">Token de acceso: </label>
+							 </div>				
+
+							
+						</form>
+
+					</div>
+					
+				</div>
+				<!--  fin Editar perfil -->
+
+				<!-- Editar FoTo de perfil -->
+				<div class="col s12 pageApp  hide " id = "editarFotoPerfil">
+					<div class="row">
+						<nav class="pink lighten-1 z-depth-1 valign-wrapper navFix">
+							<span class="col s1"><a href="#perfil"><i class="material-icons" >arrow_back</i></a></span>
+							<span class="col s11">Editar foto de perfil</span>
+							
+						</nav>			
+					</div>
+					<div class="row">
+						<div id = "editarFPerfil" ></div>
+						<div id = "editarFPerfilBotonera" ></div>
+					</div>
+					
+				</div>
+				<!-- fin Editar foto  perfil -->
+				<!-- Nuevo post -->
+				<div class="col s12 pageApp hide" id = "addPost">
+					<div class="row">
+						<nav class="pink lighten-1 z-depth-1 valign-wrapper navFix">
+							<span class="col s1"><a class="back" href="#home"><i class="material-icons" >arrow_back</i></a></span>
+							<span class="col s9">Nueva publicación</span>
+							<span class="col s2"><a id = "saveNPost"><i class="material-icons right" >done</i></a></span>
+						</nav>
+					</div>	
+					<div class="row ">
+						<div class="col s12 contenido">
+						
+							<textarea class="flow-text postTextArea valign-wrapper" id ="postTextArea" placeholder="¿Qué quieres informar?"></textarea>
+							<input type="file" id="NewFile" class="hide">
+
+
+						</div>
+						<div id="imagenesPost" ></div>
+						<div id="adjuntosPost"></div>
+					</div>
+					<div class="pieFix col s11 m6"> 
+				       <ul class="tabs">
+					        <li class="tab col s2"><a id ="addFilePost"><i class="material-icons bt">attach_file</i></a></li>
+					        <li class="tab col s2"><a id ="addFotoPost"><i class="material-icons bt">add_a_photo</i></a></li>
+					        <li class="tab col s2"><a class="color"  data-color="none"><i  class="material-icons  bt">crop_din</i></a></li>
+					        <li class="tab col s2"><a class="color"  data-color="azul" ><i class="material-icons blue-text bt">broken_image</i></a></li>
+					         <li class="tab col s2"><a class="color"  data-color="naranja" ><i class="material-icons  orange-text bt">
+					         broken_image</i></a></li>
+					          
+					            <li class="tab col s2"><a class="color"  data-color="verde"><i class="material-icons  green-text bt">broken_image</i></a></li>
+					       
+					    </ul>
+			    	</div>
+				</div><!--FIN  Nuevo post -->
+
+
+				<!-- Edit  post -->
+				<div class="col s12 pageApp hide" id = "editPost">
+					<div class="row">
+						<nav class="pink lighten-1 z-depth-1 valign-wrapper navFix">
+							<span class="col s1"><a class= "back" href="#home"><i class="material-icons" >arrow_back</i></a></span>
+							<span class="col s9">Editar publicación</span>
+							<span class="col s2"><a id = "saveEPost"><i class="material-icons right" >done</i></a></span>
+						</nav>
+					</div>	
+					<div class="row ">
+						<div class="col s12 contenido">
+							<textarea class="flow-text postTextArea valign-wrapper" id ="postETextArea" placeholder="¿Qué quieres informar?"></textarea>
+							<input type="file" id="NewEFile" class="hide">
+
+
+						</div>
+						<div id="imagenesEPost" ></div>
+						<div id="adjuntosEPost"></div>
+					</div>
+					<div class="pieFix col s11 m6"> 
+				       <ul class="tabs">
+					        <li class="tab col s2"><a id ="editFilePost"><i class="material-icons bt">attach_file</i></a></li>
+					        <li class="tab col s2"><a id ="editFotoPost"><i class="material-icons bt">add_a_photo</i></a></li>
+					        <li class="tab col s2"><a class="colorE"  data-color="none"><i  class="material-icons  bt">crop_din</i></a></li>
+					        <li class="tab col s2"><a class="colorE"  data-color="azul" ><i class="material-icons blue-text bt">broken_image</i></a></li>
+					         <li class="tab col s2"><a class="colorE"  data-color="naranja" ><i class="material-icons  orange-text bt">
+					         broken_image</i></a></li>
+					          
+					            <li class="tab col s2"><a class="colorE"  data-color="verde"><i class="material-icons  green-text bt">broken_image</i></a></li>
+					       
+					    </ul>
+			    	</div>
+				</div><!--FIN  Edit  post -->	
+
+				<!-- Ver Perfil -->
+				<div class="col s12 pageApp hide " id = "verPerfil">
+					<div class="row">
+						<nav class=" pink lighten-1 z-depth-1 valign-wrapper navFix">
+							<span class="col s1"><a href="#home"><i class="material-icons" >arrow_back</i></a></span>
+							<span class="col s11">Perfil</span>
+					
+						</nav>
+						
+					</div>
+					<div class="row">	
+						<div class="col s12 ">
+							<div class="row">
+								<div class="col s4">
+									<img id = "vimagenPerfil" src="" class = "responsive-img circle hoverable">
+								</div>
+								<div class="col s8">
+									<div class="row">
+										<div class="col m12 hide-on-small-only ">&nbsp; </div>
+										
+										<div class="col s12 m10 offset-m1 hide-on-small-only">&nbsp;</div>
+									
+										<div class="col s12 m10 offset-m1 flow-text" id ="vnombrePerfil"></div>
+										
+										<div class="col s12 m10 offset-m1 flow-text" id ="vrolPerfil"></div>
+										
+										<div class="col s12 m10 offset-m1 flow-text" id ="vemailPerfil" ></div>
+																			
+									</div>
+								</div>
+								<div class="col s12 ">
+									<div><b>Biografía</b></div>
+									<div id ="vbiografiaPerfil" ></div>
+								</div> 
+								<div class="col s12 center-align">
+									<div><b>Album</b></div>
+									<div id ="vAlbum" class="row center-align"></div>
+								</div> 
+							</div>
+						</div>
+					</div>
+
+				</div>
+				<!-- fin verperfil -->
+				<!-- Add photo -->
+				<div class="col s12 pageApp hide valign-wrapper" id ="addPhoto">
+					<div class="row">
+						<nav class="col s12 m6 z-depth-1 valign-wrapper navFix">
+							<span class="col s1"><a href="#home"><i class="material-icons" >arrow_back</i></a></span>
+							<span class="col s10"></span>
+							<span class="col s1"><a id="savePhoto" href="#home"><i class="material-icons" >save</i></a></span>
+						</nav>
+					
+						<div class="row contenido center-align">				
+						</div>
+					</div>
+				</div>							
+				<!-- fin add photo -->
+				<!--  SEEE POST  -->
+				<div class="col s12 pageApp hide" id = "seePost">
+					<div class="row">
+						<nav class="pink lighten-1 z-depth-1 valign-wrapper navFix">
+							<span class="col s1"><a class= "back" href="#home"><i class="material-icons" >arrow_back</i></a></span>
+							<span class="col s11">Ver publicación</span>	
+						</nav>
+						
+						<div class="row contenido white">
+							<p> Cargando... </p>
+						</div>
+					</div>
+				</div>	
+				<!-- fin SEEPOST -->
+				<div class= "col s12 pageApp hide black" id="historias">
+					<div class="row">
+						<div class="col s12 m6 navFix" id="totalHistorias"></div>
+						<div class="col s12 m6  navFix valign-wrapper ">
+							<span class="col s1"><a href= "#home" class="white-text"><i class="material-icons">arrow_back</i> </a></span>
+							<span class= "col s2"><img  id ="photoHistoria" src="" class="circle responsive-img" data-id=""></span>
+							<span class= "col s9"><strong id ="nameHistoria" class="white-text"></strong></span>
+
+						</div>
+						
+
+					</div>
+					<div class="row contenido valign-wrapper">
+						
+					</div>
+				</div>
+			</div> <!-- fin app -->
 				
-					<div class="row contenido center-align">				
-					</div>
-				</div>
-			</div>							
-			<!-- fin add photo-->
-
-			<div class="col s12 pageApp hide" id = "seePost">
-				<div class="row">
-					<nav class="pink lighten-1 z-depth-1 valign-wrapper navFix">
-						<span class="col s1"><a class= "back" href="#home"><i class="material-icons" >arrow_back</i></a></span>
-						<span class="col s11">Ver publicación</span>	
-					</nav>
-					
-					<div class="row contenido white">
-						<p> Cargando... </p>
-					</div>
-					
-					
-				</div>
-			</div>	
-
-			</div>
-			<!-- historias -->
-			<div class ="col s12 pageApp hide valing-wrapper" id = "historias">
-				<div class = "row">
-					<div class="col s12 m6 navFix valign-wrapper">
-						<span><a class= "withe"><i class= "material-icons">back</i></a></span>
-						<span><a class= "withe"><i class= "material-icons">back</i></a></span>
-					</div>
-				</div>
-			</div>	
-			<!-- fin historias -->
-		
 		</div>
 	</div>
 	

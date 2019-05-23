@@ -21,7 +21,7 @@
 var progres={};
 progres.valor =0
 progres.head= '<div id ="pogres" class="progress">'
-progres.body1= '<div class="determinate" style="width: '
+progres.body1= '<div class="determinate" style="width: ' +progres.valor
 progres.body2='%"></div>'
 progres.pie= '</div>';
 var limite =10;
@@ -102,17 +102,16 @@ $("#emailRecuperar").keyup(()=>{
 
 $( window ).on( 'hashchange', function( e ) {
 	let url=  location.hash.split("?")[0]
-	if (url != "#addPost" && url != "editPost"){
-		if (url != "#registro" && url != "#recuperar" && url != "#login" && url != "mensajeRecuperar"){
-			if (userInline.uid){
-		  		
+	if (url != "#addPost" && url != "#editPost"){
+		if (url != "#registro" && url != "#recuperar" && url != "#login" && url != "#mensajeRecuperar"){
+			if (userInline.uid){	
 		  		if (url == "seePost"){
 		  			toSee( location.hash.split("?")[1])
 		  		}else{
 		  			navegar(url);
 		  		}
 			}else{
-				navegar("#login")
+				navegar("#start")
 			}
 		}else{
 			navegar(url)
@@ -504,10 +503,17 @@ $("#NewFile").change(function (e){
 });
 
 var mt = function (){
-	let fecha =  Date.now()
+	
 	return firebase.database.ServerValue.TIMESTAMP
+	
+}
+
+var mt2 = function (){
+	let fecha =  Date.now()
+	return  Math.floor(fecha)
 	//return  Math.floor(fecha / 100)
 }
+
 var progresBar = function(avance){
 	progres.valor = avance ;
 	let por = progres.head + progres.body1+progres.valor+ progres.body2 + progres.pie
@@ -1390,14 +1396,62 @@ $("#savePhoto").click(function (){
 var dibujarHistoriaNueva = function(his){
 
 	let nHistoria = document.createElement("div")
-	nHistoria.setAttribute("class", "col s3 col m12 center-align")
+	nHistoria.setAttribute("class", "center-align history")
+	nHistoria.id = "historiasDe" + his.userId;
+	nHistoria.setAttribute("data-id", his.userId )
+	nHistoria.setAttribute("onclick", `verHistorias('${his.userId}')`)
 	nHistoria.innerHTML= `
-							<div class='col s12 m6'>
-								<img src="${his.imagen}"  class= "responsive-img circle" widht="100%">
-							</div>
-							<div class='col s12 m6' >${his.nombre}</div>
+							<div class='col s12 l6'>
+								<img src="${his.imagen}"  class= "responsive-img circle" width="100%">
+							${his.nombre}</div>
 						`
-						
-	$(".historias").append(nHistoria )
+	if ( !$("#historiasDe" + his.userId ).length > 0 ){
+		$(".historias").append(nHistoria )	
+	}else{
+		$("#historiasDe" + his.userId ).replaceWith( nHistoria)
+	}					
+	
 	delete nHistoria;
 }
+
+var verHistorias= function (id){
+	$("#photoHistoria").attr("data-id", id)	
+	$("#photoHistoria").attr("onclick", `verPerfil('${id}')`)	
+	buscarUsuario(id, function (user){
+		$("#photoHistoria").attr("src", user.photoURL)
+		$("#nameHistoria").html(user.nombre)
+
+	})
+	buscarHistorias(id, async function (his){
+		$("#totalHistorias").html("");
+		let cont = his.numChildren();
+
+		let j = 0 
+		let urls = []
+		his.forEach((item) => {
+			let progresBarHistory = document.createElement("span")	
+			progresBarHistory.setAttribute("data-id", "historia" + j)
+			progresBarHistory.setAttribute("class", `col s${Math.floor(12 / cont)}`)
+			progresBarHistory.innerHTML= progresBar(10);
+			$("#totalHistorias").append(progresBarHistory);
+			urls.push(item.val().archivo)
+			j++; 
+		  
+		})
+		
+		for  (const tem of urls){	
+			let hHtml = `<img src = '${tem}' class='responsive-img' width='100%' >`
+			$("#historias .contenido").html(hHtml);
+			await delay()			
+		}
+		location.href= "#home";
+		
+		
+	})
+	$("#historias").height($(window).height())
+	location.hash = "historias"
+}
+
+ var delay = function (){
+ 	return new Promise(resolve =>  setTimeout(resolve ,10000))
+ } 

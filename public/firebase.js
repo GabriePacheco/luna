@@ -404,7 +404,7 @@ var subirPost = async function (callbaks){
 			if (!myPost.imagenes){
 				 myPost.imagenes =[]
 			}
-			var urlnImagen = await suirAdjuntos("imagenes/posts/"+ myPost.id, nPost.imagenes[ci], mt()+".png" )
+			var urlnImagen = await suirAdjuntos("imagenes/posts/"+ myPost.id, nPost.imagenes[ci], mt2()+".png" )
 			myPost.imagenes.push(urlnImagen);
 		}
 
@@ -537,7 +537,7 @@ var savePost = async function (callback){
 				
 				console.log("cambiando imagen:  " + spI )
 				let archivo = await URLtoBlob(edPost.imagenes[spI]);
-				let nURLimagen = await suirAdjuntos("imagenes/posts/"+edPost.id, archivo, mt()+".png" )
+				let nURLimagen = await suirAdjuntos("imagenes/posts/"+edPost.id, archivo, mt2()+".png" )
 				edPost.imagenes[spI] = nURLimagen;
 			}
 		}
@@ -678,17 +678,13 @@ var addHistoria =  async function (file){
 
 var historiasNuevas = function(){
 	let fecha = new Date() 
-
-	console.log(fecha)
-	let nows = Math.floor(fecha.setDate(fecha.getHours() ))
-	console.log(tiempo(nows))
-
-	let historias = base.ref("historias/").orderByChild("fecha").on("value", function (his){
+	let nows = Math.floor(fecha.setDate(fecha.getUTCDate()-2 )) 	
+	let historias = base.ref("historias/").orderByChild("fecha").startAt(nows).on("value", function (his){
 		his.forEach((laHistoria)=>{
 			let hisautor = laHistoria.val()
-			base.ref("users/"+ hisautor.userId).once("value", function (snapUser){
+			base.ref("users/"+ hisautor.userId).once("value", function (snapUser){				
 				hisautor.imagen = snapUser.val().photoURL
-				hisautor.nombre = snapUser.val().nombre;
+				hisautor.nombre = snapUser.val().nombre .split (" ")[0];
 				dibujarHistoriaNueva(hisautor);
 
 			})
@@ -697,7 +693,12 @@ var historiasNuevas = function(){
 
 		
 	})
-	
-
 }
+
+
 historiasNuevas()
+var buscarHistorias = function (i,callback){
+	base.ref("historias/").orderByChild("userId").equalTo(i).limitToLast(20).once("value", function(his){
+		callback(his)
+	})
+}
