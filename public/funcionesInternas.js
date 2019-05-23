@@ -20,7 +20,7 @@
   });
 var progres={};
 progres.valor =0
-progres.head= '<div id ="pogres" class="progress">'
+progres.head= '<div  class="progress">'
 progres.body1= '<div class="determinate" style="width: ' +progres.valor
 progres.body2='%"></div>'
 progres.pie= '</div>';
@@ -1430,22 +1430,34 @@ var verHistorias= function (id){
 		let urls = []
 		his.forEach((item) => {
 			let progresBarHistory = document.createElement("span")	
+			progresBarHistory.id = "historia" + j
 			progresBarHistory.setAttribute("data-id", "historia" + j)
 			progresBarHistory.setAttribute("class", `col s${Math.floor(12 / cont)}`)
-			progresBarHistory.innerHTML= progresBar(10);
+			progresBarHistory.innerHTML= progresBar();
 			$("#totalHistorias").append(progresBarHistory);
 			urls.push(item.val().archivo)
 			j++; 
 		  
 		})
-		
+		let w=0
 		for  (const tem of urls){	
 			let hHtml = `<img src = '${tem}' class='responsive-img' width='100%' >`
 			$("#historias .contenido").html(hHtml);
-			await delay()			
+			let x100 =0 
+			let x = setInterval(() => {
+							  		x100++		
+			  		if (x100 >= 100 ){
+			  			clearInterval(x)
+			  			x100=0
+			  		}
+			  			  		
+			  		$("#historia"+ w +" .progress .determinate").css("width" , x100+"%")
+
+			}, 100)		
+			await delay()	
+			w++		
 		}
-		location.href= "#home";
-		
+		location.hash = "home"
 		
 	})
 	$("#historias").height($(window).height())
