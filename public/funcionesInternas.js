@@ -18,6 +18,7 @@
     	
 
   });
+var espera ;
 var progres={};
 progres.valor =0
 progres.head= '<div  class="progress">'
@@ -1415,17 +1416,16 @@ var dibujarHistoriaNueva = function(his){
 }
 
 var verHistorias= function (id){
+	$("#historias").height(screen.height)
 	$("#photoHistoria").attr("data-id", id)	
 	$("#photoHistoria").attr("onclick", `verPerfil('${id}')`)	
 	buscarUsuario(id, function (user){
 		$("#photoHistoria").attr("src", user.photoURL)
 		$("#nameHistoria").html(user.nombre)
-
 	})
 	buscarHistorias(id, async function (his){
 		$("#totalHistorias").html("");
 		let cont = his.numChildren();
-
 		let j = 0 
 		let urls = []
 		his.forEach((item) => {
@@ -1436,6 +1436,7 @@ var verHistorias= function (id){
 			progresBarHistory.innerHTML= progresBar();
 			$("#totalHistorias").append(progresBarHistory);
 			urls.push(item.val().archivo)
+
 			j++; 
 		  
 		})
@@ -1443,27 +1444,32 @@ var verHistorias= function (id){
 		for  (const tem of urls){	
 			let hHtml = `<img src = '${tem}' class='responsive-img' width='100%' >`
 			$("#historias .contenido").html(hHtml);
+
 			let x100 =0 
 			let x = setInterval(() => {
-							  		x100++		
+					x100++		
 			  		if (x100 >= 100 ){
 			  			clearInterval(x)
 			  			x100=0
-			  		}
-			  			  		
+			  		}			  			  	
 			  		$("#historia"+ w +" .progress .determinate").css("width" , x100+"%")
-
 			}, 100)		
 			await delay()	
 			w++		
 		}
-		location.hash = "home"
-		
+		location.hash = "home"		
 	})
-	$("#historias").height($(window).height())
+	
 	location.hash = "historias"
 }
 
  var delay = function (){
- 	return new Promise(resolve =>  setTimeout(resolve ,10000))
+ 	let del  = new Promise(resolve => { 
+ 		espera = setTimeout(resolve ,10000) 
+ 	})
+ 	return del 
  } 
+ $("#historias .contenido").click(function (e){
+ 	console.log(espera)
+ 	clearInterval(espera)
+ })
