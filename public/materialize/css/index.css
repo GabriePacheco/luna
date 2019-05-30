@@ -68,11 +68,7 @@
 		padding: 0 !important;
 
 	}
-	#addPhoto nav {
-		background: none !important;
-		color: #ffffff;
 
-	}
 	#addPhoto .contenido {
 		min-height: 100% !important: 
 		height: 100% !important;
@@ -96,11 +92,22 @@
 	#historias{
 		padding-top: 0 !important;
 		max-width: 100%;
+		overflow-y: hidden;
+		height: 100% !important;
 	}
 	#historias .contenido {
-		height: 100%;
-		min-height: 100%;
+		
+		margin-top: -2em !important;
+		min-height: 100% !important;
+		height: 100% !important;
+		overflow: hidden;
 		 
+	}
+	#historias  .espacio span {
+		margin-top: 3vh;
+	}
+	.noLeido{
+		border: solid 0.1em #c51162; 
 	}
 
 

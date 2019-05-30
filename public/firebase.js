@@ -699,6 +699,37 @@ var historiasNuevas = function(){
 historiasNuevas()
 var buscarHistorias = function (i,callback){
 	base.ref("historias/").orderByChild("userId").equalTo(i).limitToLast(20).once("value", function(his){
-		callback(his)
+		let histo = his.val();
+		let fecha = new Date() 
+		let nows = Math.floor(fecha.setDate(fecha.getUTCDate()-2 ))
+		his.forEach(function(item){
+				if (item.val().fecha < nows){
+					delete histo[item.key] 	
+				}				
+		})
+		callback(histo)
 	})
+}
+var leerHistoria = function (id){
+	let historia =  base.ref("historias/").child(id + "/leido/" +userInline.uid )
+	historia.set({
+		uid : userInline.uid,
+		fecha: mt()
+	})
+}
+
+var likeToHistoria = function (idH){
+	let refLikeHistorias= base.ref().child("LikesHistorias/"+idH+"/" + userInline.uid )
+	refLikeHistorias.once("value", function (e){
+		let isLiked = (e && e.val()) || false
+		if (!isLiked ){
+			refLikeHistorias.set({
+				uid: userInline.uid, 
+				fecha: mt()
+			})
+		} else{
+			refLikeHistorias.remove()
+		}
+	})
+
 }

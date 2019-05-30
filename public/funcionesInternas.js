@@ -21,8 +21,8 @@
 var espera ;
 var progres={};
 progres.valor =0
-progres.head= '<div  class="progress">'
-progres.body1= '<div class="determinate" style="width: ' +progres.valor
+progres.head= '<div  class="progress white">'
+progres.body1= '<div class="determinate pink lighten-4" style="width: ' +progres.valor
 progres.body2='%"></div>'
 progres.pie= '</div>';
 var limite =10;
@@ -1357,7 +1357,7 @@ var tomarFoto= function (cam, i){
 	lector.readAsDataURL(cam.target.files[0])
 	lector.onload = function (){
 		let foto = new Image();
-		$("#addPhoto").height((screen.height * 98) / 100) 
+		$("#addPhoto").height(screen.height) 
 
 		foto.src = lector.result;
 		foto.onload= function (e){
@@ -1395,15 +1395,23 @@ $("#savePhoto").click(function (){
 })
 
 var dibujarHistoriaNueva = function(his){
-
+	if (his.leido ){
+		if ( his.leido.hasOwnProperty(userInline.uid) ){
+			his.estado = "Leido"
+		}else{
+			his.estado = "noLeido"
+		}
+	}else{
+		his.estado = "noLeido"
+	}	
 	let nHistoria = document.createElement("div")
 	nHistoria.setAttribute("class", "center-align history")
 	nHistoria.id = "historiasDe" + his.userId;
 	nHistoria.setAttribute("data-id", his.userId )
-	nHistoria.setAttribute("onclick", `verHistorias('${his.userId}')`)
+	nHistoria.setAttribute("onclick", `verHistorias.init('${his.userId}')`)
 	nHistoria.innerHTML= `
 							<div class='col s12 l6'>
-								<img src="${his.imagen}"  class= "responsive-img circle" width="100%">
+								<img src="${his.imagen}"  class= "responsive-img circle ${his.estado} " width="100%">
 							${his.nombre}</div>
 						`
 	if ( !$("#historiasDe" + his.userId ).length > 0 ){
@@ -1415,61 +1423,164 @@ var dibujarHistoriaNueva = function(his){
 	delete nHistoria;
 }
 
-var verHistorias= function (id){
-	$("#historias").height(screen.height)
-	$("#photoHistoria").attr("data-id", id)	
-	$("#photoHistoria").attr("onclick", `verPerfil('${id}')`)	
-	buscarUsuario(id, function (user){
-		$("#photoHistoria").attr("src", user.photoURL)
-		$("#nameHistoria").html(user.nombre)
-	})
-	buscarHistorias(id, async function (his){
-		$("#totalHistorias").html("");
-		let cont = his.numChildren();
-		let j = 0 
-		let urls = []
-		his.forEach((item) => {
-			let progresBarHistory = document.createElement("span")	
-			progresBarHistory.id = "historia" + j
-			progresBarHistory.setAttribute("data-id", "historia" + j)
-			progresBarHistory.setAttribute("class", `col s${Math.floor(12 / cont)}`)
-			progresBarHistory.innerHTML= progresBar();
-			$("#totalHistorias").append(progresBarHistory);
-			urls.push(item.val().archivo)
-
-			j++; 
-		  
+var verHistorias ={
+	espera : 10, 
+	archivos : [],
+	ids: [], 
+	init : function (id){
+		verHistorias.archivos=[]
+		verHistorias.ids=[]
+		/*$("#historias").height(screen.height)*/
+		$("#photoHistoria").attr("data-id", id)	
+		$("#photoHistoria").attr("onclick", `verPerfilHistoria('${id}')`)
+		$("#app").height(screen.height)
+		blockScroll()
+		location.hash="historias";
+		buscarUsuario(id, function (user){
+			$("#photoHistoria").attr("src", user.photoURL)
+			$("#nameHistoria").html(user.nombre)
 		})
-		let w=0
-		for  (const tem of urls){	
-			let hHtml = `<img src = '${tem}' class='responsive-img' width='100%' >`
-			$("#historias .contenido").html(hHtml);
+		buscarHistorias(id, function (snap){
+			$("#totalHistorias").html("");
+			let cont = Object.keys(snap).length;
+			let total = (100 / cont ) -1		
+			for (item in snap)	{	
 
-			let x100 =0 
-			let x = setInterval(() => {
-					x100++		
-			  		if (x100 >= 100 ){
-			  			clearInterval(x)
-			  			x100=0
-			  		}			  			  	
-			  		$("#historia"+ w +" .progress .determinate").css("width" , x100+"%")
-			}, 100)		
-			await delay()	
-			w++		
-		}
-		location.hash = "home"		
-	})
+				if (snap[item].leido ){
+					if ( snap[item].leido.hasOwnProperty(userInline.uid) ){
+						snap[item].estado = "Leido"
+					}else{
+						snap[item].estado = "noLeido"
+					}
+				}else{
+					snap[item].estado = "noLeido"
+				}		
+
+				let progresBarHistory = document.createElement("span")	
+				progresBarHistory.id = "historia" + item
+				progresBarHistory.setAttribute("data-id", "historia" + item)
+				progresBarHistory.style= "display: inline-flex; margin-left : 1% "
+				if (snap[item].estado == "Leido" ){
+					progresBarHistory.innerHTML= progresBar(100);
+					verHistorias.conteo++
+					if (verHistorias.conteo== cont){
+						verHistorias.conteo = 0
+					}
+				}else{
+					progresBarHistory.innerHTML= progresBar();
+				}
+				
+				$("#totalHistorias").append(progresBarHistory);
+				$("#historia" + item).width(total+"%" )
+				verHistorias.archivos.push(snap[item].archivo)
+				verHistorias.ids.push(item)
+			}
+			verHistorias.mostrar(id)
+		})
+		
+
+	},
+	conteo: 0,
+	mostrar: async function (id){	
+		
+		do {
+		  verHistorias.drawHistorias(verHistorias.archivos[verHistorias.conteo], verHistorias.ids[verHistorias.conteo])
+		  await  verHistorias.intervalo.contar10 (verHistorias.ids[verHistorias.conteo]) ;
+		  leerHistoria(verHistorias.ids[verHistorias.conteo])
+		  verHistorias.conteo++
+		} while(verHistorias.conteo < verHistorias.archivos.length)
+		verHistorias.cerrar();
+	},
+	drawHistorias : function (valor, idH) {
+		let htmlH = `<img src='${valor}' class="responsive-img" width="100%" >`;
+		$("#addLikeHistoria").attr("data-id", idH )
+		$("#historias .contenido" ).html(htmlH)
 	
-	location.hash = "historias"
+ 
+	},
+	cerrar: function (){
+
+		delete verHistorias.archivos
+		delete verHistorias.ids
+		verHistorias.intervalo.x100=100
+		location.hash = "#home";
+		verHistorias.conteo=0
+		$("#photoHistoria").attr("src", "")
+		$("#nameHistoria").html("")
+		$("#historias .contenido" ).html("")	
+		$("#totalHistorias").html("");
+		unBlockScroll()
+
+	},
+	intervalo : {
+		x100: 0, 
+		contar10 : async function (historiaId){
+			verHistorias.intervalo.x100=0
+			let porcentaje = 0
+			do {
+				
+				 porcentaje = verHistorias.intervalo.x100 
+				 $("#historia" + historiaId + " .determinate").css("width", porcentaje+"%")
+				verHistorias.intervalo.x100++;
+				await delay(1);
+			}while(verHistorias.intervalo.x100 <= 100)
+		}
+	}
 }
 
- var delay = function (){
+ var delay = function (x){
  	let del  = new Promise(resolve => { 
- 		espera = setTimeout(resolve ,10000) 
+ 		espera = setTimeout(resolve ,x * 100) 
  	})
  	return del 
  } 
  $("#historias .contenido").click(function (e){
- 	console.log(espera)
- 	clearInterval(espera)
+ 	let medio = screen.width /  3
+ 	if (e.clientX >=  medio ){
+ 		verHistorias.intervalo.x100= 100	
+ 	}
+ 	if (e.clientX < medio){
+ 		if (verHistorias.conteo > 0){
+		 	verHistorias.conteo=verHistorias.conteo -1
+			verHistorias.intervalo.x100 = 1
+			verHistorias.drawHistorias(verHistorias.archivos[verHistorias.conteo])
+ 		}
+
+ 	}
+
  })
+
+ $("#historias .back").click((e)=> {
+ 	e.preventDefault()
+ 	verHistorias.cerrar()
+ 	location.hash = "home"
+ })
+
+ var blockScroll = function (){
+	 	var scrollPosition = [
+	  self.pageXOffset || document.documentElement.scrollLeft || document.body.scrollLeft,
+	  self.pageYOffset || document.documentElement.scrollTop  || document.body.scrollTop
+	];
+	var html = jQuery('html'); // it would make more sense to apply this to body, but IE7 won't have that
+	html.data('scroll-position', scrollPosition);
+	html.data('previous-overflow', html.css('overflow'));
+	html.css('overflow', 'hidden');
+	window.scrollTo(scrollPosition[0], scrollPosition[1]);
+}
+
+var unBlockScroll = function (){
+	var html = jQuery('html');
+	var scrollPosition = html.data('scroll-position');
+	html.css('overflow', html.data('previous-overflow'));
+	window.scrollTo(scrollPosition[0], scrollPosition[1])
+}
+var verPerfilHistoria = function (id){
+	verHistorias.cerrar();
+	unBlockScroll()
+	verPerfil(id)
+}
+$("#addLikeHistoria").click(function (e){
+	e.preventDefault();
+	let idHistoria = $(this).attr("data-id")
+	likeToHistoria(idHistoria)
+})
