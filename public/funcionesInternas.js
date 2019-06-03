@@ -475,7 +475,7 @@ $("#NewFile").change(function (e){
 							canvasPost.height = nImagen.height /3.6
 							contextP.drawImage(nImagen, 0,0, canvasPost.width, canvasPost.height) 
 							nPost.imagenes.push(URLtoBlob(canvasPost.toDataURL())) 
-							nPost.dataURLimg.push(canvasPost.toDataURL())
+							nPost.dataURLimg.push( canvasPost.toDataURL("image/png", 0.75) )
 							nPost.dataImg.push(canvasPost.height )
 							vistaPost(()=>{
 								delete canvasPost;
