@@ -475,7 +475,7 @@ $("#NewFile").change(function (e){
 							canvasPost.height = nImagen.height /3.6
 							contextP.drawImage(nImagen, 0,0, canvasPost.width, canvasPost.height) 
 							nPost.imagenes.push(URLtoBlob(canvasPost.toDataURL())) 
-							nPost.dataURLimg.push( canvasPost.toDataURL("image/png", 0.75) )
+							nPost.dataURLimg.push(canvasPost.toDataURL("image/png", 0.75))
 							nPost.dataImg.push(canvasPost.height )
 							vistaPost(()=>{
 								delete canvasPost;
@@ -1289,12 +1289,7 @@ var toSee = function (id){
 		seePie.setAttribute("class", "col s12")
 		seePie.innerHTML= "&nbsp"
 		see.appendChild(seePie);
-
-
-
-
 		$("#seePost .contenido").html(see)
-		
 		location.hash= "#seePost?"+post.id;	
 	})
 
@@ -1303,18 +1298,13 @@ var toSee = function (id){
 
 
 $(window).on("scroll", function() {
-
     var scrollHeight = $(document).height();
-
     var scrollPosition = $(window).height() + $(window).scrollTop();
-    
-     
     if ((scrollHeight - scrollPosition) / scrollHeight > 0.09) {
        limite+= 5;
 	     if (location.hash){
 	     	bajarPost();	
 	     }  
-       
     }
 });
 var verPerfil = function (userId){
@@ -1406,20 +1396,28 @@ var dibujarHistoriaNueva = function(his){
 	}	
 	let nHistoria = document.createElement("div")
 	nHistoria.setAttribute("class", "center-align history")
-	nHistoria.id = "historiasDe" + his.userId;
+	//nHistoria.id = "historiasDe" + his.userId;
 	nHistoria.setAttribute("data-id", his.userId )
 	nHistoria.setAttribute("onclick", `verHistorias.init('${his.userId}')`)
 	nHistoria.innerHTML= `
-							<div class='col s12 l6'>
+							<div class='col s12  hide-on-med-and-up '>
 								<img src="${his.imagen}"  class= "responsive-img circle ${his.estado} " width="100%">
 							${his.nombre}</div>
+							<div class='col m12 hide-on-small-only' >
+								<div class="col m5"> <img src="${his.imagen}"  class= "responsive-img circle ${his.estado} " width="100%"> </div>	
+								
+								<div class='col m7 left-align' >${his.nombre}</div>
+							</div>
+							
 						`
-	if ( !$("#historiasDe" + his.userId ).length > 0 ){
+
+	//if ( !$("#historiasDe" + his.userId ).length > 0 ){
 		$(".historias").append(nHistoria )	
-	}else{
+	//}else{
 		$("#historiasDe" + his.userId ).replaceWith( nHistoria)
-	}					
+	//}					
 	
+	console.log($("div[data-id='"+his.userId+"']").html() )
 	delete nHistoria;
 }
 
@@ -1427,9 +1425,11 @@ var verHistorias ={
 	espera : 10, 
 	archivos : [],
 	ids: [], 
+
 	init : function (id){
 		verHistorias.archivos=[]
 		verHistorias.ids=[]
+
 		/*$("#historias").height(screen.height)*/
 		$("#photoHistoria").attr("data-id", id)	
 		$("#photoHistoria").attr("onclick", `verPerfilHistoria('${id}')`)
@@ -1440,8 +1440,9 @@ var verHistorias ={
 			$("#photoHistoria").attr("src", user.photoURL)
 			$("#nameHistoria").html(user.nombre)
 		})
-		buscarHistorias(id, function (snap){
+		buscarHistorias(id, async function (snap){
 			$("#totalHistorias").html("");
+			
 			let cont = Object.keys(snap).length;
 			let total = (100 / cont ) -1		
 			for (item in snap)	{	
@@ -1455,6 +1456,14 @@ var verHistorias ={
 				}else{
 					snap[item].estado = "noLeido"
 				}		
+				
+				await base.ref("LikesHistorias/" + snap[item].id +"/" + userInline.uid).once("value", function (like){						
+					if (like && like.val() ){
+							verHistorias.meGusta = true
+						}else{
+							verHistorias.meGusta = false
+						}			
+				})
 
 				let progresBarHistory = document.createElement("span")	
 				progresBarHistory.id = "historia" + item
@@ -1495,6 +1504,17 @@ var verHistorias ={
 		let htmlH = `<img src='${valor}' class="responsive-img" width="100%" >`;
 		$("#addLikeHistoria").attr("data-id", idH )
 		$("#historias .contenido" ).html(htmlH)
+		console.log(verHistorias.meGusta)
+		if (verHistorias.meGusta){
+			$("#addLikeHistoria").addClass("pink")
+			$("#addLikeHistoria").removeClass("transparent")
+			
+		}else{
+			$("#addLikeHistoria").addClass("transparent")
+			$("#addLikeHistoria").removeClass("pink")
+
+		}
+		
 	
  
 	},
@@ -1502,6 +1522,7 @@ var verHistorias ={
 
 		delete verHistorias.archivos
 		delete verHistorias.ids
+		delete verHistorias.meGusta
 		verHistorias.intervalo.x100=100
 		location.hash = "#home";
 		verHistorias.conteo=0
@@ -1518,7 +1539,6 @@ var verHistorias ={
 			verHistorias.intervalo.x100=0
 			let porcentaje = 0
 			do {
-				
 				 porcentaje = verHistorias.intervalo.x100 
 				 $("#historia" + historiaId + " .determinate").css("width", porcentaje+"%")
 				verHistorias.intervalo.x100++;
@@ -1582,5 +1602,15 @@ var verPerfilHistoria = function (id){
 $("#addLikeHistoria").click(function (e){
 	e.preventDefault();
 	let idHistoria = $(this).attr("data-id")
+	if ($(this).hasClass("pink")){
+		$(this).removeClass("pink")
+		$(this).addClass("transparent")
+	}else{
+		$(this).addClass("pink")
+		$(this).removeClass("transparent")
+
+	}
+
+	
 	likeToHistoria(idHistoria)
 })

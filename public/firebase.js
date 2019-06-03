@@ -705,7 +705,7 @@ var buscarHistorias = function (i,callback){
 		his.forEach(function(item){
 				if (item.val().fecha < nows){
 					delete histo[item.key] 	
-				}				
+				}			
 		})
 		callback(histo)
 	})
