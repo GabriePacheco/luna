@@ -940,6 +940,14 @@ var tiempo = function (ts){
 		return  date.toLocaleDateString('es', options); // 10/29/2013
 
 }
+var hace = function (ts){
+	let hoy = new Date();
+	let antes = new Date(ts)
+	let haces = new Date (hoy-antes)
+
+
+	return "Hace " +  haces.getUTCHours ()+ "h "+ haces.getUTCMinutes()+"m "+ haces.getUTCSeconds() + "s"
+}
 var editar = async function (postId){
 	location.hash = "#editPost"
 	await consultarPublicacion(postId, edPostDraw)
@@ -1396,28 +1404,23 @@ var dibujarHistoriaNueva = function(his){
 	}	
 	let nHistoria = document.createElement("div")
 	nHistoria.setAttribute("class", "center-align history")
-	//nHistoria.id = "historiasDe" + his.userId;
+	
 	nHistoria.setAttribute("data-id", his.userId )
 	nHistoria.setAttribute("onclick", `verHistorias.init('${his.userId}')`)
-	nHistoria.innerHTML= `
-							<div class='col s12  hide-on-med-and-up '>
+	nHistoria.innerHTML= `<div class='col s12  hide-on-med-and-up '>
 								<img src="${his.imagen}"  class= "responsive-img circle ${his.estado} " width="100%">
 							${his.nombre}</div>
 							<div class='col m12 hide-on-small-only' >
 								<div class="col m5"> <img src="${his.imagen}"  class= "responsive-img circle ${his.estado} " width="100%"> </div>	
-								
-								<div class='col m7 left-align' >${his.nombre}</div>
-							</div>
-							
+								<div class='col m7 left-align' >${his.nombre}<br><small class='text-grey'><small>${hace(his.fecha)}</small></small> </div>
+							</div>							
 						`
 
-	//if ( !$("#historiasDe" + his.userId ).length > 0 ){
+	if ( !$("div[data-id='"+his.userId+"']").length > 0 ){
 		$(".historias").append(nHistoria )	
-	//}else{
+	}else{
 		$("#historiasDe" + his.userId ).replaceWith( nHistoria)
-	//}					
-	
-	console.log($("div[data-id='"+his.userId+"']").html() )
+	}						
 	delete nHistoria;
 }
 
@@ -1513,10 +1516,7 @@ var verHistorias ={
 			$("#addLikeHistoria").addClass("transparent")
 			$("#addLikeHistoria").removeClass("pink")
 
-		}
-		
-	
- 
+		}	
 	},
 	cerrar: function (){
 
@@ -1614,3 +1614,4 @@ $("#addLikeHistoria").click(function (e){
 	
 	likeToHistoria(idHistoria)
 })
+
