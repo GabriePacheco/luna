@@ -679,7 +679,7 @@ var dibujarPublicacion = function (publicacion, actions){
 	autorPublicacion.setAttribute("class", "col s8 ");
 	autorPublicacion.setAttribute("onclick", `verPerfil('${publicacion.authorId}')`);
 	autorPublicacion.innerHTML = '<div class="col s3"><img src="'+publicacion.autorFoto+'" class="responsive-img circle"></div>'
-	autorPublicacion.innerHTML += '<div class="col s9">'+publicacion.autorName+'<br><span><small>'+tiempo(publicacion.fecha)+'</small><span> </div> ';
+	autorPublicacion.innerHTML += '<div class="col s9">'+publicacion.autorName+'<span class="fecha-publicacion text-grey"><small>'+tiempo(publicacion.fecha)+'</small><span> </div> ';
 	formato.appendChild(autorPublicacion)
 
 	let menuPublicacion = document.createElement("div");
@@ -944,9 +944,31 @@ var hace = function (ts){
 	let hoy = new Date();
 	let antes = new Date(ts)
 	let haces = new Date (hoy-antes)
+	let salida = 'Hace ';
+	let horas  = haces.getUTCHours();
+	let minutos = haces.getUTCMinutes();
+	if (horas > 0 ){
+		if (horas > 1 ){
+			salida += horas + " hs"
 
+		}else{
+			salida += horas + " h"
+		}
+	}
+	if (minutos > 0 && horas <= 0 ){
+		if (minutos > 10){
+			salida +=  minutos + " m"
 
-	return "Hace " +  haces.getUTCHours ()+ "h "+ haces.getUTCMinutes()+"m "+ haces.getUTCSeconds() + "s"
+		}else{
+			salida += "0" + minutos + " m"
+		}
+		
+	}
+	if (minutos == 0 && horas == 0 ){
+		salida = "Hace un momento "
+	}
+
+	return salida;
 }
 var editar = async function (postId){
 	location.hash = "#editPost"
@@ -1284,13 +1306,14 @@ var toSee = function (id){
 		if (post.imagenes){
 			for (let img = 0; img < post.imagenes.length; img ++){
 				let imP = document.createElement("img");			
-				imP.setAttribute("class", "responsive-img");								
+				imP.setAttribute("class", "responsive-img materialboxed");								
 				imP.setAttribute("src", post.imagenes[img])	
 				imP.setAttribute("width", "100%")	
 				see.appendChild( imP );
 				imP = "";
 				delete imP;
-
+				  var elems = document.querySelectorAll('.materialboxed');
+    			 var instances = M.Materialbox.init(elems);
 			}
 		}
 		let seePie = document.createElement("div")
@@ -1412,7 +1435,7 @@ var dibujarHistoriaNueva = function(his){
 							${his.nombre}</div>
 							<div class='col m12 hide-on-small-only' >
 								<div class="col m5"> <img src="${his.imagen}"  class= "responsive-img circle ${his.estado} " width="100%"> </div>	
-								<div class='col m7 left-align' >${his.nombre}<br><small class='text-grey'><small>${hace(his.fecha)}</small></small> </div>
+								<div class='col m7 left-align' >${his.nombre}<small class='text-grey'>${hace(his.fecha)}</small></div>
 							</div>							
 						`
 
@@ -1507,7 +1530,6 @@ var verHistorias ={
 		let htmlH = `<img src='${valor}' class="responsive-img" width="100%" >`;
 		$("#addLikeHistoria").attr("data-id", idH )
 		$("#historias .contenido" ).html(htmlH)
-		console.log(verHistorias.meGusta)
 		if (verHistorias.meGusta){
 			$("#addLikeHistoria").addClass("pink")
 			$("#addLikeHistoria").removeClass("transparent")

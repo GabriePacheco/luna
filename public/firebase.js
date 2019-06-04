@@ -499,7 +499,6 @@ base.ref().child("posts/").on("child_changed", function (pub){
 		.once("value", function (usuario){
 			pubs.autorName = usuario.val().nombre
 			pubs.autorFoto = usuario.val().photoURL
-			console.log("chan")
 			dibujarPublicacion(pubs, "change");
 		})
 	}
@@ -685,17 +684,12 @@ var historiasNuevas = function(){
 			base.ref("users/"+ hisautor.userId).once("value", function (snapUser){				
 				hisautor.imagen = snapUser.val().photoURL
 				hisautor.nombre = snapUser.val().nombre .split (" ")[0];
-				dibujarHistoriaNueva(hisautor);
-
+					dibujarHistoriaNueva(hisautor);
 			})
 
-		})
-
-		
+		})		
 	})
 }
-
-
 historiasNuevas()
 var buscarHistorias = function (i,callback){
 	base.ref("historias/").orderByChild("userId").equalTo(i).limitToLast(20).once("value", function(his){
