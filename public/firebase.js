@@ -200,19 +200,7 @@ var cargarPerfil = function (){
 	$("#imagenUserPost").attr("src",userInline.foto)
 	$("#nombreUserPost").html(userInline.nombre)
 
-	/*var userPresensia = document.createElement("div");
-	userPresensia.setAttribute("class", "row valign-wrapper")
-	let  presensiaFoto = document.createElement("div")
-	presensiaFoto.setAttribute("class", "col s2");
-	presensiaFoto.innerHTML= `<img class="responsive-img circle" src="${userInline.foto}">` ;
-	userPresensia.appendChild(presensiaFoto);
-	let presensiaNombre = document.createElement("div")
-	presensiaNombre.setAttribute("class", "col s10");
-	presensiaNombre.innerHTML= userInline.nombre + `<br><span class="optional"></span>`;
-	userPresensia.appendChild(presensiaNombre);
-	userPresensia.id ="UserInlinePresensiaPostNuevo" ;
-	$("#addPost .contenido").prepend(userPresensia);
-	$("#addPost .optional").html("Publico");*/
+
 
 	userPresensia = `<div class='row valign-wrapper'>`
 	userPresensia+= `<div class='col s2'>`
@@ -691,8 +679,9 @@ var historiasNuevas = function(){
 	let fecha = new Date() 
 	let nows = Math.floor(fecha.setDate(fecha.getUTCDate()-2 )) 	
 	let historias = base.ref("historias/").orderByChild("fecha").startAt(nows).on("value", function (his){
+		
 		his.forEach((laHistoria)=>{
-			let hisautor = laHistoria.val()
+			let hisautor = laHistoria.val()				
 			base.ref("users/"+ hisautor.userId).once("value", function (snapUser){				
 				hisautor.imagen = snapUser.val().photoURL
 				hisautor.nombre = snapUser.val().nombre .split (" ")[0];
@@ -703,6 +692,14 @@ var historiasNuevas = function(){
 
 		})		
 	})
+	 base.ref("historias/").orderByChild("fecha").startAt(nows).on("child_removed", function (snapshot){
+	 	
+	 	buscarHistorias(snapshot.val().userId, function (quedan){
+				if (quedan == null){
+					$("div[data-id='"+snapshot.val().userId+"']").remove()
+				}
+	 	} )
+	 })
 	
 }
 

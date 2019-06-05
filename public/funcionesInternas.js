@@ -1444,7 +1444,7 @@ var dibujarHistoriaNueva = function(his){
 	if ( !$("div[data-id='"+his.userId+"']").length > 0 ){
 		$(".historias").append(nHistoria )	
 	}else{
-		$("#historiasDe" + his.userId ).replaceWith( nHistoria)
+		$("div[data-id='"+his.userId+"']").replaceWith( nHistoria)
 	}						
 	delete nHistoria;
 }
@@ -1516,7 +1516,9 @@ var verHistorias ={
 				location.hash="historias";
 				verHistorias.mostrar(id)
 			}else{
-				$("#nFoto").click()
+				if(userInline.uid == id){
+					$("#nFoto").click()
+				}
 			}
 		})
 		
