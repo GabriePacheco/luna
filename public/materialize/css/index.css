@@ -87,13 +87,16 @@
 			margin-bottom: 1vh !important;
 			margin-top: -2vh !important;
 			/*max-height: 12vh !important;*/
-			padding-bottom: 1.5vh;
+			/*padding-bottom: 1.5vh;*/
 			display: flex;
 
 		}
 		.history{
 			width:21% !important;		
 			display: inline;
+		}
+		.history .small{
+			overflow-x: hidden;
 		}
 	}
 	@media  (min-width: 601px){

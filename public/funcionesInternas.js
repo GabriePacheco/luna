@@ -1365,11 +1365,10 @@ var verPerfil = function (userId){
 }
 $("#nFoto").click(function (e){
 	e.preventDefault()	
-	let camara = document.createElement("input") 
+	let camara = document.getElementById("paraFotos") 
 	camara.setAttribute("type", "file")
 	camara.setAttribute("accept", "image/*");
-	camara.addEventListener("change", tomarFoto)
-	camara.id = "Camara"
+	camara.addEventListener("change", tomarFoto)	
 	camara.click();
 })
 
@@ -1435,10 +1434,10 @@ var dibujarHistoriaNueva = function(his){
 	nHistoria.setAttribute("onclick", `verHistorias.init('${his.userId}')`)
 	nHistoria.innerHTML= `<div class='col s12  hide-on-med-and-up '>
 								<img src="${his.imagen}"  class= "responsive-img circle ${his.estado} " width="100%">
-							${his.nombre}</div>
+							<small >${his.nombre}</small></div>
 							<div class='col m12 hide-on-small-only' >
 								<div class="col m4"> <img src="${his.imagen}"  class= "responsive-img circle ${his.estado} " width="100%"> </div>	
-								<div class='col m8 left-align' >${his.nombre}<small class='text-grey'>${hace(his.fecha)}</small></div>
+								<div class='col m8 left-align' >${his.nombre}<small class='text-grey flow-text'>${hace(his.fecha)}</small></div>
 							</div>							
 						`
 
@@ -1460,19 +1459,18 @@ var verHistorias ={
 		verHistorias.ids=[]
 		verHistorias.uid =id
 		verHistorias.fin= false
-		/*$("#historias").height(screen.height)*/
+		
 		$("#photoHistoria").attr("data-id", id)	
 		$("#photoHistoria").attr("onclick", `verPerfilHistoria('${id}')`)
 		$("#app").height(screen.height)
-		blockScroll()
-		location.hash="historias";
+		
 		buscarUsuario(id, function (user){
 			$("#photoHistoria").attr("src", user.photoURL)
 			$("#nameHistoria").html(user.nombre)
 		})
 		buscarHistorias(id, async function (snap){
 			$("#totalHistorias").html("");
-			if	(snap && snap.val() ){ 		
+			if	(snap){ 		
 				let cont = Object.keys(snap).length;
 				let total = (100 / cont ) -1		
 				for (item in snap)	{	
@@ -1514,9 +1512,11 @@ var verHistorias ={
 					verHistorias.archivos.push(snap[item].archivo)
 					verHistorias.ids.push(item)
 				}
+				blockScroll()
+				location.hash="historias";
 				verHistorias.mostrar(id)
 			}else{
-				$("#addPhoto").click()
+				$("#nFoto").click()
 			}
 		})
 		

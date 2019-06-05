@@ -229,7 +229,7 @@ var cargarPerfil = function (){
 	$("#editPost .optional").html("Público");
 	$(".historias").append(`<div class='center-align history' data-id="myHistory" onclick = 'verHistorias.init("${userInline.uid}")'><div class='col s12  hide-on-med-and-up '>
 								<img src="${userInline.foto}"  class= "responsive-img circle " width="100%">
-							Tu historia </div>
+							<small>Tu historia</small> </div>
 							<div class='col m12 hide-on-small-only' >
 								<div class="col m4"> <img src="${userInline.foto}"  class= "responsive-img circle " width="100%"> </div>	
 								<div class='col m8 left-align' >Tu historia <small class='text-grey'> </small></div>
