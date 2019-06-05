@@ -224,10 +224,17 @@ var cargarPerfil = function (){
 	userPresensia+= `</div>`;
 	userPresensia+= `</div>`;
 	$("#addPost .contenido").prepend(userPresensia);
-	$("#addPost .optional").html("Publico");
-	$("#editPost .contenido").prepend(userPresensia);
-	$("#editPost .optional").html("Publico");
-
+	$("#addPost .optional").html("Público");
+	$("#editPost .contenido ").prepend(userPresensia);
+	$("#editPost .optional").html("Público");
+	$(".historias").append(`<div class='center-align history' data-id="myHistory" onclick = 'verHistorias.init("${userInline.uid}")'><div class='col s12  hide-on-med-and-up '>
+								<img src="${userInline.foto}"  class= "responsive-img circle " width="100%">
+							Tu historia </div>
+							<div class='col m12 hide-on-small-only' >
+								<div class="col m4"> <img src="${userInline.foto}"  class= "responsive-img circle " width="100%"> </div>	
+								<div class='col m8 left-align' >Tu historia <small class='text-grey'> </small></div>
+							</div>							
+						</div>`)
 
 	 base.ref("users/" + userInline.uid ).on("value", function (datos){
 	 	userInline.rol= datos.val().rol
@@ -653,7 +660,7 @@ var buscarUsuario = function (id, callback){
 	})
 
 }
-var addHistoria =  async function (file){
+var addHistoria =  async function (file, callback){
 
 	let historia = base.ref("/historias/")
 	let nId = historia.push().key
@@ -665,7 +672,11 @@ var addHistoria =  async function (file){
 		userId: userInline.uid,
 		archivo: url,
 		fecha: mt()
+
 		
+	})
+	.then((e)=>{
+		callback(e)
 	})
 	albumes.set({
 		id: nId,
@@ -673,6 +684,7 @@ var addHistoria =  async function (file){
 		archivo: url,
 		fecha: mt()
 	})
+
 }
 
 var historiasNuevas = function(){
@@ -684,12 +696,16 @@ var historiasNuevas = function(){
 			base.ref("users/"+ hisautor.userId).once("value", function (snapUser){				
 				hisautor.imagen = snapUser.val().photoURL
 				hisautor.nombre = snapUser.val().nombre .split (" ")[0];
+				if (userInline.uid != snapUser.val().uid){
 					dibujarHistoriaNueva(hisautor);
+				}
 			})
 
 		})		
 	})
+	
 }
+
 historiasNuevas()
 var buscarHistorias = function (i,callback){
 	base.ref("historias/").orderByChild("userId").equalTo(i).limitToLast(20).once("value", function(his){
@@ -705,11 +721,16 @@ var buscarHistorias = function (i,callback){
 	})
 }
 var leerHistoria = function (id){
-	let historia =  base.ref("historias/").child(id + "/leido/" +userInline.uid )
-	historia.set({
-		uid : userInline.uid,
-		fecha: mt()
+	let historia =  base.ref("historias/"+id).once("value", function (snap){
+		if(snap && snap.val()){
+			base.ref("historias/" + id +"/").child("leido/" + userInline.uid).set({
+				uid : userInline.uid,
+				fecha: mt()
+			})
+		}
 	})
+		
+	
 }
 
 var likeToHistoria = function (idH){
@@ -726,4 +747,9 @@ var likeToHistoria = function (idH){
 		}
 	})
 
+}
+var removerHistoria = function (idh, callback){
+
+	base.ref().child("historias/"  + idh).remove()
+	if (callback) callback()
 }

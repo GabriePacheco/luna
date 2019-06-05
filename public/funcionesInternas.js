@@ -1409,9 +1409,12 @@ var tomarFoto= function (cam, i){
 }
 
 $("#savePhoto").click(function (){
-
-	let photoCanvas = URLtoBlob(canvasPhoto.toDataURL())
-	addHistoria(photoCanvas)
+	let photoCanvas = URLtoBlob(canvasPhoto.toDataURL("image/png", 0.75))
+	let resp = $("div[data-id='myHistory']").html()
+	$("div[data-id='myHistory']").html(preloader)
+	addHistoria(photoCanvas, function (e){
+		$("div[data-id='myHistory']").html(resp)
+	})
 	
 })
 
@@ -1434,8 +1437,8 @@ var dibujarHistoriaNueva = function(his){
 								<img src="${his.imagen}"  class= "responsive-img circle ${his.estado} " width="100%">
 							${his.nombre}</div>
 							<div class='col m12 hide-on-small-only' >
-								<div class="col m5"> <img src="${his.imagen}"  class= "responsive-img circle ${his.estado} " width="100%"> </div>	
-								<div class='col m7 left-align' >${his.nombre}<small class='text-grey'>${hace(his.fecha)}</small></div>
+								<div class="col m4"> <img src="${his.imagen}"  class= "responsive-img circle ${his.estado} " width="100%"> </div>	
+								<div class='col m8 left-align' >${his.nombre}<small class='text-grey'>${hace(his.fecha)}</small></div>
 							</div>							
 						`
 
@@ -1455,7 +1458,8 @@ var verHistorias ={
 	init : function (id){
 		verHistorias.archivos=[]
 		verHistorias.ids=[]
-
+		verHistorias.uid =id
+		verHistorias.fin= false
 		/*$("#historias").height(screen.height)*/
 		$("#photoHistoria").attr("data-id", id)	
 		$("#photoHistoria").attr("onclick", `verPerfilHistoria('${id}')`)
@@ -1468,62 +1472,64 @@ var verHistorias ={
 		})
 		buscarHistorias(id, async function (snap){
 			$("#totalHistorias").html("");
-			
-			let cont = Object.keys(snap).length;
-			let total = (100 / cont ) -1		
-			for (item in snap)	{	
+			if	(snap && snap.val() ){ 		
+				let cont = Object.keys(snap).length;
+				let total = (100 / cont ) -1		
+				for (item in snap)	{	
 
-				if (snap[item].leido ){
-					if ( snap[item].leido.hasOwnProperty(userInline.uid) ){
-						snap[item].estado = "Leido"
+					if (snap[item].leido ){
+						if ( snap[item].leido.hasOwnProperty(userInline.uid) ){
+							snap[item].estado = "Leido"
+						}else{
+							snap[item].estado = "noLeido"
+						}
 					}else{
 						snap[item].estado = "noLeido"
-					}
-				}else{
-					snap[item].estado = "noLeido"
-				}		
-				
-				await base.ref("LikesHistorias/" + snap[item].id +"/" + userInline.uid).once("value", function (like){						
-					if (like && like.val() ){
-							verHistorias.meGusta = true
-						}else{
-							verHistorias.meGusta = false
-						}			
-				})
+					}		
+					
+					await base.ref("LikesHistorias/" + snap[item].id +"/" + userInline.uid).once("value", function (like){						
+						if (like && like.val() ){
+								verHistorias.meGusta = true
+							}else{
+								verHistorias.meGusta = false
+							}			
+					})
 
-				let progresBarHistory = document.createElement("span")	
-				progresBarHistory.id = "historia" + item
-				progresBarHistory.setAttribute("data-id", "historia" + item)
-				progresBarHistory.style= "display: inline-flex; margin-left : 1% "
-				if (snap[item].estado == "Leido" ){
-					progresBarHistory.innerHTML= progresBar(100);
-					verHistorias.conteo++
-					if (verHistorias.conteo== cont){
-						verHistorias.conteo = 0
+					let progresBarHistory = document.createElement("span")	
+					progresBarHistory.id = "historia" + item
+					progresBarHistory.setAttribute("data-id", "historia" + item)
+					progresBarHistory.style= "display: inline-flex; margin-left : 1% "
+					if (snap[item].estado == "Leido" ){
+						progresBarHistory.innerHTML= progresBar(100);
+						verHistorias.conteo++
+						if (verHistorias.conteo== cont){
+							verHistorias.conteo = 0
+						}
+					}else{
+						progresBarHistory.innerHTML= progresBar();
 					}
-				}else{
-					progresBarHistory.innerHTML= progresBar();
+					
+					$("#totalHistorias").append(progresBarHistory);
+					$("#historia" + item).width(total+"%" )
+					verHistorias.archivos.push(snap[item].archivo)
+					verHistorias.ids.push(item)
 				}
-				
-				$("#totalHistorias").append(progresBarHistory);
-				$("#historia" + item).width(total+"%" )
-				verHistorias.archivos.push(snap[item].archivo)
-				verHistorias.ids.push(item)
+				verHistorias.mostrar(id)
+			}else{
+				$("#addPhoto").click()
 			}
-			verHistorias.mostrar(id)
 		})
 		
 
 	},
 	conteo: 0,
-	mostrar: async function (id){	
-		
-		do {
+	mostrar: async function (id){		
+		while(verHistorias.conteo < verHistorias.archivos.length && verHistorias.fin != true) {
 		  verHistorias.drawHistorias(verHistorias.archivos[verHistorias.conteo], verHistorias.ids[verHistorias.conteo])
 		  await  verHistorias.intervalo.contar10 (verHistorias.ids[verHistorias.conteo]) ;
 		  leerHistoria(verHistorias.ids[verHistorias.conteo])
 		  verHistorias.conteo++
-		} while(verHistorias.conteo < verHistorias.archivos.length)
+		} 
 		verHistorias.cerrar();
 	},
 	drawHistorias : function (valor, idH) {
@@ -1538,13 +1544,29 @@ var verHistorias ={
 			$("#addLikeHistoria").addClass("transparent")
 			$("#addLikeHistoria").removeClass("pink")
 
-		}	
+		}
+		if (verHistorias.uid == userInline.uid){
+			$("#menuHistoria").html(`
+				<a  class='dropdown-trigger'  data-target='dropdown1'><i class='material-icons white-text'>
+				more_vert</i></a>
+						<ul id='dropdown1' class='dropdown-content'>
+						 	<li><a onclick = "borrarHistoria('${idH}')">Borrar</a></li>
+						</ul>
+			`)
+
+		}else{
+			$("#menuHistoria").html("")
+		}
+	 	var elems = document.querySelectorAll('.dropdown-trigger');
+    	var instances = M.Dropdown.init(elems)	
+
 	},
 	cerrar: function (){
-
+		delete verHistorias.uid
 		delete verHistorias.archivos
 		delete verHistorias.ids
 		delete verHistorias.meGusta
+		 verHistorias.fin=true
 		verHistorias.intervalo.x100=100
 		location.hash = "#home";
 		verHistorias.conteo=0
@@ -1594,6 +1616,7 @@ var verHistorias ={
 
  $("#historias .back").click((e)=> {
  	e.preventDefault()
+ 	verHistorias.fin=true
  	verHistorias.cerrar()
  	location.hash = "home"
  })
@@ -1632,8 +1655,15 @@ $("#addLikeHistoria").click(function (e){
 		$(this).removeClass("transparent")
 
 	}
-
-	
 	likeToHistoria(idHistoria)
 })
 
+var borrarHistoria = function (id){
+	if (verHistorias.archivos [verHistorias.conteo +1] ){
+		verHistorias.intervalo.x100= 100	
+	}else{
+		verHistorias.cerrar()
+	}
+	removerHistoria(id)
+	
+}
