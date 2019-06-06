@@ -1472,6 +1472,7 @@ var verHistorias ={
 				for (item in snap)	{	
 
 					if (snap[item].leido ){
+						verHistorias.vistos = Object.keys(snap[item].leido).length
 						if ( snap[item].leido.hasOwnProperty(userInline.uid) ){
 							snap[item].estado = "Leido"
 						}else{
@@ -1479,15 +1480,10 @@ var verHistorias ={
 						}
 					}else{
 						snap[item].estado = "noLeido"
+						verHistorias.vistos = 0
 					}		
 					
-					await base.ref("LikesHistorias/" + snap[item].id +"/" + userInline.uid).once("value", function (like){						
-						if (like && like.val() ){
-								verHistorias.meGusta = true
-							}else{
-								verHistorias.meGusta = false
-							}			
-					})
+					
 
 					let progresBarHistory = document.createElement("span")	
 					progresBarHistory.id = "historia" + item
@@ -1507,6 +1503,7 @@ var verHistorias ={
 					$("#historia" + item).width(total+"%" )
 					verHistorias.archivos.push(snap[item].archivo)
 					verHistorias.ids.push(item)
+					
 				}
 				blockScroll()
 				location.hash="historias";
@@ -1534,15 +1531,19 @@ var verHistorias ={
 		let htmlH = `<img src='${valor}' class="responsive-img" width="100%" >`;
 		$("#addLikeHistoria").attr("data-id", idH )
 		$("#historias .contenido" ).html(htmlH)
-		if (verHistorias.meGusta){
-			$("#addLikeHistoria").addClass("pink")
-			$("#addLikeHistoria").removeClass("transparent")
-			
-		}else{
-			$("#addLikeHistoria").addClass("transparent")
-			$("#addLikeHistoria").removeClass("pink")
+		let hlikes = base.ref("LikesHistorias/" + idH +"/")
+		hlikes.child(userInline.uid).once("value")
+		.then(function (meGusta){
+				if (meGusta && meGusta.val()){
+					$("#addLikeHistoria").addClass("pink")
+					$("#addLikeHistoria").removeClass("transparent")
+					
+				}else{
+					$("#addLikeHistoria").addClass("transparent")
+					$("#addLikeHistoria").removeClass("pink")
+				}
+		})
 
-		}
 		if (verHistorias.uid == userInline.uid){
 			$("#menuHistoria").html(`
 				<a  class='dropdown-trigger'  data-target='dropdown1'><i class='material-icons white-text'>
@@ -1551,9 +1552,34 @@ var verHistorias ={
 						 	<li><a onclick = "borrarHistoria('${idH}')">Borrar</a></li>
 						</ul>
 			`)
+			hlikes.once("value")
+			.then(function (w){
+				if (w.numChildren()> 0){
+					if (w.numChildren() == 1){
+						$("#datosHistoria .likes").html( 1 + " me gusta" )
+					}else{
+						$("#datosHistoria .likes").html( w.numChildren()+ " me gusta" )
+					}
+				}else{
+					$("#datosHistoria .likes").html("")
+				}
+			})
+			if (verHistorias.vistos > 0 ){
+				if (verHistorias.vistos == 1){
+					$("#datosHistoria .vistos").html(`${verHistorias.vistos} vió `)	
+				}else{
+					$("#datosHistoria .vistos").html(`${verHistorias.vistos} vieron `)	
+				}
+				
+			}else{
+				$("#datosHistoria .vistos").html("")	
+			}
+
+			
 
 		}else{
 			$("#menuHistoria").html("")
+			$("#datosHistoria").html("")
 		}
 	 	var elems = document.querySelectorAll('.dropdown-trigger');
     	var instances = M.Dropdown.init(elems)	
@@ -1564,6 +1590,7 @@ var verHistorias ={
 		delete verHistorias.archivos
 		delete verHistorias.ids
 		delete verHistorias.meGusta
+		delete verHistorias.vistos
 		 verHistorias.fin=true
 		verHistorias.intervalo.x100=100
 		location.hash = "#home";

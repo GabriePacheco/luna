@@ -33,7 +33,6 @@
 				    		}else{
 				    			cargarPerfil();
 				    			location.hash= "#home"
-				    			
 
 				    		}
 				    	}
@@ -216,6 +215,7 @@ var cargarPerfil = function (){
 	$("#editPost .contenido ").prepend(userPresensia);
 	$("#editPost .optional").html("Público");
 	base.ref().child("config/").on("value", function (conf){
+		$(".historias").html("")
 		if (conf.val().historias === true ){
 			$(".historias").append(`<div class='center-align history' data-id="myHistory" onclick = 'verHistorias.init("${userInline.uid}")'><div class='col s12  hide-on-med-and-up '>
 								<img src="${userInline.foto}"  class= "responsive-img circle " width="100%">
@@ -714,19 +714,20 @@ var historiasNuevas = function(){
 }
 
 
-var buscarHistorias = function (i,callback){
-	base.ref("historias/").orderByChild("userId").equalTo(i).limitToLast(20).once("value", function(his){
+var buscarHistorias =  async function (i,callback){
+	base.ref("historias/").orderByChild("userId").equalTo(i).limitToLast(20).once("value", async function(his){
 		let histo = his.val();
 		let fecha = new Date() 
 		let nows = Math.floor(fecha.setDate(fecha.getUTCDate()-2 ))
-		his.forEach(function(item){
-				if (item.val().fecha < nows){
-					delete histo[item.key] 	
-				}			
-		})
+		await his.forEach(async function(item){
+			if (item.val().fecha < nows){
+				delete histo[item.key] 	
+			}		
+		})	
 		callback(histo)
 	})
 }
+
 var leerHistoria = function (id){
 	let historia =  base.ref("historias/"+id).once("value", function (snap){
 		if(snap && snap.val()){
