@@ -215,7 +215,9 @@ var cargarPerfil = function (){
 	$("#addPost .optional").html("Público");
 	$("#editPost .contenido ").prepend(userPresensia);
 	$("#editPost .optional").html("Público");
-	$(".historias").append(`<div class='center-align history' data-id="myHistory" onclick = 'verHistorias.init("${userInline.uid}")'><div class='col s12  hide-on-med-and-up '>
+	base.ref().child("config/").on("value", function (conf){
+		if (conf.val().historias === true ){
+			$(".historias").append(`<div class='center-align history' data-id="myHistory" onclick = 'verHistorias.init("${userInline.uid}")'><div class='col s12  hide-on-med-and-up '>
 								<img src="${userInline.foto}"  class= "responsive-img circle " width="100%">
 							<small>Tu historia</small> </div>
 							<div class='col m12 hide-on-small-only' >
@@ -223,6 +225,14 @@ var cargarPerfil = function (){
 								<div class='col m8 left-align' >Tu historia <small class='text-grey'> </small></div>
 							</div>							
 						</div>`)
+
+			historiasNuevas()
+		}else{
+			$(".historias").html("")
+		}
+
+	})
+	
 
 	 base.ref("users/" + userInline.uid ).on("value", function (datos){
 	 	userInline.rol= datos.val().rol
@@ -703,7 +713,7 @@ var historiasNuevas = function(){
 	
 }
 
-historiasNuevas()
+
 var buscarHistorias = function (i,callback){
 	base.ref("historias/").orderByChild("userId").equalTo(i).limitToLast(20).once("value", function(his){
 		let histo = his.val();

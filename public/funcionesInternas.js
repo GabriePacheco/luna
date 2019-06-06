@@ -811,16 +811,16 @@ var dibujarPublicacion = function (publicacion, actions){
 	corazonP.setAttribute("data-id",publicacion.id)
 	corazonP.setAttribute("onclick","like('"+publicacion.id+"')")
 	corazonP.innerHTML = "<i class='material-icons'> favorite_border </i>"
-	corazonP.innerHTML+= "<span class='contador'></spna>";
+	corazonP.innerHTML+= "<span class='contador'></span>";
 	corazonP.style = "padding-top: 0.7em"
 	
-	let comentP = document.createElement("div");
+	/*let comentP = document.createElement("div");
 	comentP.setAttribute("class", "col s6 right-align")
 	comentP.id="coment" + publicacion.id;
 	comentP.setAttribute(`onclick`, `toggleComent('${publicacion.id}')`)
 	comentP.innerHTML = "<span class='contador'></span>";
 	comentP.innerHTML += "<i class='material-icons'>comment</i>";
-	comentP.style = "padding-top: 0.7em"; 
+	comentP.style = "padding-top: 0.7em"; */
 
 	let comentarios = document.createElement("div");
 	comentarios.setAttribute("class", "col s12 hide ");
@@ -831,14 +831,10 @@ var dibujarPublicacion = function (publicacion, actions){
 
 
 	pieP.appendChild(corazonP)
-	pieP.appendChild(comentP)
-	pieP.appendChild(comentarios)
+	/*pieP.appendChild(comentP)*/
+	/*pieP.appendChild(comentarios)*/
 	formato.appendChild(pieP)
 
-	/*if (!$("#P" + publicacion.id).length > 0 ){		
-	
-		$("#posts").append(formato);		
-	}*/
 	if (actions == "add"){
 		if ($("#P" + publicacion.id).length > 0 ){		
 			!$("#P" + publicacion.id).replaceWith(formato);		
@@ -879,13 +875,13 @@ var dibujarPublicacion = function (publicacion, actions){
 		}
 	})	
 
-	cargarComentarios (publicacion.id, function (total){
+	/*cargarComentarios (publicacion.id, function (total){
 		if (total > 0){
 			$("#coment" + publicacion.id + " .contador").html(total)
 		}else{
 			$("#coment" + publicacion.id + " .contador").html()
 		}
-	})
+	})*/
 
     let elems = document.querySelectorAll('.dropdown-trigger');
 	let instances = M.Dropdown.init(elems);
