@@ -56,6 +56,10 @@
 									$("#nombreRegistroNombre").val(userInline.nombre);
 									location.hash= "#registroNombre"
 								}else{
+									userInline.uid= user.uid;
+								  	userInline.email = user.email;
+								  	userInline.foto = user.photoURL;	
+								  	userInline.nombre = user.displayName;
 									cargarPerfil();
 									location.hash= "#home"
 									
@@ -236,8 +240,7 @@ var cargarPerfil = function (){
 
 	 base.ref("users/" + userInline.uid ).on("value", function (datos){
 	 	userInline.rol= datos.val().rol
-		$("#rolEPerfil").val(datos.val().rol);
-		
+		$("#rolEPerfil").val(datos.val().rol);	
 		$("#rolEPerfil option[value = "+datos.val().rol+"]").attr("selected", "selected")
 		userInline.rol=datos.val().rol;
 		testPermisos((es)=>{
@@ -281,12 +284,27 @@ var cargarPerfil = function (){
 			  M.textareaAutoResize($("#biografiaEPerfil"));
 			  	M.updateTextFields()
 		}else{
-			$("#biografiaPerfil").html("<p> No has ingresado auna biografía </p>");
+			$("#biografiaPerfil").html("<p> No has ingresado una biografía </p>");
 		}
-		if (datos.val().estudiantes){
-			$("#estudiantesEPerfil").val(datos.val().estudiantes)
+		if (datos.val().alumnos){
+			$("#estudiantesEPerfil").val(datos.val().alumnos)
 			$("#portaEstudiantes").removeClass("hide");
 		}
+
+		 base.ref().child("/albumes/" + datos.val().uid).limitToLast(12).on("value", function(album){
+		 	$("#albumPerfil").html("")
+		 	album.forEach((item)=>{
+		 		let foto = `<div class='col s4 fotoAlbum materialboxed hoverable' id ="Album${item.key}">
+		 						<div class='col s12 '><img src='${item.val().archivo}' class="responsive-img " width="100%"></div>
+		 						<a class="col s12" onClick ="borrarAlbum('${item.key}')"><i class='material-icons'>delete</i> </a>
+		 				   </di>`
+		 			$("#albumPerfil").append(foto)
+		 			 var elems = document.querySelectorAll('.materialboxed')
+		 			 M.Materialbox.init(elems);
+		 	})
+
+		 })
+
 		M.updateTextFields()
 	}) 	
 }
@@ -315,7 +333,7 @@ var editarUsuario = function (callback) {
 				nombre: $("#nombreEPerfil").val(),
 				biografia: $("#biografiaEPerfil").val(),
 				rol: $("#rolEPerfil").val(),
-				estudiantes: $("#estudiantesEPerfil").val()
+				alumnos: $("#estudiantesEPerfil").val()
 			})
 			.then(function (e){
 				auth.currentUser.updateProfile({
@@ -643,13 +661,11 @@ var buscarPost = function(id, callback){
 var buscarUsuario = function (id, callback){
 	base.ref().child("users/" + id).once("value", function (us){
 		let usC=us.val()
-		 base.ref().child("/albumes/" + us.val().uid).once("value", function (archivos){
-
+		 base.ref().child("/albumes/" + us.val().uid).limitToLast(12).once("value", function (archivos){
 		 	archivos.forEach((item) => {
 		 	 if (!usC.album  ){
 		 	 	usC.album=[];
-		 	 }
-		 	
+		 	 }		 	
 		 	 usC.album.push(item.val().archivo)
 		 	})
 		 		 callback(usC)
@@ -760,4 +776,11 @@ var removerHistoria = function (idh, callback){
 
 	base.ref().child("historias/"  + idh).remove()
 	if (callback) callback()
+}
+var borrarAlbum = function (id){
+	console.log(id)
+		base.ref("/albumes/" + userInline.uid + "/" + id ).remove()
+		.then ((e)=>{
+			$("#Album"+ id).remove()
+		})
 }

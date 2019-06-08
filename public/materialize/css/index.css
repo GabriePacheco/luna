@@ -143,5 +143,21 @@
 	.noLeido{
 		border: solid 0.1em #c51162; 
 	}
+	.fotoAlbum:hover{
+		color: #989889;
+		
+	}
+	.fotoAlbum div {
+		
+		overflow-y: hidden;
+	}
+	.fotoAlbum a{
+		display: flex;
+		margin-top: -2em !important;
+		margin-right: 1em !important;
+		color: #ec407a;
+		height: 100%;
+
+	}
 
 

@@ -138,7 +138,15 @@ $( window ).on( 'hashchange', function( e ) {
 var navegar = function (url, callback){
 	$(".pageApp").addClass("hide");
 	$(""+url+"").removeClass("hide");
-
+	if (url = "#registrarFotoUsuario"){
+		gpRecortador({recortador: "selectPhoto", redondo: true},
+		 function(res){
+		 	$("#registroFotoForm").append(preloader);
+		 	registrarFotoUsuario(res, function (e){
+		 		location.href= "#registroNombre"
+		 	})
+		})
+	}
 	if (callback){
 		callback();
 	}
@@ -226,7 +234,16 @@ $("#registroNombreForm").submit( function (e){
 	$("#botonRegistroNombreI").html= preloader;
 	registrarNombre((e)=>{
 		$("#botonRegistroNombreI").html= 'skip_next';
-		location.hash= "#home"	
+		if (!userInline.nombre){
+			cargarPerfil()
+			location.hash= "#login"
+			mensajeria({code: "auth/sus"})
+
+		}else{			
+			cargarPerfil()
+			location.hash= "#home"		
+		}
+		
 	})
 
 
@@ -238,6 +255,10 @@ var mensajeria = function (mensaje){
 	let  alerta= {}
 
 	switch(mensaje.code){
+		case "auth/sus":
+		alerta.icono = "<i class='material-icons green-text'>error</i>"
+		alerta.texto = "Tu registro se completo correctamente ya puedes iniciar sesión "
+		break;
 		case "auth/invalid-email":
 		alerta.icono = "<i class='material-icons red-text'>error</i>"
 		alerta.texto = "Email no valido"
@@ -286,22 +307,22 @@ var mensajeria = function (mensaje){
 
 }
 
-gpRecortador({recortador: "recortador", redondo: true},
- function(res){
- 	$("#registroFotoForm").append(preloader);
- 	registrarFotoUsuario(res, function (e){
- 		location.href= "#registroNombre"
- 	})
-})
+
 
 $("#cerrar").click((e)=>{
 	auth.signOut()
 	.then(function (){
-		delete userInline.id, userInline.nombre, userInline.foto;
+		delete userInline.uid, userInline.nombre, userInline.foto;
 	})
 
 });
+$(".cerrar").click((e)=>{
+	auth.signOut()
+	.then(function (){
+		delete userInline.uid, userInline.nombre, userInline.foto;
+	})
 
+});
 
  
 $("#recuperarForm").submit(function (e) {
@@ -1335,21 +1356,22 @@ $(window).on("scroll", function() {
     }
 });
 var verPerfil = function (userId){
-	
-	buscarUsuario(userId, function (vUsuario){
-		
+	buscarUsuario(userId, function (vUsuario){		
 		$("#vimagenPerfil").attr("src", vUsuario.photoURL)
 		$("#vnombrePerfil").html(vUsuario.nombre)
 		$("#vemailPerfil").html(vUsuario.email)	
 		$("#vnombrePerfil").html(vUsuario.nombre)
 		$("#vbiografiaPerfil").html(vUsuario.biografia)
+		$("#vrolPerfil").html(`${elPerfil(vUsuario.rol)}`)
+		if (vUsuario.alumnos){
+			$("#vrolPerfil").append(`<br><small> ${vUsuario.alumnos}</small>`)
+		}
 		$("#vAlbum").html("");
 		if (vUsuario.album){
 			for (let i = 0; i < vUsuario.album.length; i++ ){
-				let foto = `<div class='col s4 '>
-					<img src='${vUsuario.album[i]}' class='responsive-img materialboxed'>
-					<div></div>
-				</div>`
+				let foto = `<div class='col s4'>
+								<img src='${vUsuario.album[i]}' class='responsive-img materialboxed'>
+							</div>`
 				$("#vAlbum").append(foto);
 			}
 		}
@@ -1482,9 +1504,7 @@ var verHistorias ={
 						snap[item].estado = "noLeido"
 						verHistorias.vistos = 0
 					}		
-					
-					
-
+								
 					let progresBarHistory = document.createElement("span")	
 					progresBarHistory.id = "historia" + item
 					progresBarHistory.setAttribute("data-id", "historia" + item)
@@ -1691,4 +1711,24 @@ var borrarHistoria = function (id){
 	}
 	removerHistoria(id)
 	
+}
+var elPerfil = function (n){
+	
+	switch (n){
+		case "1":
+			 per = "Alumno";
+		break;
+		case "2" : 
+			 per= "Representante"
+		break;
+		case "3": 
+			 per = "Profesor";
+		break;
+		default:
+			 per= "No se a definido un perfil"
+		break;
+
+	}
+	return per 
+
 }
