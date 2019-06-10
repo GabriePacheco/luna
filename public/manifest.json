@@ -1,0 +1,26 @@
+{
+  "short_name": "Lunytha",
+  "name": "Agenda Estudiantil Lunytha",
+  "icons": [
+    {
+      "src": "imagenes/LunythaLogo48x48.png",
+      "type": "image/png",
+      "sizes": "48x48"
+    },
+    {
+      "src": "imagenes/LunythaLogo144x144.png",
+      "type": "image/png",
+      "sizes": "144x144"
+    },
+    {
+      "src": "imagenes/LunythaLogo192x192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    }
+  ],
+  "theme_color": "#ec407a",
+  "start_url": "index.html",
+  "display": "standalone",
+  "orientation": "portrait",
+   "gcm_sender_id": "103953800507"
+}
