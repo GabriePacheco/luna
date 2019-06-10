@@ -1488,7 +1488,7 @@ var verHistorias ={
 		})
 		buscarHistorias(id, async function (snap){
 			$("#totalHistorias").html("");
-			if	(snap){ 		
+			if	(snap  && Object.keys(snap).length > 0){ 						
 				let cont = Object.keys(snap).length;
 				let total = (100 / cont ) -1		
 				for (item in snap)	{	
@@ -1530,6 +1530,7 @@ var verHistorias ={
 				verHistorias.mostrar(id)
 			}else{
 				if(userInline.uid == id){
+			
 					$("#nFoto").click()
 				}
 			}
