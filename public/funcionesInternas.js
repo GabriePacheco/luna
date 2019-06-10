@@ -159,8 +159,20 @@ $("#loginForm").submit(function (e){
 	auth.signInWithEmailAndPassword($("#emailLogin").val(), $("#passwordLogin").val())
 	.then(function (){
 		$("#botonLoginI").html("lock_open");
+		if (! userInline.foto){
+			location.hash ="#registroFoto"
+		}else{
+			if (!userInline.nombre){
+				location.hash ="#registroNombre"	
+			}else{
+				cargarPerfil();
+				location.hash= "#home"
+
+			}			
+
+		}
 	
-		location.hash="#login";
+		
 	})
 	.catch(function (error){
 		mensajeria(error, "error");
@@ -236,7 +248,7 @@ $("#registroNombreForm").submit( function (e){
 		$("#botonRegistroNombreI").html= 'skip_next';
 		if (!userInline.nombre){
 			cargarPerfil()
-			location.hash= "#login"
+			location.hash= "#start"
 			mensajeria({code: "auth/sus"})
 
 		}else{			

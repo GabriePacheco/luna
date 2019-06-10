@@ -88,13 +88,16 @@ var registrarFotoUsuario = function (snap, callback){
 			auth.currentUser.updateProfile({
               photoURL : URL
             })
-
+            .then(function (){
+            	userInline.foto=URL
+            })
 	        base.ref("users/" +userInline.uid  ).update({
 	          uid :userInline.uid,
 	          email: userInline.email,
 	          photoURL: URL
-	        });	
-	    callback(URL);
+	        })
+	        .then(callback(URL))	
+	    	
 		})
 
 		
@@ -121,7 +124,12 @@ var registrarNombre = function (callback){
 			auth.currentUser.updateProfile({
 				displayName: $("#nombreRegistroNombre").val()
 			})
-			callback(e);
+			.then(function (){
+				userInline.nombre = $("#nombreRegistroNombre").val()
+
+				callback(e)
+			})
+		
 		})
 	}else{
 		base.ref("tokens/" + $("#tokenRegistroNombre").val()).once('value')
@@ -138,13 +146,17 @@ var registrarNombre = function (callback){
 							auth.currentUser.updateProfile({
 								displayName: $("#nombreRegistroNombre").val()
 							})
-							callback(e);
+							.then(function (){
+								userInline.nombre = $("#nombreRegistroNombre").val()	
+								callback(e)
+							})
+							
 					})
 					base.ref("tokens/" + $("#tokenRegistroNombre").val()).update({
 						estado: false,
 						usuario:userInline.uid
 					})
-					callback();
+					/*callback();*/
 			}
 
 		})
@@ -652,9 +664,12 @@ var buscarPost = function(id, callback){
 			publis.userName = uu.val().nombre
 			publis.userFoto = uu.val().photoURL
 		})
-		if (callback){
-		 callback(publis)
-		}
+		.then(()=>{
+			if (callback){
+			 callback(publis)
+			}
+		})
+		
 	})
 }
 
