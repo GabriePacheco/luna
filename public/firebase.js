@@ -13,6 +13,7 @@
   var storage = firebase.storage();
   var userInline ={}
   var userPresensia ;
+  
 	firebase.auth().onAuthStateChanged(function(user){
 		if (user) {
 		
