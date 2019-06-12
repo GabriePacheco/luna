@@ -22,7 +22,7 @@ var espera ;
 var progres={};
 progres.valor =0
 progres.head= '<div  class="progress white">'
-progres.body1= '<div class="determinate pink lighten-4" style="width: ' +progres.valor
+progres.body1= '<div class="determinate pink lighten-4" style="width: ' + progres.valor
 progres.body2='%"></div>'
 progres.pie= '</div>';
 var limite =10;

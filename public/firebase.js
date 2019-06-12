@@ -269,11 +269,11 @@ var cargarPerfil = function (){
 	 	switch(datos.val().rol) {
 		  case "1":
 		    	$("#rolPerfil").html("Alumno");
-		    	console.log(datos.val().rol)
+		    	
 		    break;
 		  case "2":
 		 		  $("#rolPerfil").html("Representante");
-		 		  console.log(datos.val().rol)
+		 		
 		    break;
 
 		   case "3":
@@ -282,15 +282,15 @@ var cargarPerfil = function (){
 		    break;
    		  case "4":
 		 		  $("#rolPerfil").html("Administrador");
-		 		  console.log(datos.val().rol)
+		 		  
 		    break;
    		  case "5":
 		 		  $("#rolPerfil").html("Desarollador");
-		 		  console.log(datos.val().rol)
 		    break;
 		  default:
  				$("#rolEPerfil").val(datos.val().rol);
- 				console.log(datos.val().rol)	   
+ 			break;	
+ 				
 		}
 
 		if (datos.val().biografia){
