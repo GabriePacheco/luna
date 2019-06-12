@@ -102,6 +102,7 @@ $("#emailRecuperar").keyup(()=>{
 //NAVEGACION 
 
 $( window ).on( 'hashchange', function( e ) {
+	$("#app").height(screen.height)
 	let url=  location.hash.split("?")[0]
 	if (url != "#addPost" && url != "#editPost"){
 		if (url != "#registro" && url != "#recuperar" && url != "#login" && url != "#mensajeRecuperar"){
@@ -1492,8 +1493,7 @@ var verHistorias ={
 		
 		$("#photoHistoria").attr("data-id", id)	
 		$("#photoHistoria").attr("onclick", `verPerfilHistoria('${id}')`)
-		$("#app").height(screen.height)
-		
+				
 		buscarUsuario(id, function (user){
 			$("#photoHistoria").attr("src", user.photoURL)
 			$("#nameHistoria").html(user.nombre)
