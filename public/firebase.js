@@ -13,7 +13,8 @@
   var storage = firebase.storage();
   var userInline ={}
   var userPresensia ;
-  
+  const messaging = firebase.messaging();
+  messaging.usePublicVapidKey("BG1OIJl6E9nqJMq--PCXiMzzdKY9Eu8AMY57Kxuswa0QM_GpJE3H4DH4aD7y4ANSdI_gfhoKFY0JF6ktYQoEsNw");
 	firebase.auth().onAuthStateChanged(function(user){
 		if (user) {
 		
@@ -33,6 +34,7 @@
 				    			location.hash ="#registroNombre"	
 				    		}else{
 				    			cargarPerfil();
+				    			notificaciones()
 				    			location.hash= "#home"
 
 				    		}
