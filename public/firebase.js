@@ -25,17 +25,17 @@
 				
 				if (user.providerData[0].providerId == "password" ){
 				    if (!user.emailVerified){
-				    	location.hash="#registroMensaje";
+				    	window.location.hash="registroMensaje";
 				    }else{
 				    	if (!user.photoURL){
-				    		location.hash ="#registroFoto"
+				    		window.location.hash ="registroFoto"
 				    	}else{
 				    		if (!userInline.nombre){
-				    			location.hash ="#registroNombre"	
+				    			window.location.hash ="registroNombre"	
 				    		}else{
 				    			cargarPerfil();
 				    			notificaciones()
-				    			location.hash= "#home"
+				    			window.location.hash= "home"
 
 				    		}
 				    	}
@@ -52,19 +52,19 @@
 									photoURL: 	userInline.foto,
 									email: userInline.email
 								})
-								location.hash= "#registroNombre"
+								window.location.hash= "registroNombre"
 								$("#nombreRegistroNombre").val(userInline.nombre);
 							}else{
 								if (!usuario.val().rol){
 									$("#nombreRegistroNombre").val(userInline.nombre);
-									location.hash= "#registroNombre"
+									window.location.hash= "registroNombre"
 								}else{
 									userInline.uid= user.uid;
 								  	userInline.email = user.email;
 								  	userInline.foto = user.photoURL;	
 								  	userInline.nombre = user.displayName;
 									cargarPerfil();
-									location.hash= "#home"
+									window.location.hash= "home"
 									
 								}
 							}
@@ -76,7 +76,7 @@
 				}
 				
 		 }else{
-		 	 location.hash="#login";
+		 	 window.location.hash="login";
 		}
 	});
 
@@ -174,7 +174,7 @@ var recuperarPass= function (callback){
 	.then(function(e) {
 			callback();
 			mensajeria({code: "auth/mail-enviado"})
-			location.hash = "#recuperarMensaje"
+			window.location.hash = "recuperarMensaje"
  	
 	})
 	.catch(function(error) {
@@ -192,7 +192,7 @@ var loginCon = function(prov, callback){
 		firebase.auth().signInWithRedirect(provider)
 		.then((result)=>{	
 			cargarPerfil();
-			location.hash= "#home"
+			window.location.hash= "home"
 			callback(result);
 		})
 		.catch(function (error){
@@ -269,26 +269,28 @@ var cargarPerfil = function (){
 	 	switch(datos.val().rol) {
 		  case "1":
 		    	$("#rolPerfil").html("Alumno");
-		    	
+		    	$("#rolEPerfil").val(datos.val().rol)
 		    break;
 		  case "2":
 		 		  $("#rolPerfil").html("Representante");
-		 		
+		 			$("#rolEPerfil").val(datos.val().rol)
 		    break;
 
 		   case "3":
 		 		  $("#rolPerfil").html("Profesor");
-		 		 
+		 		 $("#rolEPerfil").val(datos.val().rol)
 		    break;
    		  case "4":
 		 		  $("#rolPerfil").html("Administrador");
-		 		  
+		 		  $("#rolEPerfil").val(datos.val().rol)
 		    break;
    		  case "5":
 		 		  $("#rolPerfil").html("Desarollador");
+		 		  $("#rolEPerfil").val(datos.val().rol)
 		    break;
 		  default:
  				$("#rolEPerfil").val(datos.val().rol);
+ 				$("#rolEPerfil").val(datos.val().rol)
  			break;	
  				
 		}
@@ -360,7 +362,7 @@ var editarUsuario = function (callback) {
 		case "3": // Es profesor 
 
 			if ($("#tokenEPerfil").attr("required") == "required"){
-				base.ref().child("tokens" + $("tokensEPerfil").val() ).once("value", function(token){
+				base.ref().child("tokens/" + $("tokensEPerfil").val() ).once("value", function(token){
 					let tok = (token.val() && token.val().estado) || false;
 					if (tok){
 						base.ref("users/" + userInline.uid)

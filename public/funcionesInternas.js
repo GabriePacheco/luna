@@ -6,14 +6,14 @@
       	var elems = document.querySelectorAll('.sidenav');
     	var instances = M.Sidenav.init(elems);
      	var instance = M.Tabs.init(instances);
-
+     	$("#app").height(screen.height);
       	var elems = document.querySelectorAll('.chips');
     	var instances = M.Chips.init(elems)
         var elems = document.querySelectorAll('.dropdown-trigger');
     	var instances = M.Dropdown.init(elems);
-    	
-    	if (location.hash){	
-    		location.hash = "start"
+  	
+    	if (window.location.hash){	
+    		window.location.hash = "start"
     	}
     	
 
@@ -102,13 +102,13 @@ $("#emailRecuperar").keyup(()=>{
 //NAVEGACION 
 
 $( window ).on( 'hashchange', function( e ) {
-	$("#app").height(screen.height)
-	let url=  location.hash.split("?")[0]
+
+	let url=  window.location.hash.split("?")[0]
 	if (url != "#addPost" && url != "#editPost"){
 		if (url != "#registro" && url != "#recuperar" && url != "#login" && url != "#mensajeRecuperar"){
 			if (userInline.uid){	
 		  		if (url == "seePost"){
-		  			toSee( location.hash.split("?")[1])
+		  			toSee( window.location.hash.split("?")[1])
 		  		}else{
 		  			navegar(url);
 		  		}
@@ -161,13 +161,13 @@ $("#loginForm").submit(function (e){
 	.then(function (){
 		$("#botonLoginI").html("lock_open");
 		if (! userInline.foto){
-			location.hash ="#registroFoto"
+			window.location.hash ="registroFoto"
 		}else{
 			if (!userInline.nombre){
-				location.hash ="#registroNombre"	
+				window.location.hash ="registroNombre"	
 			}else{
 				cargarPerfil();
-				location.hash= "#home"
+				window.location.hash= "home"
 
 			}			
 
@@ -190,7 +190,7 @@ $("#registroForm").submit(function (e){
 		$("#botonRegistroI").html(next);
 		auth.currentUser.sendEmailVerification()
 		.then(function (e){
-			location.hash="#registroMensaje";
+			window.location.hash="registroMensaje";
 		})
 
 	})
@@ -249,12 +249,12 @@ $("#registroNombreForm").submit( function (e){
 		$("#botonRegistroNombreI").html= 'skip_next';
 		if (!userInline.nombre){
 			cargarPerfil()
-			location.hash= "#start"
+			window.location.hash= "#start"
 			mensajeria({code: "auth/sus"})
 
 		}else{			
 			cargarPerfil()
-			location.hash= "#home"		
+			window.location.hash= "#home"		
 		}
 		
 	})
@@ -401,7 +401,7 @@ $("#linkEditarFoto").click(function (){
 				registrarFotoUsuario(captura, function (e){
 					$("#imagenEPerfil").attr("src",e)
 					$("#imagenPerfil").attr("src",e)
-					location.hash="#editarPerfil"
+					window.location.hash="#editarPerfil"
 				})
 			}
 		)
@@ -447,7 +447,7 @@ $(".color").click(function (){
 $("#saveNPost").click(function (){
 	if (nPost.texto || nPost.imagenes || nPost.color || nPost.files){
 		$("#posts").prepend("<div class='posteando col s12 '>Posteando... <i class='right'>"+preloader+"</i></div")
-		location.hash="#home";
+		window.location.hash="#home";
 		subirPost(function (captura, e){
 			if (e){
 				mensajeria(e)
@@ -931,11 +931,11 @@ $("#addPost .back").click(function (e){
 			nPost ={}
 			vistaPost();
 			$("#postTextArea").val("");
-			location.hash= "#home";
+			window.location.hash= "#home";
 		}
 	}else{
 		$("#postTextArea").val("");
-		location.hash= "#home";
+		window.location.hash= "#home";
 	}
 
 })
@@ -945,7 +945,7 @@ $("#editPost .back").click(function (e){
 		let descart = confirm("¿Hay cambios en la publicacion deseas descartarlos? " );
 		if (descart){
 			limpiarEdit()	
-			location.hash= "#home";
+			window.location.hash= "home";
 			edPost={}
 			edPostRespaldo={}
 		}
@@ -953,7 +953,7 @@ $("#editPost .back").click(function (e){
 	}else{
 
 		limpiarEdit()
-		location.hash = "#home";
+		window.location.hash = "home";
 		edPost={}
 		edPostRespaldo={}		
 
@@ -1001,7 +1001,7 @@ var hace = function (ts){
 	return salida;
 }
 var editar = async function (postId){
-	location.hash = "#editPost"
+	window.location.hash = "editPost"
 	await consultarPublicacion(postId, edPostDraw)
 
 }
@@ -1228,7 +1228,7 @@ $("#saveEPost").click(function (e){
 	$("#saveEPost  i").html(preloader);
 	savePost(function (){
 		$("#saveEPost  i").html("done");
-			location.hash="#home";
+			window.location.hash="#home";
 			limpiarEdit(function (ed){
 				edPost = {}
 				edPostRespaldo={}
@@ -1351,7 +1351,7 @@ var toSee = function (id){
 		seePie.innerHTML= "&nbsp"
 		see.appendChild(seePie);
 		$("#seePost .contenido").html(see)
-		location.hash= "#seePost?"+post.id;	
+		window.location.hash= "#seePost?"+post.id;	
 	})
 
 	
@@ -1363,7 +1363,7 @@ $(window).on("scroll", function() {
     var scrollPosition = $(window).height() + $(window).scrollTop();
     if ((scrollHeight - scrollPosition) / scrollHeight > 0.09) {
        limite+= 5;
-	     if (location.hash){
+	     if (window.location.hash){
 	     	bajarPost();	
 	     }  
     }
@@ -1390,7 +1390,7 @@ var verPerfil = function (userId){
 		}
     	var elems = document.querySelectorAll('.materialboxed');
 		var instances = M.Materialbox.init(elems);
-		location.hash= "verPerfil";
+		window.location.hash= "verPerfil";
 	})
 
 }
@@ -1430,7 +1430,7 @@ var tomarFoto= function (cam, i){
 			contexPhoto.drawImage(foto , 0,0,canvasPhoto.width, canvasPhoto.height)
 			foto.setAttribute("width", "100%")
 			$("#addPhoto .contenido").html(foto)
-			location.hash= "addPhoto";
+			window.location.hash= "addPhoto";
 			delete foto;
 			delete lector;
 
@@ -1538,7 +1538,7 @@ var verHistorias ={
 					
 				}
 				blockScroll()
-				location.hash="historias";
+				window.location.hash="historias";
 				verHistorias.mostrar(id)
 			}else{
 				if(userInline.uid == id){
@@ -1626,7 +1626,7 @@ var verHistorias ={
 		delete verHistorias.vistos
 		 verHistorias.fin=true
 		verHistorias.intervalo.x100=100
-		location.hash = "#home";
+		window.location.hash = "home";
 		verHistorias.conteo=0
 		$("#photoHistoria").attr("src", "")
 		$("#nameHistoria").html("")
@@ -1676,7 +1676,7 @@ var verHistorias ={
  	e.preventDefault()
  	verHistorias.fin=true
  	verHistorias.cerrar()
- 	location.hash = "home"
+ 	window.location.hash = "home"
  })
 
  var blockScroll = function (){
