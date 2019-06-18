@@ -17,7 +17,6 @@
   messaging.usePublicVapidKey("BG1OIJl6E9nqJMq--PCXiMzzdKY9Eu8AMY57Kxuswa0QM_GpJE3H4DH4aD7y4ANSdI_gfhoKFY0JF6ktYQoEsNw");
 	firebase.auth().onAuthStateChanged(function(user){
 		if (user) {
-		
 		  	userInline.uid= user.uid;
 		  	userInline.email = user.email;
 		  	userInline.foto = user.photoURL;	
@@ -252,7 +251,6 @@ var cargarPerfil = function (){
 
 	})
 	
-
 	 base.ref("users/" + userInline.uid ).on("value", function (datos){
 	 	userInline.rol= datos.val().rol
 		$("#rolEPerfil").val(datos.val().rol);	
