@@ -83,6 +83,7 @@
 	}
 	@media (max-width: 600px){
 		.historias{
+			padding-top: 1vh; 
 			overflow-y: hidden;
 			overflow-x: scroll; 
 			margin-bottom: 1vh !important;
