@@ -32,6 +32,7 @@
 				    		if (!userInline.nombre){
 				    			window.location.hash ="registroNombre"	
 				    		}else{
+				    			registrarIngreso();
 				    			cargarPerfil();
 				    			notificaciones()
 				    			window.location.hash= "home"
@@ -798,3 +799,35 @@ var borrarAlbum = function (id){
 			$("#Album"+ id).remove()
 		})
 }
+
+var registrarIngreso = async function (){
+	var ingreso = {}
+	ingreso.id = await base.ref().child("ingresos").push().key
+	ingreso.uid = userInline.uid;
+	ingreso.fecha = mt();
+	ingreso.pos={}
+	if(navigator.geolocation ){
+		navigator.geolocation.getCurrentPosition(function (position){		
+				ingreso.pos.lat= position.coords.latitude;
+				ingreso.pos.lgn= position.coords.longitude;
+				ingreso.pos.estado =true;
+		}, function (error){
+			ingreso.pos.estado =  false;
+			ingreso.pos.errorCode =  error.code
+			if (error.code == 1){
+				ingreso.pos.errorMensage = "El usuario no permitio la geolocation"	
+			}
+			if (error.code == 2){
+				ingreso.pos.errorMensage = "La ubicación es inacesible ";
+			}
+		})
+	}else{
+			ingreso.pos.estado =  false;
+			ingreso.pos.errorCode =  0;
+			ingreso.pos.errorMensage = "El navegador no soporta la geolocation"
+	}
+	let update = {}
+	update["ingresos/" + userInline.uid + "/" +ingreso.id]= ingreso;	
+	return base.ref().update(update)
+}
+ 
