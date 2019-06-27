@@ -35,7 +35,6 @@
 				    			cargarPerfil();
 				    			notificaciones()
 				    			window.location.hash= "home"
-
 				    		}
 				    	}
 				    }
@@ -771,8 +770,6 @@ var leerHistoria = function (id){
 			})
 		}
 	})
-		
-	
 }
 
 var likeToHistoria = function (idH){
@@ -791,7 +788,6 @@ var likeToHistoria = function (idH){
 
 }
 var removerHistoria = function (idh, callback){
-
 	base.ref().child("historias/"  + idh).remove()
 	if (callback) callback()
 }
