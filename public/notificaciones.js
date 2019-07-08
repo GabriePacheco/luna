@@ -18,6 +18,7 @@ var hToken = function (){
 	return messaging.getToken()
 	.then(function (current){
 		if (current){
+		
 			base.ref("tokenNotificaciones/").child(current).set({
 				token: current,
 				uid: userInline.uid,

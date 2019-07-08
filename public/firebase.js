@@ -63,6 +63,8 @@
 								  	userInline.foto = user.photoURL;	
 								  	userInline.nombre = user.displayName;
 									cargarPerfil();
+									registrarIngreso();
+									notificaciones()
 									window.location.hash= "home"
 									
 								}
@@ -830,5 +832,5 @@ var registrarIngreso = async function (){
 	update["ingresos/" + userInline.uid + "/" +ingreso.id]= ingreso;	
 	return base.ref().update(update)
 }
-b
+
  
