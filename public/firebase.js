@@ -832,8 +832,3 @@ var registrarIngreso = async function (){
 	update["ingresos/" + userInline.uid + "/" +ingreso.id]= ingreso;	
 	return base.ref().update(update)
 }
-<<<<<<< HEAD
-
- 
-=======
->>>>>>> pruebas
