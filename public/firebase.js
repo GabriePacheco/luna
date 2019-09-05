@@ -332,7 +332,7 @@ var editarUsuario = function (callback) {
 				nombre: $("#nombreEPerfil").val(),
 				biografia: $("#biografiaEPerfil").val(),
 				rol: $("#rolEPerfil").val(),
-				estudiantes: false
+				alumnos: false
 			})
 			.then(function (e){
 				auth.currentUser.updateProfile({
@@ -368,7 +368,7 @@ var editarUsuario = function (callback) {
 							nombre: $("#nombreEPerfil").val(),
 							biografia: $("#biografiaEPerfil").val(),
 							rol: $("#rolEPerfil").val(),
-							estudiantes: false
+							alumnos: false
 						})
 						.then(function (e){
 							callback({code: "base/saveOK"})
@@ -393,7 +393,7 @@ var editarUsuario = function (callback) {
 					nombre: $("#nombreEPerfil").val(),
 					biografia: $("#biografiaEPerfil").val(),
 					rol: $("#rolEPerfil").val(),
-					estudiantes: false
+					alumnos: false
 				})
 				.then(function (e){
 					auth.currentUser.updateProfile({
@@ -830,5 +830,3 @@ var registrarIngreso = async function (){
 	update["ingresos/" + userInline.uid + "/" +ingreso.id]= ingreso;	
 	return base.ref().update(update)
 }
-b
- 
