@@ -530,7 +530,7 @@ base.ref().child("posts/").limitToLast(1).on("child_added", function (pub){
 })
 
 ///Escuchar cambios en los post 
-base.ref().child("posts/").on("child_changed", function (pub){
+base.ref().child("posts").on("child_changed", function (pub){
 	if (pub.val()){
 		let pubs = pub.val();
 		base.ref().child("users/" + pub.val().authorId )
