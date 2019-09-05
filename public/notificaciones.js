@@ -1,11 +1,9 @@
 
 var notificaciones = function (){
 	messaging.requestPermission().then(function() {
-		hToken()
-
+			hToken()
 	}).catch(function(err) {
 	  console.log('no resive notificaciones', err);
-
 	});
 	messaging.onTokenRefresh(function (){
 		hToken();

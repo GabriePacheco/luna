@@ -743,12 +743,12 @@ var dibujarPublicacion = function (publicacion, actions){
 
 	if (publicacion.texto){
 		let texto = document.createElement("div");
-		texto.innerHTML="<div class='textoP'>" + publicacion.texto +"</div>";
+		texto.innerHTML="<div class='textoP'>" + replaceURLWithHTMLLinks(publicacion.texto )+"</div>";
 		texto.setAttribute("class", "col s12")
 		formato.appendChild(texto)	
 		if (publicacion.color){
 			texto.setAttribute("class", "col s12 "+ publicacion.color )
-			texto.innerHTML="<div class='color valign-wrapper  '><div class=' col s12 center-align'>" +publicacion.texto+"</div></div>";
+			texto.innerHTML="<div class='color valign-wrapper  '><div class=' col s12 center-align'>" + replaceURLWithHTMLLinks(publicacion.texto) +"</div></div>";
 
 		}
 	}
@@ -1744,4 +1744,9 @@ var elPerfil = function (n){
 	}
 	return per 
 
+}
+
+function replaceURLWithHTMLLinks(e){
+	return e.replace(/(\(.*?)?\b((?:https?|ftp|file):\/\/[-a-z0-9+&@#\/%?=~_()|!:,.;]*[-a-z0-9+&@#\/%=~_()|])/gi,function(e,r,n){var t="";r=r||"";for(var a=/\(/g;a.exec(r);){var l;(l=/(.*)(\.\).*)/.exec(n)||/(.*)(\).*)/.exec(n))&&(n=l[1],t=l[2]+t)}
+		return r+"<a href='"+n+"' target='_blank' rel='nofollow noopener'>"+n+"</a>"+t})
 }

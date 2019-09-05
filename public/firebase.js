@@ -334,7 +334,7 @@ var editarUsuario = function (callback) {
 				nombre: $("#nombreEPerfil").val(),
 				biografia: $("#biografiaEPerfil").val(),
 				rol: $("#rolEPerfil").val(),
-				estudiantes: false
+				alumnos: false
 			})
 			.then(function (e){
 				auth.currentUser.updateProfile({
@@ -370,7 +370,7 @@ var editarUsuario = function (callback) {
 							nombre: $("#nombreEPerfil").val(),
 							biografia: $("#biografiaEPerfil").val(),
 							rol: $("#rolEPerfil").val(),
-							estudiantes: false
+							alumnos: false
 						})
 						.then(function (e){
 							callback({code: "base/saveOK"})
@@ -395,7 +395,7 @@ var editarUsuario = function (callback) {
 					nombre: $("#nombreEPerfil").val(),
 					biografia: $("#biografiaEPerfil").val(),
 					rol: $("#rolEPerfil").val(),
-					estudiantes: false
+					alumnos: false
 				})
 				.then(function (e){
 					auth.currentUser.updateProfile({
@@ -532,7 +532,7 @@ base.ref().child("posts/").limitToLast(1).on("child_added", function (pub){
 })
 
 ///Escuchar cambios en los post 
-base.ref().child("posts/").on("child_changed", function (pub){
+base.ref().child("posts").on("child_changed", function (pub){
 	if (pub.val()){
 		let pubs = pub.val();
 		base.ref().child("users/" + pub.val().authorId )
@@ -832,5 +832,8 @@ var registrarIngreso = async function (){
 	update["ingresos/" + userInline.uid + "/" +ingreso.id]= ingreso;	
 	return base.ref().update(update)
 }
+<<<<<<< HEAD
 
  
+=======
+>>>>>>> pruebas

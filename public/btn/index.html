@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+	<meta charset="UTF-8">
+	<title id = "title"></title>
+	<meta name="viewport" content="width=device-width, user-scalable=no">
+  	<title>Lunytha Sistema administrativo de agenda </title>
+  	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+ 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+ 	<link rel="stylesheet" type="text/css" href="css/index.css">
+	
+</head>
+<body>	
+<!-- Paginas  -->
+	<!--Login -->
+	<div class="app  valign-wrapper" id = "login">
+		<div class="row"> 
+			<form  id ="login_form" class="col m6 s10 offset-m3 offset-s1">
+		      <div class="row">
+		      	<div class = "input-field col s12">
+		      		<h3>Lunytha </h3>
+		      		<p>Por favor inicie sesión</p>
+		      	</div>
+		        <div class="input-field col s12">
+		          <input placeholder="Correo electronico" id="login_email" type="email" required>
+		          <label for="login_email">Usuario</label>
+		        </div>
+		        <div class="input-field col s12">
+		          <input id="login_password" type="password" required>
+		          <label for="login_password">Contraseña</label>
+		        </div>
+		        <div class = "input-field col s12 right-align">
+		        	<a href = "#resetpassword">olvidé mi contraseña</a>
+		        </div>
+		        <div class="input-field col s12">
+		          <button id ="login_boton" class="waves-effect waves-light btn col s12" disabled="true">
+		          	<i id="login_boton_icono" class="material-icons right">lock</i>Entrar<span id = "login_estado"></span>
+		          </button>
+		        </div>		        
+		      </div>					
+			</form>
+		</div>
+		
+	</div><!--fin login -->
+	<!-- recuperar contraseña -->
+	<div class="app valign-wrapper hide" id ="resetpassword">
+		<div class="row"> 
+			<form id = "resetPassword_form" class="col m6 s10 offset-m3 offset-s1">
+				<h3>Lunytha</h3>
+				<p>Ingrese el email registrado en la aplicación. Enciaremos un email con instrucciones para recuperar la contraseña.</p>
+		        <div class="input-field col s12">
+		          <input id="resetPassword_email" type="email" required>
+		          <label for="resetPassword_email">Correo Electrónico</label>
+		        </div>
+		        <div class="input-field col s12">
+		          <button id ="resetPassword_boton" class="waves-effect waves-light btn col s12" disabled="true">
+		          	<i id="resetPassword_boton_icono" class="material-icons right">send</i>Enviar<span id = "resetPassword_estado"></span>
+		          </button>
+		        </div>		
+		        <div class = "input-field col s12 right-align">
+		        	¿Ya tienes tus credenciales? <a href = "#login"> Inicia sesión </a>
+		        </div>
+			</form>
+
+		</div>	
+	</div> <!-- fin recuperar contraseña -->
+	<!-- Home -->
+	<div class= "app hide" id ="home">	
+		<nav class= "white"> <a href="#cerrar" data-action="true" >Cerrar Sesión</a> </nav>
+		<div class="row">
+		    <div class="col s12 m4">
+		      <div class="card-panel z-depth-3 light-blue">
+		      	<div class="row"> 
+			      	<div class= "col s4 center-align">
+			      		<a href="#users">
+			      			<i class="material-icons blue-text text-darken-3 large">account_circle</i>
+			      		</a>
+			      		<span class="white-text">Usuarios</span>
+			      	</div>
+			      	<div class= "col s4"></div>
+			      	<div class= "col s4">
+			      		<h3 class="white-text" id = "totalUsers"></h3>
+			      		<span id = "usersOnline"  class="white-text" ></span>
+			      	</div>
+			    </div>  	
+
+		      </div>
+		    </div>
+		    <div class="col s12 m4">
+		      <div class="card-panel z-depth-3 amber darken-1">
+		      	<div class="row"> 
+			      	<div class= "col s4 center-align">
+			      		<a href="#allPost">
+			      			<i class="material-icons orange-text text-darken-2 large">error</i>
+			      		</a>
+			      		<span class="white-text">Publicaciones</span>
+			      	</div>
+			      	<div class= "col s4"></div>
+			      	<div class= "col s4">
+			      		<h3 class="white-text" id = "totalPost">150</h3>
+			      		<span id = "usersOnline"  class="white-text" >1</span>
+			      	</div>
+			    </div>  	
+
+		      </div>
+		    </div>
+		    <div class="col s12 m4">
+		      <div class="card-panel z-depth-3 pink lighten-2">
+		      	<div class="row"> 
+			      	<div class= "col s4 center-align">
+			      		<a href="#allHistorias">
+			      			<i class="material-icons pink-text text-darken-1 large">error</i>
+			      		</a>
+			      		<span class="white-text">Publicaciones</span>
+			      	</div>
+			      	<div class= "col s4"></div>
+			      	<div class= "col s4">
+			      		<h3 class="white-text" id = "totalPost">150</h3>
+			      		<span id = "usersOnline"  class="white-text" >1</span>
+			      	</div>
+			    </div>  	
+
+		      </div>
+		    </div>			    		    
+		
+		</div>
+
+	</div><!-- fin Home -->
+	<div class= "app hide" id = "users">
+		<nav class= "white"> <a href="#home" >Cerrar Sesión</a> </nav>
+		<div class="row">
+			<div class="col s12">
+				  <table >
+				        <thead>
+				          <tr>
+				          	 <th width ="2%">#</th>
+				              <th width ="15%">Uid</th>
+				              <th width ="3%">Foto</th>
+				              <th width ="30%" >Nombre</th>
+				              <th width ="30%" >Email</th>
+				              <th class="10%">Rol</th>
+				              <th width="10%" >Action</th>
+				          </tr>
+				        </thead>
+
+				        <tbody id = "tbody">
+				         
+				         
+				        </tbody>
+				      </table>
+			</div> 
+		</div>
+	</div>
+
+<!-- fin paginas  -->
+	 <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+</body>
+</html>
+<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+
+
+<script type="text/javascript" src="js/index.js"></script>
+<script src="https://www.gstatic.com/firebasejs/6.4.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/6.4.0/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/6.4.0/firebase-database.js"></script>
+<script type="text/javascript" src="js/firebase.js"></script>
+<script type="text/javascript" src="js/navegacion.js"></script>
