@@ -115,19 +115,18 @@ var mensajeria = function (men, tipo){
 
 var roles = function (i){
 	let rol;
-	console.log(i)
 	switch (i){
 		case "1":
 			rol = "Estudiante";
 		break;
 		case "2":
-			rol = "Padre de familia";
+			rol = "Representante";
 		break;
 		case "3":
 			rol = "Profesor";
 		break;
 		case "4":
-			rol = "Web master";
+			rol = "WebMaster";
 		break;
 		case "5":
 			rol = "Desarollador";
@@ -137,3 +136,134 @@ var roles = function (i){
 	return rol;
 }
 /***/ 
+
+/***filtra el areglode usuarios**/
+var drawTabla = function (us){
+			
+		$("#tbody").html("")
+  		let x=0;
+		us.forEach((item) => {
+			x++;
+			let print ='<tr><td>'+ x +'</td>'
+			print+= '<td>' +item.val().nombre+'</td>';
+			print+= '<td class="hide-on-small-only">' +item.val().email+'</td>';
+			print+= '<td><span class="' + roles(item.val().rol) + '"> ' + roles(item.val().rol) +' </span></td>';
+			print+= '<td> <i  onClick ="files(`' +item.val().uid + '`)" class="material-icons">folder_shared</i> </td>';
+			print+="</tr>";
+			$("#tbody").append(print)
+	  
+		})
+		
+		
+
+
+		
+}
+
+$("#botonSearch").click(function (){
+	buscarUsuarios($("#buscador").val())
+})
+var files = function (uid){
+
+	if (uid){
+		navegacion("#userFiles", function (){
+			base.ref("users/" + uid).once("value", function(userSnap){
+				let u = userSnap.val()
+				$("#userFilesUid").val(u.uid);
+				$("#userFilesImagen").attr("src", u.photoURL);
+				$("#userFilesNombre").val(u.nombre);
+				$("#userFilesEmail").val( u.email);
+				$("#userFilesRol").val(roles(u.rol));
+				 M.updateTextFields()
+			})
+			base.ref("historias/").orderByChild("userId").equalTo(uid).once("value", function (historiasUser){
+				$("#userFilesTotalHistorias").html(historiasUser.numChildren())
+				    var elems = document.querySelectorAll('.collapsible');
+    				var instances = M.Collapsible.init(elems); 
+    				$("#userFilesTotalHistoriasDetalle").html("");
+    				if (historiasUser.val() ){
+    					historiasUser.forEach((item) => {
+	    					let sal = `<li id ='${item.val().id}' class="collection-item avatar">
+						      <img src="${item.val().archivo}" alt="" class="circle">
+						      <span class="title">${tiempo(item.val().fecha)}</span>
+
+						      <a href="#!" class="secondary-content" data-action ="true"><i class="material-icons">delete</i></a>
+						    </li>
+						  `
+	    					$("#userFilesTotalHistoriasDetalle").append(sal)
+    					})
+
+    				}else{
+    					$("#userFilesTotalHistoriasDetalle").html("<li> El Usuario no a resgistrado ninguna historia.</li>");
+    				}
+    				
+			})
+
+			base.ref("ingresos/" + uid).once("value", function (ingresosUser){
+				$("#userFilesIngresosDetalle").html("");
+				if ( ingresosUser.val() ){
+					ingresosUser.forEach((item) => {				
+					  let sal2 =`<li id ='${item.val().id}' class="collection-item ">
+						      			<span class="title">${tiempo(item.val().fecha)}</span>
+						      	
+						   		 </li>
+						 	 `;
+						 	 
+						$("#userFilesIngresosDetalle").append(sal2)
+					})
+				}else{
+					$("#userFilesIngresosDetalle").html("<li>El usuario no ha registrado ingresos! </li>");
+				}
+			})
+			base.ref("albumes/" + uid).once("value", function (albumUser){
+				$("#userFilesAlbumDetalle").html("");
+				if (albumUser.val()){
+					albumUser.forEach((item) => {
+					  	let sal3 = `<li id ='${item.val().id}' class="collection-item avatar">
+						      <img src="${item.val().archivo}" alt="" class="circle">
+						      <span class="title">${tiempo(item.val().fecha)}</span>
+						      <a href="#!" class="secondary-content" data-action ="true"><i class="material-icons">delete</i></a>
+						`	;  
+						$("#userFilesAlbumDetalle").append(sal3);
+					})
+
+				}else{
+					$("#userFilesAlbumDetalle").html("<li>El usuario no tiene ninguna foto en el album.</li>");
+				}
+			
+			})
+
+			base.ref("posts/").orderByChild("authorId").equalTo(uid).once("value", function (postUser){
+				$("#userFilesPublicacionesDetalle").html("");
+				if (postUser.val()){
+					postUser.forEach((item) => {
+					  	let sal4 = `<li id ='${item.val().id}' class="collection-item avatar">
+						      <img src="${item.val().archivo}" alt="" class="circle">
+						      <span class="title">${tiempo(item.val().fecha)}</span>
+						      <a href="#!" class="secondary-content" data-action ="true"><i class="material-icons">delete</i></a>
+						`	;  
+						$("#userFilesPublicacionesDetalle").append(sal4);
+					})
+
+				}else{
+					$("#userFilesPublicacionesDetalle").html("<li>El usuario Tiene puiblicaciones .</li>");
+				}
+			
+			})
+			
+		})
+	}
+}
+/**/
+
+
+var tiempo = function (ts){
+		
+		let date = new Date(ts);
+		var options = {
+		         day: 'numeric',month: 'long', year: 'numeric', hour: 'numeric', minute: 'numeric'
+		    };
+
+		return  date.toLocaleDateString('es', options); // 10/29/2013
+
+}

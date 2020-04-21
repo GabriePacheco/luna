@@ -66,7 +66,7 @@
 	</div> <!-- fin recuperar contraseña -->
 	<!-- Home -->
 	<div class= "app hide" id ="home">	
-		<nav class= "white"> <a href="#cerrar" data-action="true" >Cerrar Sesión</a> </nav>
+		<nav class="fija"> <a href="#cerrar" data-action="true" >Cerrar Sesión</a> </nav>
 		<div class="row">
 		    <div class="col s12 m4">
 		      <div class="card-panel z-depth-3 light-blue">
@@ -126,20 +126,29 @@
 		</div>
 
 	</div><!-- fin Home -->
+	<!-- usuarios -->
 	<div class= "app hide" id = "users">
-		<nav class= "white"> <a href="#home" >Cerrar Sesión</a> </nav>
+		<nav class="fija"> <a href="#home" ><i class="material-icons">arrow_back</i></a> </nav>
 		<div class="row">
+		
+		    <form class="col s12">	      
+		        <div class="input-field col s6 offset-s5">
+		          <textarea id="buscador" class="materialize-textarea"></textarea>
+		          <a id = "botonSearch" data-action="true" class="material-icons prefix">search</a>
+		          <label for="buscador">Buscar</label>
+		        </div>      
+		    </form>
+		  		
+			  
 			<div class="col s12">
 				  <table >
 				        <thead>
 				          <tr>
 				          	 <th width ="2%">#</th>
-				              <th width ="15%">Uid</th>
-				              <th width ="3%">Foto</th>
 				              <th width ="30%" >Nombre</th>
-				              <th width ="30%" >Email</th>
-				              <th class="10%">Rol</th>
-				              <th width="10%" >Action</th>
+				              <th width ="30%" class="hide-on-small-only" >Email</th>
+				              <th class="30%">Rol</th>
+				              <th width="8%" >Action</th>
 				          </tr>
 				        </thead>
 
@@ -150,7 +159,100 @@
 				      </table>
 			</div> 
 		</div>
-	</div>
+	</div><!--users-->
+	<!--Users FILES -->
+	<div class = "app hide" id = "userFiles" >
+		<nav class="fija"> <a href="#users"><i class="material-icons">arrow_back</i></a> </nav>
+			<div class="container"> 
+				<div class="row">
+					<div class="col s12">
+						<div class="row">
+							<div class="col s2 m3"> 
+								<img id ="userFilesImagen" src="" class="circle responsive-img" width="100%">
+							</div>
+							<div class="col s12 m9">
+		 						<form class="col s12">
+								      <div class="row">
+								      	<div class="input-field col s12">
+								          <input disabled placeholder="Uid" id="userFilesUid" type="text" class="validate">
+								          <label class="active" for="userFilesUid">Id</label>
+								        </div>
+								        <div class="input-field col s12">
+								          <input disabled placeholder="Nombre" id="userFilesNombre" type="text" class="validate">
+								          <label class="active" for="userFilesNombre">Nombre</label>
+								        </div>
+								        <div class="input-field col s12">
+								          <input disabled id="userFilesEmail" type="text" >
+								          <label class="active"  for="userFilesEmail">Email</label>
+								        </div>
+								      </div>
+								      <div class="row">
+								        <div class="input-field col s12">
+								          <input disabled  id="userFilesRol" type="text" class="validate">
+								          <label class="active"  for="userFilesRol">Rol</label>
+								        </div>
+								      </div>
+		  						</form>						
+							</div>
+							<div class="col s12">
+								<div class="row">
+									<ul class="collapsible col s12">
+									    <li>
+									      <div class="collapsible-header"><i class="material-icons">assignment_late</i>Historias  &nbsp; <span id= "userFilesTotalHistorias"></span></div>
+									      <div class="collapsible-body">
+									      		<ul  id = "userFilesTotalHistoriasDetalle" class="collection">
+												</ul>
+									      	
+									      </div>
+									    </li>
+									</ul>
+						
+									
+									<ul class="collapsible col s12 ">
+									    <li>
+									      <div class="collapsible-header"><i class="material-icons">assignment_late</i>Ingresos  &nbsp; <span id= "userFilesUltimoIngreso"></span></div>
+									      <div class="collapsible-body">
+									      		<ul  id = "userFilesIngresosDetalle" class="collection">
+												</ul>
+									      	
+									      </div>
+									    </li>
+									</ul>
+
+									<ul class="collapsible col s12 ">
+									    <li>
+									      <div class="collapsible-header"><i class="material-icons">assignment_late</i>Album  &nbsp; <span ></span></div>
+									      <div class="collapsible-body">
+									      		<ul  id = "userFilesAlbumDetalle" class="collection">
+												</ul>
+									      	
+									      </div>
+									    </li>
+									</ul>
+									</div>
+									<div class="row">
+									<ul class="collapsible col s12 ">
+									    <li>
+									      <div class="collapsible-header"><i class="material-icons">assignment_late</i>Publicaciones  &nbsp; <span ></span></div>
+									      <div class="collapsible-body">
+									      		<ul  id = "userFilesPublicacionesDetalle" class="collection">
+												</ul>
+									      	
+									      </div>
+									    </li>
+									</ul>
+						
+						
+					
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+	</div><!-- user FILEs-->
+
+
 
 <!-- fin paginas  -->
 	 <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>

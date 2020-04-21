@@ -12,7 +12,7 @@ exports.notificarNuevoPost = laBase.ref("/posts/{postId}/")
     	"title": "Nueva publicación",
     	"body": "Se agrego información en la agenda Lunytha ",
         "sound":"default",
-      	"click_action": "FCM_PLUGIN_ACTIVITY"
+      	"click_action": "https://lunytha-0.firebaseapp.com/"
     }
     return await base.ref("users/" + nuevoPost.authorId ).once("value", async (snapUser)=>{
     	  	playLoad.notification.icon = snapUser.val().photoURL;

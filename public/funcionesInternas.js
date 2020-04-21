@@ -16,6 +16,7 @@
     		window.location.hash = "start"
     	}
     	
+    	
 
   });
 var espera ;
@@ -105,7 +106,7 @@ $( window ).on( 'hashchange', function( e ) {
 
 	let url=  window.location.hash.split("?")[0]
 	if (url != "#addPost" && url != "#editPost"){
-		if (url != "#registro" && url != "#recuperar" && url != "#login" && url != "#mensajeRecuperar"){
+		if (url != "#registro" && url != "#recuperar" && url != "#login" && url != "#mensajeRecuperar" && url != "#politicas"){
 			if (userInline.uid){	
 		  		if (url == "seePost"){
 		  			toSee( window.location.hash.split("?")[1])
@@ -1311,7 +1312,7 @@ var toSee = function (id){
 		
 		if (post.texto){
 			let seetexto = document.createElement("div");
-			seetexto.innerHTML="<div class='textoP'>" + post.texto +"</div>";
+			seetexto.innerHTML="<div class='textoP'>" + replaceURLWithHTMLLinks(post.texto) +"</div>";
 			seetexto.setAttribute("class", "col s12")
 			see.appendChild(seetexto)	
 			if (post.color){
@@ -1726,7 +1727,7 @@ var borrarHistoria = function (id){
 	
 }
 var elPerfil = function (n){
-	
+
 	switch (n){
 		case "1":
 			 per = "Alumno";
@@ -1748,5 +1749,5 @@ var elPerfil = function (n){
 
 function replaceURLWithHTMLLinks(e){
 	return e.replace(/(\(.*?)?\b((?:https?|ftp|file):\/\/[-a-z0-9+&@#\/%?=~_()|!:,.;]*[-a-z0-9+&@#\/%=~_()|])/gi,function(e,r,n){var t="";r=r||"";for(var a=/\(/g;a.exec(r);){var l;(l=/(.*)(\.\).*)/.exec(n)||/(.*)(\).*)/.exec(n))&&(n=l[1],t=l[2]+t)}
-		return r+"<a href='"+n+"' target='_blank' rel='nofollow noopener'>"+n+"</a>"+t})
+		return r+"<a class='truncate' href='"+n+"' target='_blank' rel='nofollow noopener'>"+n+"</a>"+t})
 }

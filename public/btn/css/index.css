@@ -5,3 +5,26 @@
 #login .row{
 	width: 100% !important;
 }
+.Estudiante{
+	background: #00695c;
+	color:#FFFFFF;
+}
+.Profesor{
+	background: #0277bd;
+	color:#FFFFFF;
+}
+.Representante{
+	background: #ef6c00;
+	color:#FFFFFF;
+}
+.WebMaster{
+	background: #dd2c00;
+	color:#FFFFFF;
+}
+.fija{
+	position: fixed;
+	top:0 !important;
+}
+.app{
+	padding-top: 10vh;
+}

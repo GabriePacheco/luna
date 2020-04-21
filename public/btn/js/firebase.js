@@ -88,30 +88,29 @@ auth.onAuthStateChanged(function (user){
 /****/
 
 /***Escucha Cambios en usuarios***/
+var tUsuarios;
 base.ref("users").on("value", function (snap){
 	totalUsuarios(snap.numChildren())
+	tUsuarios = snap.numChildren();
 
 })
 /****/
 /**Buscar Usuarios**/
-var buscarUsuarios = function (limite, nombre, filtro){
-	$("#tbody").html("")
-	base.ref("users").on("value", function (snap){
-		let x =0;
-		snap.forEach((item) => {
-			x++;
-			let print ='<tr><td>'+ x +'</td>'
-			print+= '<td>'+item.val().uid.substr(0,10)+'... </td>';		
-			print+= '<td><img width ="100%" src="' +item.val().photoURL+'" class="responsive-img circle"></td>';
-			print+= '<td>' +item.val().nombre+'</td>';
-			print+= '<td>' +item.val().email+'</td>';
-			print+= '<td>' + roles(item.val().rol) +'</td>';
-				print+= '<td>' +item.val().rol+'</td>';
-			print+="</tr>";
-			$("#tbody").append(print)
-	  
+var usuarios;
+var buscarUsuarios = function (dato){
+	if (! dato ){
+		base.ref("users").limitToLast(10).on("value", function (snap){
+			usuarios = snap;
+			drawTabla(snap);
 		})
-	})
+	}else{
+		
+			base.ref("users").orderByChild("nombre").startAt(dato).limitToFirst(10).on("value", function (snap){
+			usuarios = snap;
+			drawTabla(snap);
+		})
+	}
+
 }
 
 /******/
