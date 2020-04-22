@@ -7,6 +7,7 @@
     storageBucket: "lunytha-0.appspot.com",
     messagingSenderId: "620792262555"
   };
+  const postBase = 'posts'
   firebase.initializeApp(config);
   var base = firebase.database();
   var auth = firebase.auth();
@@ -34,8 +35,9 @@
 				    		}else{
 				    			registrarIngreso();
 				    			cargarPerfil();
-				    			notificaciones()
-				    			window.location.hash= "home"
+				    			notificaciones();
+				    			window.location.hash= "home";
+				    			bajarPost();
 				    		}
 				    	}
 				    }
@@ -430,7 +432,7 @@ var subirPost = async function (callbaks){
 		}
 	}
 	
-	myPost.id = await base.ref().child("posts").push().key
+	myPost.id = await base.ref().child(postBase).push().key
 	myPost.authorId = userInline.uid
 	myPost.fecha = firebase.database.ServerValue.TIMESTAMP;
 	if (nPost.texto){
@@ -462,8 +464,15 @@ var subirPost = async function (callbaks){
 
 	}
 	
+	if (nPost.video){
+		myPost.video = await suirAdjuntos("archivos/posts/"+ myPost.id, nPost.video, "video");
+	}
+	if (nPost.youtube){
+		myPost.youtube=nPost.youtube;
+	}
+	
 	var updates = {}
-	updates["/posts/" + myPost.id]= myPost;
+	updates[postBase + myPost.id]= myPost;
 	return base.ref().update(updates)
 	.then(function (){
 		callbaks();
@@ -488,7 +497,7 @@ var suirAdjuntos = async function (ruta, archivo, referencia ){
 }
 
 
-base.ref().child("posts/").orderByKey().limitToLast(limite).once("value", function (publicaciones){
+/*base.ref().child(postBase).orderByKey().limitToLast(limite).once("value", function (publicaciones){
 	if (publicaciones.val()){
 		publicaciones.forEach((item) => {
 			  let pubs = item.val()		  
@@ -501,10 +510,10 @@ base.ref().child("posts/").orderByKey().limitToLast(limite).once("value", functi
 			  })
 		})	
 	}
-})
+})*/
 
 var bajarPost = function (){
-	base.ref().child("posts/").orderByKey().limitToLast(limite).once("value", function (publicaciones){
+	base.ref().child(postBase).orderByKey().limitToLast(limite).once("value", function (publicaciones){
 		if (publicaciones.val()){
 			publicaciones.forEach((item) => {
 				  let pubs = item.val()		  
@@ -519,7 +528,7 @@ var bajarPost = function (){
 		}
 	})
 }
-base.ref().child("posts/").limitToLast(1).on("child_added", function (pub){
+base.ref().child(postBase).limitToLast(1).on("child_added", function (pub){
 	if (pub.val()){
 		let pubs = pub.val();
 		base.ref().child("users/" + pub.val().authorId )
@@ -532,7 +541,7 @@ base.ref().child("posts/").limitToLast(1).on("child_added", function (pub){
 })
 
 ///Escuchar cambios en los post 
-base.ref().child("posts").on("child_changed", function (pub){
+base.ref().child(postBase).on("child_changed", function (pub){
 	if (pub.val()){
 		let pubs = pub.val();
 		base.ref().child("users/" + pub.val().authorId )
@@ -543,7 +552,7 @@ base.ref().child("posts").on("child_changed", function (pub){
 		})
 	}
 })
-base.ref().child("posts/").on("child_removed", function (pub){
+base.ref().child(postBase).on("child_removed", function (pub){
 	$("#P" + pub.val().id).remove() 
 })
 
@@ -551,14 +560,14 @@ var  borrar = function (publicacionId){
 
 	testPermisos(function (permiso){
 		if (permiso){
-			base.ref().child("posts/" + publicacionId).remove()
+			base.ref().child(postBase + publicacionId).remove()
 		}
 
 	});
 }
 
 var consultarPublicacion = function (id, callback){
-	 base.ref().child("posts/" + id ).once("value", function (pub){
+	 base.ref().child(postBase + id ).once("value", function (pub){
 		if (pub.val()){
 			let pp = {}
 				 pp = pub.val();
@@ -591,7 +600,7 @@ var savePost = async function (callback){
 	}
 	
 	let updates = {}
-	updates["/posts/" + edPost.id]= edPost;
+	updates[postBase + edPost.id]= edPost;
 	return base.ref().update(updates)
 	.then(function (){
 		callback();
@@ -663,7 +672,7 @@ var cargarComentarios =function (publicacionId, callback){
 	})
 }
 var buscarPost = function(id, callback){
-	base.ref().child("posts/" + id).once("value", function (publicacion){
+	base.ref().child(postBase + id).once("value", function (publicacion){
 		let publis= publicacion.val()
 		base.ref().child("users/" + publicacion.val().authorId ).once("value", function (uu){
 			publis.userName = uu.val().nombre

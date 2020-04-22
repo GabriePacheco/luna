@@ -11,6 +11,8 @@
     	var instances = M.Chips.init(elems)
         var elems = document.querySelectorAll('.dropdown-trigger');
     	var instances = M.Dropdown.init(elems);
+    	var elems = document.querySelectorAll('.modal');
+    	var instances = M.Modal.init(elems);
   	
     	if (window.location.hash){	
     		window.location.hash = "start"
@@ -452,14 +454,19 @@ $("#saveNPost").click(function (){
 		subirPost(function (captura, e){
 			if (e){
 				mensajeria(e)
-
 			}
+
 			delete nPost.texto,nPost.imagenes,nPost.color,nPost.files ;
 			delete nPost.imagenes;
 			delete nPost.dataImg;
 			delete nPost.dataURLimg;
+			nPost={}
 			$(".posteando").remove();
 			$("#postTextArea").val("")
+			$('#imagenesPost').html('');
+			$('#adjuntosPost').html('');
+			$('#videoPost').html('');
+			$("#youtubePost").html('')
 			vistaPost();
 		})
 	}
@@ -470,10 +477,26 @@ $("#addFilePost").click(function(){
 	$("#NewFile").click()
 
 });
+$("#addVideo").click(function(){
+	$("#NewFile").attr("accept", "video/*");
+	$("#NewFile").click()
+
+});
 $("#addFotoPost").click(function(){
 	$("#NewFile").attr("accept", "image/*")
 	$("#NewFile").click()
+});
 
+
+$("#putYoutube").click(function (e){
+	e.preventDefault();
+	if ( $("#nCodigoYoutube").val().length > 0){
+		let ny = $("#nCodigoYoutube").val();
+		nPost.youtube= ny.replace(/width=/gi, 'width="100%" '); 
+		console.log(nPost.youtube)
+		vistaPost();
+		$("#nCodigoYoutube").val('')	
+	}
 });
 $("#NewFile").change(function (e){
 
@@ -490,48 +513,52 @@ $("#NewFile").change(function (e){
 				vistaPost()
 			}
 		}else{
-			$("#imagenesPost").append(preloader);
-			if (e.target.files[0].name){
-				if (!nPost.imagenes){
-					nPost.imagenes=[];
-					nPost.dataImg=[];	
-					nPost.dataURLimg=[];	
-				}
-				let canvasPost = document.createElement("canvas")
-				let contextP = canvasPost.getContext("2d");
-				let reader = new FileReader();
-				reader.readAsDataURL(e.target.files[0]);
-				reader.onload = function (){
-					let nImagen = new Image();
-					nImagen.src = reader.result;
-					nImagen.onload = function (){
-						if (e.target.files[0].size >= 307200 ){
-							canvasPost.width = nImagen.width/3.6
-							canvasPost.height = nImagen.height /3.6
-							contextP.drawImage(nImagen, 0,0, canvasPost.width, canvasPost.height) 
-							nPost.imagenes.push(URLtoBlob(canvasPost.toDataURL())) 
-							nPost.dataURLimg.push(canvasPost.toDataURL("image/png", 0.75))
-							nPost.dataImg.push(canvasPost.height )
-							vistaPost(()=>{
-								delete canvasPost;
-								delete reader;
-								delete nImagen;
-							})
-						}else{
-							nPost.imagenes.push(e.target.files[0])
-							nPost.dataURLimg.push(nImagen.src)
-							nPost.dataImg.push(nImagen.height)
-							vistaPost(()=>{
-								delete canvasPost;
-								delete reader;
-								delete nImagen;
-							})
+			if($("#NewFile").attr("accept") == "image/*"){
+				$("#imagenesPost").append(preloader);
+				if (e.target.files[0].name){
+					if (!nPost.imagenes){
+						nPost.imagenes=[];
+						nPost.dataImg=[];	
+						nPost.dataURLimg=[];	
+					}
+					let canvasPost = document.createElement("canvas")
+					let contextP = canvasPost.getContext("2d");
+					let reader = new FileReader();
+					reader.readAsDataURL(e.target.files[0]);
+					reader.onload = function (){
+						let nImagen = new Image();
+						nImagen.src = reader.result;
+						nImagen.onload = function (){
+							if (e.target.files[0].size >= 307200 ){
+								canvasPost.width = nImagen.width/3.6
+								canvasPost.height = nImagen.height /3.6
+								contextP.drawImage(nImagen, 0,0, canvasPost.width, canvasPost.height) 
+								nPost.imagenes.push(URLtoBlob(canvasPost.toDataURL())) 
+								nPost.dataURLimg.push(canvasPost.toDataURL("image/png", 0.75))
+								nPost.dataImg.push(canvasPost.height )
+								vistaPost(()=>{
+									delete canvasPost;
+									delete reader;
+									delete nImagen;
+								})
+							}else{
+								nPost.imagenes.push(e.target.files[0])
+								nPost.dataURLimg.push(nImagen.src)
+								nPost.dataImg.push(nImagen.height)
+								vistaPost(()=>{
+									delete canvasPost;
+									delete reader;
+									delete nImagen;
+								})
+							}
+		
 						}
-	
 					}
 				}
-			
-				
+			}
+			if($("#NewFile").attr("accept") == "video/*"){
+				nPost.video = e.target.files[0]
+				vistaPost()
 			}
 		}
 	}
@@ -565,6 +592,7 @@ var vistaPost = function (callback){
 	$("#postTextArea").removeClass("verde")
 	$("#postTextArea").removeClass("naranja")
 	$("#postTextArea").removeClass("azul")
+	
 
 	delete nPost.color;
 
@@ -576,7 +604,6 @@ var vistaPost = function (callback){
 
 	}
 	if (nPost.imagenes){
-		console.log(nPost.dataImg)
 		if (nPost.imagenes.length == 1){
 			
 				$("#imagenesPost").append("<div class='col s12'><a onclick='removeImagenes("+0+")' ><i class='right'>X</i></a>"
@@ -650,8 +677,12 @@ var vistaPost = function (callback){
 					delete img;					
 			}
 		}			
-
-
+	}
+	if (nPost.video){
+		$("#videoPost").append("<img class= 'responsive-img' src='imagenes/imagenVideo.png' />")
+	}
+	if(nPost.youtube){
+		$("#youtubePost").html(nPost.youtube)
 	}
 
 	if (callback){
@@ -724,7 +755,7 @@ var dibujarPublicacion = function (publicacion, actions){
 
 	menus += `<li><a  onclick='toSee("${publicacion.id}")' >Ver</i></a></li>`; 
 	testPermisos(function(y){
-		
+		console.log("ahora")
 		if (y){
 			if (!$("#itemMenuBorrar"+publicacion.id).length > 0 ){
 					$("#menu"+publicacion.id).append(`<li id ='itemMenuBorrar${publicacion.id}'><a  onclick='borrar("${publicacion.id}")' >Borrar</i></a></li>`);
@@ -834,10 +865,27 @@ var dibujarPublicacion = function (publicacion, actions){
 			delete fileP;
 			
 		}
-
-		
-
 	}
+	if(publicacion.video){
+		var contenVideoP = document.createElement('div');
+		contenVideoP.setAttribute('class', 'videoContainer center-align');
+		var videoP = document.createElement("video")
+		videoP.setAttribute('src', publicacion.video);
+		videoP.setAttribute('width', $("#posts").width() );
+		videoP.setAttribute('controls', true);
+		contenVideoP.append(videoP);
+		formato.appendChild(contenVideoP);
+		delete contenVideoP, videoP;
+		
+	}
+	if (publicacion.youtube){
+		let contentYoutube = document.createElement('div')
+		contentYoutube.setAttribute("class", "col s12")
+		contentYoutube.innerHTML="<div class='textoP'>" + publicacion.youtube+"</div>";
+		formato.append(contentYoutube);
+	}
+
+
 	let pieP = document.createElement("div")
 
 	let corazonP = document.createElement("div");
@@ -881,7 +929,7 @@ var dibujarPublicacion = function (publicacion, actions){
 	if (actions == "carga"){
 		
 		if ($("#P" + publicacion.id).length > 0 ){		
-			!$("#P" + publicacion.id).replaceWith(formato);		
+			$("#P" + publicacion.id).replaceWith(formato);		
 		}else{
 			$("#posts").append(formato);		
 		}
@@ -1363,7 +1411,7 @@ $(window).on("scroll", function() {
     var scrollHeight = $(document).height();
     var scrollPosition = $(window).height() + $(window).scrollTop();
     if ((scrollHeight - scrollPosition) / scrollHeight > 0.09) {
-       limite+= 5;
+       limite+= 1;
 	     if (window.location.hash){
 	     	bajarPost();	
 	     }  
