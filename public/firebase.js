@@ -7,7 +7,7 @@
     storageBucket: "lunytha-0.appspot.com",
     messagingSenderId: "620792262555"
   };
-  const postBase = 'posts'
+  const postBase = 'posts/'
   firebase.initializeApp(config);
   var base = firebase.database();
   var auth = firebase.auth();
@@ -497,7 +497,7 @@ var suirAdjuntos = async function (ruta, archivo, referencia ){
 }
 
 
-/*base.ref().child(postBase).orderByKey().limitToLast(limite).once("value", function (publicaciones){
+base.ref().child(postBase).orderByKey().limitToLast(limite).once("value", function (publicaciones){
 	if (publicaciones.val()){
 		publicaciones.forEach((item) => {
 			  let pubs = item.val()		  
@@ -510,7 +510,7 @@ var suirAdjuntos = async function (ruta, archivo, referencia ){
 			  })
 		})	
 	}
-})*/
+})
 
 var bajarPost = function (){
 	base.ref().child(postBase).orderByKey().limitToLast(limite).once("value", function (publicaciones){

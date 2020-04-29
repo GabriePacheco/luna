@@ -23,9 +23,5 @@ exports.notificarNuevoPost = laBase.ref("/posts/{postId}/")
     	  		  		return admin.messaging().sendToDevice(sendTokes, playLoad)
     	  		  		.then((reponse)= console.info(sendTokes) );	
     	  		  })		
-
     	  })
-
-
-
 })	

@@ -755,7 +755,7 @@ var dibujarPublicacion = function (publicacion, actions){
 
 	menus += `<li><a  onclick='toSee("${publicacion.id}")' >Ver</i></a></li>`; 
 	testPermisos(function(y){
-		console.log("ahora")
+		
 		if (y){
 			if (!$("#itemMenuBorrar"+publicacion.id).length > 0 ){
 					$("#menu"+publicacion.id).append(`<li id ='itemMenuBorrar${publicacion.id}'><a  onclick='borrar("${publicacion.id}")' >Borrar</i></a></li>`);
